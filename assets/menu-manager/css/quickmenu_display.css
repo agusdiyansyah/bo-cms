@@ -1,0 +1,120 @@
+/*
+ Table Of Content:
+
+ 1.) Home Page Content
+ --------------------------------*/
+
+/*
+ 1.) Home Page Content
+ --------------------------------*/
+
+.header-navigation .header-nav { display: inline-block; padding: 0; }
+.header-navigation .header-nav li { float: left; margin-bottom: 0; }
+.header-navigation .header-nav li > a { color: #2e3334; padding: 26px 44px 32px; border-top: 3px solid transparent; display: block; }
+.header-navigation.cl-effect-2 .header-nav > li > a { padding: 26px 32px 32px; }
+.header-navigation .header-nav > li:before { width: 1px; height: 40px; content: ''; position: absolute; left: auto; top: 0; background: #eaeced; }
+.header-navigation .header-nav li:first-child:before { background: none; width: 0; }
+.header-navigation .header-nav > li:hover > a { border-top: 3px solid #12a6ca; color: #12a6ca; text-decoration: none;  }
+.header-navigation { text-align: center; }
+.header-navigation .sub-menu { position: absolute; left: 0; top: 60px; background: #7fccdf; min-width: 260px; width: auto; padding: 25px 31px; display: none; }
+.header-navigation .sub-menu li { font-size: 16px; line-height: 40px; position: relative; float: none; text-align: left; }
+.header-navigation .sub-menu li { line-height: 1.5; padding-top: 8px; padding-bottom: 8px; }
+.header-navigation .sub-menu li a { color: #ffffff; padding: 0; border: none; }
+.header-navigation .sub-menu li:hover { border: none; }
+.header-navigation .sub-menu li a:hover, .header-navigation .sub-menu li a:hover { color: #334f56; border: none; text-decoration: none; }
+.header-navigation .sub-menu li:before { width: 100%; height: 1px; content: ''; position: absolute; left: 0; top: 0; background: #9bdae9; }
+.header-navigation .sub-menu .sub-menu { position: absolute; left: 100%; top: 0; display: none; min-width: 293px; padding-left: 66px; }
+.header-navigation .sub-menu .sub-menu:before { width: 1px; height: 100%; content: ''; position: absolute; left: 31px; top: 0; background: #ffffff; }
+.header-navigation .mega-menu .sub-menu .sub-menu:before { background: none; }
+.header-navigation .sub-menu li:hover .sub-menu { display: block; }
+.header-navigation li.mega-menu { position: inherit !important; }
+.header-navigation li.mega-menu > .sub-menu { left: 0; right: 0; padding: 25px 33px 5px 3px; margin: 0 auto !important; }
+.header-navigation li.mega-menu > .sub-menu li ul { display: block; position: static; padding: 0; min-width: 160px; }
+.header-navigation li.mega-menu > .sub-menu > li { float: left; font-weight: 700; margin: 0 28px 20px; position: relative; }
+.header-navigation li.mega-menu > .sub-menu > li:before { background: none; }
+.header-navigation li.mega-menu > .sub-menu > li:after { background: #9bdae9; content: ''; height: 100%; width: 1px; position: absolute; left: -28px; top: 0; }
+.header-navigation li.mega-menu > .sub-menu > li:nth-child(5n+1):after { background: none; width: 0; }
+.header-navigation li.mega-menu > .sub-menu > li { float: none; display: inline-block; width: -webkit-calc(20% - 60px); width: calc(20% - 60px); vertical-align: top; }
+
+.toggle-row{ display: none; }
+
+/*Red Color CSS*/
+.red .toggle-row{ background: red !important; }
+.red .header-navigation .header-nav > li:hover > a{ color:red; }
+.red .header-navigation .sub-menu{ background: red; }
+.red .header-navigation .header-nav > li:hover > a{ border-color: red; }
+.red .cl-effect-1 .header-nav > li > a:hover::before, 
+.red .cl-effect-1 .header-nav > li > a:focus::before{ text-shadow: 10px 0 red, -10px 0 red }
+.red .cl-effect-1 .header-nav > li > a:hover::before, 
+.red .cl-effect-1 .header-nav > li > a:focus::before { color:red; }
+.red .cl-effect-3 .header-nav > li > a::after{ background: red  }
+.red .cl-effect-5 .header-nav > li > a::before,
+.red .cl-effect-5 .header-nav > li > a::after { border-color: red; }
+.red .header-navigation .sub-menu li::before{ background: #fff; }
+.red .header-navigation li.mega-menu > .sub-menu > li::after{ color: #fff; background: #fff; }
+
+
+/*green color CSS*/
+.green .toggle-row{ background: green !important; }
+.green .header-navigation .header-nav > li:hover > a{ color:green; }
+.green .header-navigation .sub-menu{ background: green; }
+.green .header-navigation .header-nav > li:hover > a{ border-color: green; }
+.green .cl-effect-1 .header-nav > li > a:hover::before, 
+.green .cl-effect-1 .header-nav > li > a:focus::before { color:green; }
+.green .cl-effect-1 .header-nav > li > a:hover::before, 
+.green .cl-effect-1 .header-nav > li > a:focus::before{ text-shadow: 10px 0 green, -10px 0 green }
+.green .cl-effect-3 .header-nav > li > a::after{ background: green;  }
+.green .cl-effect-5 .header-nav > li > a::before,
+.green .cl-effect-5 .header-nav > li > a::after { border-color: green; }
+.green .header-navigation .sub-menu li::before{ background: #fff; }
+.green .header-navigation li.mega-menu > .sub-menu > li::after{ color: #fff; background: #fff; }
+
+/*blue color CSS*/
+.blue .toggle-row{ background: blue !important; }
+.blue .header-navigation .header-nav > li:hover > a{ color:blue; }
+.blue .header-navigation .sub-menu{ background: blue; }
+.blue .header-navigation .header-nav > li:hover > a{ border-color: blue; }
+.blue .cl-effect-1 .header-nav > li > a:hover::before, 
+.blue .cl-effect-1 .header-nav > li > a:focus::before a{ color:blue; }
+.blue .cl-effect-1 .header-nav > li > a:hover::before, 
+.blue .cl-effect-1 .header-nav > li > a:focus::before{ text-shadow: 10px 0 blue, -10px 0 blue }
+.blue .cl-effect-3 .header-nav > li > a::after{ background: blue  }
+.blue .cl-effect-5 .header-nav > li > a::before,
+.blue .cl-effect-5 .header-nav > li > a::after { border-color: blue; }
+.blue .header-navigation .sub-menu li::before{ background: #fff; }
+.blue .header-navigation li.mega-menu > .sub-menu > li::after{ color: #fff; background: #fff; }
+
+/*orange color CSS*/
+.orange .toggle-row{ background: orange !important; }
+.orange .header-navigation .header-nav > li:hover > a{ color:orange; }
+.orange .header-navigation .sub-menu{ background: orange; }
+.orange .header-navigation .header-nav > li:hover > a{ border-color: orange; }
+.orange .cl-effect-1 .header-nav > li > a:hover::before, 
+.orange .cl-effect-1 .header-nav > li > a:focus::before { color:orange; }
+.orange .cl-effect-1 .header-nav > li > a:hover::before, 
+.orange .cl-effect-1 .header-nav > li > a:focus::before{ text-shadow: 10px 0 orange, -10px 0 orange }
+.orange .cl-effect-3 .header-nav > li > a::after{ background: orange  }
+.orange .cl-effect-5 .header-nav > li > a::before,
+.orange .cl-effect-5 .header-nav > li > a::after { border-color: orange; }
+.orange .header-navigation .sub-menu li::before{ background: #fff; }
+.orange .header-navigation li.mega-menu > .sub-menu > li::after{ color: #fff; background: #fff; }
+
+/*grey color CSS*/
+.grey .toggle-row{ background: grey !important; }
+.grey .header-navigation .header-nav > li:hover > a{ color:grey; }
+.grey .header-navigation .sub-menu{ background: grey; }
+.grey .header-navigation .header-nav > li:hover > a{ border-color: grey; }
+.grey .cl-effect-1 .header-nav > li > a:hover::before, 
+.grey .cl-effect-1 .header-nav > li > a:focus::before{ text-shadow: 10px 0 grey, -10px 0 grey }
+.grey .cl-effect-1 .header-nav > li > a:hover::before, 
+.grey .cl-effect-1 .header-nav > li > a:focus::before { color:grey; }
+.grey .cl-effect-3 .header-nav > li > a::after{ background: grey  }
+.grey .cl-effect-5 .header-nav > li > a::before,
+.grey .cl-effect-5 .header-nav > li > a::after { border-color: grey; }
+.grey .header-navigation .sub-menu li::before{ background: #fff; }
+.grey .header-navigation li.mega-menu > .sub-menu > li::after{ color: #fff; background: #fff; }
+
+.footer-copy-right{
+text-align:center;
+padding:30px 0 10px;
+}

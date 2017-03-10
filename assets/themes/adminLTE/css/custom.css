@@ -1,0 +1,164 @@
+.control-label {
+    margin-bottom: 5px !important;
+    /*font-weight: normal;*/
+    font-size: 12px;
+}
+
+.form-group small {
+    font-size: 10px;
+}
+
+.box {
+    border-radius: 0px;
+}
+
+label.error {
+    font-weight: normal;
+    font-size: 10px;
+    color: red
+}
+
+.wrapper-pencarian {
+    border-bottom: 1px solid rgb(226, 226, 226);
+}
+
+.box-header>.box-tools {
+    top: 1px;
+}
+
+.select2-selection.select2-selection--single {
+    border-radius: 0px !important;
+    height: 34px;
+    padding-top: 5px;
+    padding-left: 2px;
+    /*font-size: 12px;*/
+}
+
+.dataTables_wrapper .small-text {
+    font-size: 11px;
+    display: block;
+    color: rgb(162, 162, 162)
+}
+
+.dataTables_wrapper table {
+    font-size: 12px;
+}
+
+.dataTables_wrapper ul.dropdown-menu {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.dataTables_wrapper ul.dropdown-menu > li {
+    text-align: right !important
+}
+
+.dataTables_wrapper ul.dropdown-menu > li > a {
+    padding: 5px 4px 5px 10px;
+    font-size: 12px;
+}
+
+.dataTables_wrapper ul.dropdown-menu > li > a.bg-warning {
+    background-color: #ffc107;
+    color: #fff
+}
+
+.dataTables_wrapper ul.dropdown-menu > li > a.bg-success {
+    background-color: #00a65a;
+    color: #fff
+}
+
+.table-responsive {
+    min-height: 500px;
+}
+
+.datepicker table tbody tr td.disabled,
+.datepicker table tbody tr td.disabled:hover {
+    background-color: rgb(221, 221, 221);
+}
+
+.datepicker table tbody tr td,
+.datepicker table tbody tr td.disabled {
+    border-radius: 0px;
+}
+
+.alert {
+    border-radius: 0px !important;
+}
+
+.btn-group .dropdown-toggle {
+    border-radius: 0px;
+    background-color: #fff
+}
+
+.btn-group.tunda {
+    border-left: 4px solid #ffc107;
+}
+
+.btn-group.setuju {
+    border-left: 4px solid #00a65a;
+}
+
+.sidebar .user-panel {
+    min-height: 70px;
+}
+
+.sidebar .user-panel .image {
+    margin-top: 5px;
+}
+
+.sidebar .user-panel .info {
+    padding-left: 10px;
+    line-height: 15px;
+}
+
+.sidebar .user-panel .info p {
+    margin-bottom: 2px;
+}
+
+.confirm-wrapper {
+    position: fixed;
+    z-index: 100000;
+    bottom: -100px;
+    right: 0px;
+    width: 100%;
+    opacity: 0;
+    transition: bottom .5s, opacity .5s;
+}
+
+.confirm-wrapper.active {
+    bottom: 0;
+    opacity: 1;
+    transition: bottom .5s, opacity .2s;
+}
+
+.confirm {
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirm h3 {
+    margin-top: 0px;
+}
+
+.confirm .overlay {
+    position: absolute;
+    font-size: 300px;
+    left: 0px;
+    bottom: -150px;
+    color: rgba(0, 0, 0, 0.05);
+    transform: rotate(30deg);
+}
+
+.box-header.with-border {
+     border-bottom: none; 
+}
+
+@media screen and (max-width: 767px) {
+    div.dataTables_wrapper div.dataTables_paginate {
+        text-align: left;
+    }
+}

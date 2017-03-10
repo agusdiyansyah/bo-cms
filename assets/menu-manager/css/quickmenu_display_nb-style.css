@@ -1,0 +1,200 @@
+/*
+ Table Of Content:
+
+ 1.) Page Content
+
+/*---------Media Query For Tablet Landscape and Medium Devices----------*/
+@media screen and (min-width: 1024px) and (max-width: 1169px) {
+
+    .header-navigation li.mega-menu > .sub-menu > li {
+        width: -webkit-calc(33.33% - 60px) !important;
+        width: calc(33.33% - 60px) !important;
+    }
+    .header-navigation li.mega-menu > .sub-menu > li:nth-child(3n+1):after {
+        background: none;
+        width: 0;
+    }
+ 
+}
+
+
+
+
+/*-------Animation For Navigation--------*/
+nav a:hover, nav a:focus {
+    outline: none;
+}
+
+.header-nav > li > a {
+    position: relative;
+}
+
+/* Effect 1: three circles */
+.cl-effect-1 .header-nav > li > a {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.cl-effect-1 .header-nav > li > a::before {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    color: transparent;
+    content: '•';
+    text-shadow: 0 0 transparent;
+    font-size: 18px;
+    -webkit-transition: text-shadow 0.3s, color 0.3s;
+    -moz-transition: text-shadow 0.3s, color 0.3s;
+    transition: text-shadow 0.3s, color 0.3s;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.cl-effect-1 .header-nav > li > a:hover::before, .cl-effect-1 .header-nav > li > a:focus::before {
+    color: #fff;
+    text-shadow: 10px 0 #fff, -10px 0 #fff;
+}
+
+.cl-effect-1 .header-nav > li > a:hover:before, 
+.cl-effect-1 .header-nav > li > a:focus:before {
+    color: #7fccdf;
+    text-shadow: 10px 0 #7fccdf, -10px 0 #7fccdf;
+}
+
+/* Effect 2: Brackets */
+.cl-effect-2 .header-nav > li > a::before, .cl-effect-2 .header-nav > li > a::after {
+    display: inline-block;
+    opacity: 0;
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.2s;
+    -moz-transition: -moz-transform 0.3s, opacity 0.2s;
+    transition: transform 0.3s, opacity 0.2s;
+}
+
+.cl-effect-2 .header-nav > li > a::before {
+    margin-right: 5px;
+    content: '[';
+    -webkit-transform: translateX(10px);
+    -moz-transform: translateX(10px);
+    transform: translateX(10px);
+}
+
+.cl-effect-2 .header-nav > li > a::after {
+    margin-left: 5px;
+    content: ']';
+    -webkit-transform: translateX(-10px);
+    -moz-transform: translateX(-10px);
+    transform: translateX(-10px);
+}
+
+.cl-effect-2 .header-nav > li > a:hover::before, .cl-effect-2 .header-nav > li > a:hover::after, .cl-effect-2 .header-nav > li > a:focus::before, .cl-effect-2 .header-nav > li > a:focus::after {
+    opacity: 1;
+    -webkit-transform: translateX(0px);
+    -moz-transform: translateX(0px);
+    transform: translateX(0px);
+}
+
+/* Effect 3: bottom line slides/fades in */
+.cl-effect-3 .header-nav > li > a {
+    padding: 8px 0;
+}
+
+.cl-effect-3 .header-nav > li > a::after {
+    position: absolute;
+    top: 90%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    content: '';
+    opacity: 0;
+    -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+    -moz-transition: opacity 0.3s, -moz-transform 0.3s;
+    transition: opacity 0.3s, transform 0.3s;
+    -webkit-transform: translateY(10px);
+    -moz-transform: translateY(10px);
+    transform: translateY(10px);
+    background: #12a6ca;
+}
+
+.cl-effect-3 .header-nav > li > a:hover::after, .cl-effect-3 .header-nav > li > a:focus::after {
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    -moz-transform: translateY(0px);
+    transform: translateY(0px);
+}
+
+/* Effect 4: bottom border enlarge */
+.cl-effect-4 .header-nav > li > a {
+    padding: 0 0 10px;
+}
+
+.cl-effect-4 .header-nav > li > a::after {
+    position: absolute;
+    top: 90%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #fff;
+    content: '';
+    opacity: 0;
+    -webkit-transition: height 0.3s, opacity 0.3s, -webkit-transform 0.3s;
+    -moz-transition: height 0.3s, opacity 0.3s, -moz-transform 0.3s;
+    transition: height 0.3s, opacity 0.3s, transform 0.3s;
+    -webkit-transform: translateY(-10px);
+    -moz-transform: translateY(-10px);
+    transform: translateY(-10px);
+}
+
+.cl-effect-4 .header-nav > li > a:hover::after, .cl-effect-4 .header-nav > li > a:focus::after {
+    height: 3px;
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    -moz-transform: translateY(0px);
+    transform: translateY(0px);
+}
+
+/* Effect 5: circle */
+.cl-effect-5 .header-nav > li > a::before, .cl-effect-5 .header-nav > li > a::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    content: '';
+    opacity: 0;
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+    -moz-transition: -moz-transform 0.3s, opacity 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
+    -webkit-transform: translateX(-50%) translateY(-50%) scale(0.2);
+    -moz-transform: translateX(-50%) translateY(-50%) scale(0.2);
+    transform: translateX(-50%) translateY(-50%) scale(0.2);
+}
+
+.cl-effect-5 .header-nav > li > a::after {
+    width: 90px;
+    height: 90px;
+    border-width: 6px;
+    -webkit-transform: translateX(-50%) translateY(-50%) scale(0.8);
+    -moz-transform: translateX(-50%) translateY(-50%) scale(0.8);
+    transform: translateX(-50%) translateY(-50%) scale(0.8);
+}
+
+.cl-effect-5 .header-nav > li > a:hover::before, .cl-effect-5 .header-nav > li > a:hover::after, .cl-effect-5 .header-nav > li > a:focus::before, .cl-effect-5 .header-nav > li > a:focus::after {
+    opacity: 1;
+    -webkit-transform: translateX(-50%) translateY(-50%) scale(1);
+    -moz-transform: translateX(-50%) translateY(-50%) scale(1);
+    transform: translateX(-50%) translateY(-50%) scale(1);
+}
+
+.cl-effect-5 .header-nav > li > a::before,
+.cl-effect-5 .header-nav > li > a::after, 
+.main-menu-full > li > a::after{ border-color: #7fccdf; }
+
+
+
+

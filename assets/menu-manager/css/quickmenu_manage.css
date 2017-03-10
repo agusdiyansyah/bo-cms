@@ -1,0 +1,60 @@
+.error {
+    color: #ff0000;
+    float: left;
+    font-size: 12px;
+    min-height: 20px;
+    width: 100%;
+}
+.content-temp{
+   min-height: 500px; 
+}
+#action-form fieldset {
+    margin-left: 15px !important;
+}
+.action-form fieldset {
+    margin-left: 15px !important;
+}
+.action-form fieldset {
+    margin: 8px;
+}
+.action-form fieldset label {
+    float: right;
+}
+.viewcontrols{
+    padding: 4px;
+}
+.form-horizontal .label-control
+{
+text-align:left !important;
+}
+.clear {
+	clear: both;
+	display: block;
+	overflow: hidden;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
+#wrapper {
+	background: #fff;
+	width: 750px;
+	margin: 10px auto;
+	padding: 20px 30px;
+}
+#header {
+	height: 80px;
+}
+#footer {
+	font-size: 11px;
+	text-align: right;
+	border-top: 1px solid #eee;
+	padding: 20px 0 10px;
+}
+.effect-color{
+width:100% !important; 
+}
+
+.content-condition{ padding: 15px; background-color: #f7f7f9; border: 1px solid #e1e1e8; }
+
+
