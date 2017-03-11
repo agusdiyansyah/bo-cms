@@ -20,6 +20,11 @@ class Migration_add_table_page extends CI_Migration {
                 'null' => FALSE,
                 'default' => 1
             ),
+            'tipe' => array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+                'null' => FALSE,
+            ),
             'title' => array(
                 'type' => 'VARCHAR',
                 'constraint' => 100,

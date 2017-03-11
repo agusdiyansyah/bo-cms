@@ -3,6 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin extends Controller {
     protected $title = "Menu Admin Manajemen";
+    protected $valid = false;
+    protected $msg = "Data gagal di proses";
     
 	public function __construct() {
 		parent::__construct();
@@ -70,6 +72,10 @@ class Admin extends Controller {
 		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
 		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
         
+        // validate
+        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+        
         $data = array(
             'title' => 'Tambah Data Menu Admin',
             'button' => 'Tambah',
@@ -78,7 +84,7 @@ class Admin extends Controller {
             'name' => set_value('name'),
             'link' => set_value('link'),
             'icon' => set_value('icon'),
-            'order' => set_value('order'),
+            'order' => set_value('order', $this->M_menu->getLastOrder()),
             'is_active' => set_value('is_active'),
             'is_parent' => set_value('is_parent'),
             'level' => $this->M_admin->combobox_level(set_value('level')),
@@ -180,6 +186,24 @@ class Admin extends Controller {
             $this->session->set_flashdata('message', $notif);
             // redirect(site_url('menu/admin'));
         }
+    }
+    
+    public function getLastOrderByIdParent () {
+        $this->output->unset_template();
+        if (
+            !empty($this->input->post('id')) AND
+            $this->input->post('id') > 0
+        ) {
+            $this->valid = true;
+        }
+        
+        if ($this->valid) {
+            $id = $this->input->post('id');
+            
+            $order = $this->M_menu->getLastOrder($id);
+        }
+        
+        echo json_encode(array("order" => $order));
     }
 
     public function order($status, $id_menu)

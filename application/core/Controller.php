@@ -13,7 +13,7 @@ class Controller extends MX_Controller {
         // migrate
 		if (MIGRATE) {
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, base_url("migrate"));
+			curl_setopt($ch, CURLOPT_URL, base_url("migrate/latest"));
 			$response = curl_exec($ch);
 			curl_close($ch);
 		}

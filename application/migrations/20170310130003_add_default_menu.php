@@ -23,10 +23,20 @@ class Migration_add_default_menu extends CI_Migration {
             ),
             array(
                 "id_menu" => null,
+                "name" => "Slideshow",
+                "link" => "slideshow",
+                "icon" => "fa fa-slideshare",
+                "order" => 2,
+                "is_active" => 1,
+                "is_parent" => 0,
+                "level" => 0
+            ),
+            array(
+                "id_menu" => null,
                 "name" => "Profile Klub",
                 "link" => "#",
                 "icon" => "fa fa-bank",
-                "order" => 2,
+                "order" => 10,
                 "is_active" => 1,
                 "is_parent" => 0,
                 "level" => 0
@@ -36,19 +46,9 @@ class Migration_add_default_menu extends CI_Migration {
                     "name" => "Histori",
                     "link" => "profile_club/histori",
                     "icon" => "",
-                    "order" => 3,
-                    "is_active" => 1,
-                    "is_parent" => 2,
-                    "level" => 0
-                ),
-                array(
-                    "id_menu" => null,
-                    "name" => "Galeri",
-                    "link" => "profile_club/galeri",
-                    "icon" => "",
                     "order" => 4,
                     "is_active" => 1,
-                    "is_parent" => 2,
+                    "is_parent" => 3,
                     "level" => 0
                 ),
                 array(
@@ -56,17 +56,77 @@ class Migration_add_default_menu extends CI_Migration {
                     "name" => "Trophy",
                     "link" => "profile_club/trophy",
                     "icon" => "",
-                    "order" => 5,
+                    "order" => 6,
                     "is_active" => 1,
-                    "is_parent" => 2,
+                    "is_parent" => 3,
+                    "level" => 0
+                ),
+                array(
+                    "id_menu" => null,
+                    "name" => "Tentang Kami",
+                    "link" => "profile_club/aboutus",
+                    "icon" => "",
+                    "order" => 14,
+                    "is_active" => 1,
+                    "is_parent" => 3,
+                    "level" => 0
+                ),
+                array(
+                    "id_menu" => null,
+                    "name" => "Kontak",
+                    "link" => "profile_club/contact",
+                    "icon" => "",
+                    "order" => 15,
+                    "is_active" => 1,
+                    "is_parent" => 3,
+                    "level" => 0
+                ),
+                array(
+                    "id_menu" => null,
+                    "name" => "Galeri",
+                    "link" => "profile_club/galeri",
+                    "icon" => "",
+                    "order" => 16,
+                    "is_active" => 1,
+                    "is_parent" => 3,
                     "level" => 0
                 ),
             array(
                 "id_menu" => null,
+                "name" => "Pemain",
+                "link" => "pemain",
+                "icon" => "fa fa-address-card-o",
+                "order" => 6,
+                "is_active" => 1,
+                "is_parent" => 0,
+                "level" => 0
+            ),
+            array(
+                "id_menu" => null,
                 "name" => "Pengurus",
                 "link" => "pengurus",
-                "icon" => "fa fa-users",
-                "order" => 6,
+                "icon" => "fa fa-address-card",
+                "order" => 7,
+                "is_active" => 1,
+                "is_parent" => 0,
+                "level" => 0
+            ),
+            array(
+                "id_menu" => null,
+                "name" => "Jadwal Pertandingan",
+                "link" => "pertandingan/jadwal",
+                "icon" => "fa fa-futbol-o",
+                "order" => 8,
+                "is_active" => 1,
+                "is_parent" => 0,
+                "level" => 0
+            ),
+            array(
+                "id_menu" => null,
+                "name" => "Hasil Pertandingan",
+                "link" => "pertandingan/hasil",
+                "icon" => "fa fa-trophy",
+                "order" => 9,
                 "is_active" => 1,
                 "is_parent" => 0,
                 "level" => 0
@@ -76,7 +136,7 @@ class Migration_add_default_menu extends CI_Migration {
                 "name" => "Setting",
                 "link" => "#",
                 "icon" => "fa fa-gear",
-                "order" => 7,
+                "order" => 11,
                 "is_active" => 1,
                 "is_parent" => 0,
                 "level" => 0
@@ -86,9 +146,9 @@ class Migration_add_default_menu extends CI_Migration {
                     "name" => "Administrator",
                     "link" => "administrator",
                     "icon" => "",
-                    "order" => 8,
+                    "order" => 12,
                     "is_active" => 1,
-                    "is_parent" => 7,
+                    "is_parent" => 13,
                     "level" => 0
                 ),
                 array(
@@ -96,9 +156,9 @@ class Migration_add_default_menu extends CI_Migration {
                     "name" => "Manajemen Menu",
                     "link" => "menu/admin",
                     "icon" => "",
-                    "order" => 9,
+                    "order" => 13,
                     "is_active" => 1,
-                    "is_parent" => 7,
+                    "is_parent" => 13,
                     "level" => 0
                 ),
         );

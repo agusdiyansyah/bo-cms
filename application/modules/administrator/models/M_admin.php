@@ -1,7 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class M_admin extends CI_Model {
-	var $tb = 'user';
+	protected $tb = '';
+	
 	public $level = array(
 		"" 	=> "Pilih Level", 
 		100 => "root", 
@@ -15,6 +16,11 @@ class M_admin extends CI_Model {
 		0 => "Unpublish", 
 		1 => "Publish"
 	);
+	
+	public function __construct() {
+		$tb = $this->config->load("database_table", true);
+        $this->tb = $tb['tb_user'];
+	}
 
 	function getAll($limit = array()){
 		$this->filter();

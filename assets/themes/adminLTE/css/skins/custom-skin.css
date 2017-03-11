@@ -6,6 +6,10 @@
     margin-top: 15px;
 }
 
+.skin-black .sidebar-menu .treeview-menu .fa.fa-angle-right {
+    padding-left: 3px;
+}
+
 .skin-black .wrapper, 
 .skin-black .main-sidebar, 
 .skin-black .left-side {

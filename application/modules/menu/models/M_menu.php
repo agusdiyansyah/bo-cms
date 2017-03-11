@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_menu extends CI_Model {
 
-	public $table = 'menu_admin';
+	public $table = '';
     public $id = 'id_menu';
     public $order = 'DESC';
 	
@@ -14,6 +14,9 @@ class M_menu extends CI_Model {
 		$CI =& get_instance();
 		$CI->load->model('Administrator/M_admin');
 		$this->M_admin = $CI->M_admin;
+		
+		$tb = $this->config->load("database_table", true);
+        $this->table = $tb['tb_menu_admin'];
     }
     // get all
     public function data($post, $debug = false) {
@@ -109,13 +112,15 @@ class M_menu extends CI_Model {
 				</ul>
 			</div>
 			";
+			
+			$icon = ($data->is_parent > 0) ? "" : "<i class='$data->icon'></i>";
 
             $baris = array(
                 $no,
                 $aksi,
 				$data->name,
 				$data->link,
-				$data->icon,
+				$icon,
 				$data->order,
 				$this->isActiveLabel($data->is_active),
 				$this->isParentLabel($data->is_parent, $data->parent),
@@ -144,6 +149,23 @@ class M_menu extends CI_Model {
 		} else {
 			return "<b>$parent</b>";
 		}
+	}
+	
+	public function getLastOrder ($id_parent = 0) {
+		if ($id_parent > 0) {
+			$this->db->where("is_parent", $id_parent);
+		}
+		
+		$sql = $this->db
+			->select("order")
+			->order_by("order", "DESC")
+			->get($this->table, 1);
+		
+		$data = $sql->row();
+		
+		$order = (empty($data->order)) ? 0 : $data->order;
+		
+		return $order + 1;
 	}
 
     // get data by id

@@ -5,7 +5,7 @@
 	<link rel="shortcut icon" href="<?php echo base_url();?>assets/themes/adminLTE/img/doc.ico">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/bootstrap.min.css" rel="stylesheet">
-	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/font-awesome.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/plugins/Font-Awesome/css/font-awesome.min.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/ionicons.min.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/AdminLTE.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/_all-skins.min.css" rel="stylesheet">
@@ -14,9 +14,12 @@
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/js/bootstrap.min.js"></script>
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/plugins/fastclick/fastclick.min.js"></script>
+	<script src="<?php echo base_url();?>assets/themes/adminLTE/plugins/pace/pace.js"></script>
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/js/app.min.js"></script>
 	<script src="<?php echo base_url();?>assets/themes/adminLTE/js/demo.js"></script>
+	
+	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/plugins/pace/pace.css" rel="stylesheet">
 
 	<?php
 		if(!empty($meta))

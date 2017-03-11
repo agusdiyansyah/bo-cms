@@ -2,10 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_pengurus extends CI_Model{
-    protected $tb_pengurus = "pengurus";
+    protected $tb_pengurus = "";
 
     public function __construct() {
         parent::__construct();
+        $tb = $this->config->load("database_table", true);
+        $this->tb_pengurus = $tb['tb_pengurus'];
     }
     
     public function data ($post, $debug = false) {

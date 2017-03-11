@@ -1,20 +1,23 @@
 <?php
 class M_login extends CI_Model {
-	var $table = 'user';
+	protected $table = '';
+	
+	public function __construct() {
+		$tb = $this->config->load("database_table", true);
+        $this->table = $tb['tb_user'];
+	}
+	
 	//cek user dan sandi di database
-	function cek($user, $sandi){
+	public function cek($user, $sandi){
 		$query = $this->db->get_where($this->table, array('username' => $user, 'password' => $sandi), 1, 0);
-		if ($query->num_rows() > 0)
-		{
+		if ($query->num_rows() > 0) {
 			return TRUE;
-		}
-		else
-		{
+		} else {
 			return FALSE;
 		}
 	}
 	//untuk mendapatkan data admin yg login
-	function getAdmin($user, $sandi){
+	public function getAdmin($user, $sandi){
 		return $query = $this->db->get_where($this->table, array('username' => $user, 'password' => $sandi), 1, 0)->row();
 	}
 }

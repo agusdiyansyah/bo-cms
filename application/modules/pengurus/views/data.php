@@ -110,7 +110,10 @@
                 "type": "POST",
                 "data": function ( d ) {
 					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
-                }
+                }, 
+				"beforeSend": function () {
+					Pace.restart();
+				}
             },
             "displayLength": 50,
             // "order": [[ 5, "desc" ]]
@@ -182,7 +185,7 @@
 	                    id: id
 	                },
 	                success: function () {
-	                    location.reload();
+						location.reload();
 	                }
 	            });
 	        });
