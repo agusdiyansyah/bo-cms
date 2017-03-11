@@ -200,7 +200,7 @@ class Administrator extends Controller {
 				}
 			}
 			$data['username'] = $this->input->post('username');
-			$data['password'] = md5($this->input->post('password'));
+			$data['password'] = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
 			$data['nama'] = $this->input->post('nama');
 			$data['level'] = $this->input->post('level');
 			$data['email'] = $this->input->post('email');
@@ -356,7 +356,7 @@ class Administrator extends Controller {
 			$data['username'] = $this->input->post('username');
 			$password = $this->input->post('password');
 			if ($password != "") {
-				$data['password'] = md5($password);
+				$data['password'] = password_hash($password,PASSWORD_BCRYPT);
 			}
 			$data['nama'] = $this->input->post('nama');
 			$data['level'] = $this->input->post('level');

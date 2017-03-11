@@ -28,7 +28,7 @@ class Login extends MX_Controller {
 		//jika validasi sukses
 		if($this->form_validation->run($this) == TRUE){
 			$userid = $this->input->post('userid');
-			$password = md5($this->input->post('password'));
+			$password = $this->input->post('password');
 			$type = $this->input->post('type');
 
 			//cek user dan sandi di database
@@ -49,6 +49,7 @@ class Login extends MX_Controller {
 				$this->session->set_flashdata('message', 'Maaf, nama dan atau sandi Anda salah');
 				redirect('login');
 			}
+			$this->M_login->cek($userid, $password);
 		}
 		else {
 			$this->index();

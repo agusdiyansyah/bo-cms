@@ -114,7 +114,7 @@ class Profil extends Controller {
 			$data['username'] = $this->input->post('username');
 			$password = $this->input->post('password');
 			if ($password != "") {
-				$data['password'] = md5($password);
+				$data['password'] = password_hash($password,PASSWORD_BCRYPT);
 			}
 			$data['nama'] = $this->input->post('nama');
 			$data['email'] = $this->input->post('email');
