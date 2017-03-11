@@ -5,7 +5,7 @@
 	<link rel="shortcut icon" href="<?php echo base_url();?>assets/themes/adminLTE/img/doc.ico">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/bootstrap.min.css" rel="stylesheet">
-	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/plugins/Font-Awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/font-awesome.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/ionicons.min.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/AdminLTE.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/_all-skins.min.css" rel="stylesheet">
