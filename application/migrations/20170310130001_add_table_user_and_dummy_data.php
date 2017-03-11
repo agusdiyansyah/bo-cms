@@ -22,7 +22,7 @@ class Migration_add_table_user_and_dummy_data extends CI_Migration {
             ),
             'password' => array(
                 'type' => 'VARCHAR',
-                'constraint' => '64',
+                'constraint' => '150',
                 'null' => FALSE
             ),
             'nama' => array(
@@ -56,7 +56,7 @@ class Migration_add_table_user_and_dummy_data extends CI_Migration {
         $this->db->insert($this->tb, array(
             "id_user" => null,
             "username" => "admin",
-            "password" => md5(1),
+            "password" => password_hash(1,PASSWORD_BCRYPT),
             "nama" => "Root Admin",
             "email" => "admin@mail.com",
             "status" => 1,
