@@ -1,6 +1,7 @@
 <?php
 class M_login extends CI_Model {
 	protected $table = '';
+	private $loginvalid=FALSE;
 	
 	public function __construct() {
 		$tb = $this->config->load("database_table", true);
@@ -9,15 +10,25 @@ class M_login extends CI_Model {
 	
 	//cek user dan sandi di database
 	public function cek($user, $sandi){
-		$query = $this->db->get_where($this->table, array('username' => $user, 'password' => $sandi), 1, 0);
+		$query = $this->db->get_where($this->table, array('username' => $user), 1, 0);
 		if ($query->num_rows() > 0) {
-			return TRUE;
+			$hasil=$query->row();
+			if (password_verify($sandi, $hasil->password)) {
+			    $this->loginvalid=TRUE;
+			    return TRUE;
+			} else {
+			    return FALSE;
+			    //password salah
+			}
 		} else {
 			return FALSE;
+			//user tidak ditemukan
 		}
 	}
 	//untuk mendapatkan data admin yg login
 	public function getAdmin($user, $sandi){
-		return $query = $this->db->get_where($this->table, array('username' => $user, 'password' => $sandi), 1, 0)->row();
+		if($this->loginvalid){
+			return $query = $this->db->get_where($this->table, array('username' => $user), 1, 0)->row();
+		}
 	}
 }
