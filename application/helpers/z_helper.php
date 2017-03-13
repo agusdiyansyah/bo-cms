@@ -119,3 +119,6 @@ function form_select ($option = array()) {
 
     return $hasil;
 }
+function _id () {
+    return md5(uniqid(rand(), true));
+}
