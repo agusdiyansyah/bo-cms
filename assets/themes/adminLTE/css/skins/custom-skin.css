@@ -172,3 +172,9 @@
     background-color: #fff;
     color: #777
 }
+
+@media (min-width: 768px) {
+    .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+        margin-left: 0px;
+    }
+}
