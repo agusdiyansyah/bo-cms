@@ -3,10 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Migration_add_table_galeri extends CI_Migration {
     
-    protected $tb = "galeri";
+    protected $tb;
 
     public function __construct() {
         parent::__construct();
+        $table = $this->config->load("database_table", true);
+        $this->tb = $table['tb_galeri'];
     }
 
     public function up() {

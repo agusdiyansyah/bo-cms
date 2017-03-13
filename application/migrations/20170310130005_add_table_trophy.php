@@ -3,10 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Migration_add_table_trophy extends CI_Migration {
     
-    protected $tb = "trophy";
+    protected $tb;
 
     public function __construct() {
         parent::__construct();
+        $table = $this->config->load("database_table", true);
+        $this->tb = $table['tb_trophy'];
     }
 
     public function up() {

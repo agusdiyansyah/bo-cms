@@ -3,10 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Migration_add_table_user_and_dummy_data extends CI_Migration {
     
-    protected $tb = "user";
+    protected $tb;
 
     public function __construct() {
         parent::__construct();
+        $table = $this->config->load("database_table", true);
+        $this->tb = $table['tb_user'];
     }
 
     public function up() {
@@ -56,7 +58,7 @@ class Migration_add_table_user_and_dummy_data extends CI_Migration {
         $this->db->insert($this->tb, array(
             "id_user" => null,
             "username" => "admin",
-            "password" => password_hash(1,PASSWORD_BCRYPT),
+            "password" => password_hash(1, PASSWORD_BCRYPT),
             "nama" => "Root Admin",
             "email" => "admin@mail.com",
             "status" => 1,

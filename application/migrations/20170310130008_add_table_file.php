@@ -3,10 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Migration_add_table_file extends CI_Migration {
     
-    protected $tb = "file";
+    protected $tb;
 
     public function __construct() {
         parent::__construct();
+        $table = $this->config->load("database_table", true);
+        $this->tb = $table['tb_file'];
     }
 
     public function up() {
