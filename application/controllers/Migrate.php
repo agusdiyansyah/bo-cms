@@ -17,7 +17,30 @@ class Migrate extends CI_Controller {
         }
     }
     
+    public function reload ($show_msg = 0) {
+        $msg = "";
+        if ($this->reset()) {
+            $msg .= "Database berhasil di reset";
+        } else {
+            $msg .= "Gagal reset <br />";
+            $msg .= $this->migration->error_string() . PHP_EOL;
+        }
+        $msg .= "<br />";
+        if ($this->latest()) {
+            $msg .= "Berhasil di perbaharui - " . $this->_version();
+        } else {
+            $msg .= "Gagal update database ke versi terbaru <br />";
+            $msg .= $this->migration->error_string() . PHP_EOL;
+        }
+        
+        if ($show_msg) {
+            echo $msg;
+        }
+    }
+    
     public function reset ($show_msg = 0) {
+        $ret = false;
+        
         $this->migration->version(0);
         $err = $this->migration->error_string();
         
@@ -25,10 +48,13 @@ class Migrate extends CI_Controller {
             $msg = $this->migration->error_string() . PHP_EOL;
         } else {
             $msg = "Database berhasil direset";
+            $ret = true;
         }
         
         if ($show_msg == 1) {
             echo $msg;
+        } else {
+            return $ret;
         }
     }
     
@@ -48,14 +74,18 @@ class Migrate extends CI_Controller {
     }
     
     public function latest ($show_msg = 0) {
+        $ret = false;
         if ($this->migration->latest()) {
             $msg = "Success - " . $this->_version();
+            $ret = true;
         } else {
             $msg = $this->migration->error_string() . PHP_EOL;
         }
         
         if ($show_msg) {
             echo $msg;
+        } else {
+            return $ret;
         }
     }
     
