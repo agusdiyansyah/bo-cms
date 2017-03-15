@@ -42,7 +42,7 @@ class Migration_add_table_page extends CI_Migration {
                 'null' => TRUE
             ),
             'datecreate TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
-            'dateupdate TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            'dateupdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
             'isdelete' => array(
                 'type' => 'TINYINT',
                 'null' => FALSE,

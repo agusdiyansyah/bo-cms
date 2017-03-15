@@ -35,7 +35,7 @@ class Migration_add_default_menu extends CI_Migration {
             ),
             array(
                 "id_menu" => null,
-                "name" => "Profile Klub",
+                "name" => "Profil Team",
                 "link" => "#",
                 "icon" => "fa fa-bank",
                 "order" => 10,
@@ -86,7 +86,7 @@ class Migration_add_default_menu extends CI_Migration {
                 array(
                     "id_menu" => null,
                     "name" => "Galeri",
-                    "link" => "profile_club/galeri",
+                    "link" => "media",
                     "icon" => "",
                     "order" => 16,
                     "is_active" => 1,
