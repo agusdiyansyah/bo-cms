@@ -1,1 +1,3 @@
 /application/session/*
+/assets/upload/images/*.*
+/assets/upload/images/thumb/*.*
