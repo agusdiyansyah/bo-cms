@@ -837,14 +837,16 @@
         html += '    <h4><i class="icon fa fa-check"></i> ' + data.title + '</h4>';
         html += '    ' + data.msg;
         html += '</div>';
-        
-        var notif = $(".media-wrapper").find('.js-notif');
-        if (!notif.hasClass('alert')) {
-            content.after(html);
+        var timeout = 2500;
+        if ($(".media-wrapper").find('.js-notif').hasClass('alert')) {
+            $(".media-wrapper").find('.js-notif').remove();
+            timeout = 0;
         }
         
+        content.after(html);
+        
         setTimeout(function(){ 
-            notif.remove();
-        }, 2500);
+            $(".media-wrapper").find('.js-notif').remove();
+        }, timeout);
     }
 </script>

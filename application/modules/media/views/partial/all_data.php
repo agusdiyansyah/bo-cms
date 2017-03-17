@@ -57,6 +57,9 @@
                         html += htmlGaleri(data);
                     });
                     $(".galeri-list").html(html);
+                    if ($(".media-wrapper").find('.js-notif').hasClass('alert')) {
+                        $(".media-wrapper").find('.js-notif').remove();
+                    }
                 } else {
                     var conf = {
                         tipe: 'warning',
