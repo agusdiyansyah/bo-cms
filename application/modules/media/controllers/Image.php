@@ -65,8 +65,11 @@ class Image extends Controller {
             
             $id = $this->input->post('id');
             
+            $image = $this->M_image->getFieldValueById('file', $id);
+            
             $upload = $this->_imageUpload(array(
-                "upload_path" => "./assets/upload/images/"
+                "upload_path" => "./assets/upload/images/",
+                "update" => $image->file
             ));
             
             if (!empty($this->file_name)) {
@@ -156,14 +159,34 @@ class Image extends Controller {
             "file_element_name" => empty($opt['file_element_name']) ? "file" : $opt['file_element_name'],
             "crop" => empty($opt['crop']) ? true : $opt['crop'],
             "crop_center" => empty($opt['crop_center']) ? true : $opt['crop_center'],
-            "upload_path" => empty($opt['upload_path']) ? "./upload/image/" : $opt['upload_path']
+            "upload_path" => empty($opt['upload_path']) ? "./upload/image/" : $opt['upload_path'],
+            "update" => empty($opt['update']) ? false : $opt['update']
         );
         
         $valid = true;
         $file_name = "";
+        $upload = true;
+        
+        if ($opt['update']) {
+            if (
+                file_exists($opt['upload_path'] . $opt['update']) AND
+                file_exists($opt['upload_path'] . "thumb/" . $opt['update'])
+            ) {
+                if (
+                    unlink($opt['upload_path'] . $opt['update']) AND
+                    unlink($opt['upload_path'] . "thumb/" . $opt['update'])
+                ) {
+                    $upload = true;
+                } else {
+                    $upload = false;
+                }
+            } else {
+                $upload = false;
+            }
+        }
         
         $file_element_name = $opt['file_element_name']; // input file name
-        if (is_uploaded_file($_FILES[$file_element_name]['tmp_name'])) {
+        if (is_uploaded_file($_FILES[$file_element_name]['tmp_name']) AND $upload) {
             $upload_path = $opt['upload_path'];
             
             if (!file_exists($upload_path)) {

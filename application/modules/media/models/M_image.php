@@ -54,5 +54,13 @@ class M_image extends CI_Model{
             ->select('id_file, id_galeri, title, file, keterangan')
             ->get($this->file);
     }
+    
+    public function getFieldValueById ($field, $id) {
+        return $this->db
+            ->where('id_file', $id)
+            ->select($field)
+            ->get($this->file, 1)
+            ->row();
+    }
 
 }
