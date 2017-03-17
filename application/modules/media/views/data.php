@@ -838,9 +838,13 @@
         html += '    ' + data.msg;
         html += '</div>';
         
-        content.after(html);
+        var notif = $(".media-wrapper").find('.js-notif');
+        if (!notif.hasClass('alert')) {
+            content.after(html);
+        }
+        
         setTimeout(function(){ 
-            $(".media-wrapper").find('.js-notif').remove();
+            notif.remove();
         }, 2500);
     }
 </script>
