@@ -17,5 +17,9 @@ class Migration_remove_column_isdelete_from_galeri_and_file extends CI_Migration
         $this->dbforge->drop_column($this->galeri, 'isdelete');
         $this->dbforge->drop_column($this->file, 'isdelete');
     }
+    
+    public function down () {
+    
+    }
 
 }

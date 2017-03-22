@@ -12,8 +12,8 @@ $config["tb_socmed"] = "socmed";
 $config["tb_jenis_socmed"] = "jenis_socmed";
 $config["tb_team"] = "team";
 $config["tb_match"] = "match";
+$config["tb_berita"] = "berita";
 
-$config["tb_media"] = "media";
 $config["tb_pemain"] = "pemain";
 $config["tb_jadwal"] = "jadwal";
 $config["tb_hasil_pertandingan"] = "hasil_pertandingan";
