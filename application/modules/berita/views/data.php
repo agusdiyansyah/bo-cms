@@ -24,9 +24,14 @@
 				        	<div class="box-body">
 								<!-- form field -->
 								<div class="row">
-									<div class="col-xs-12">
-										<label for="nama_pengurus" class="control-label">Nama Pengurus</label>
-										<?php echo form_input($input['nama_pengurus']) ?>
+									<div class="col-sm-6">
+										<label for="title" class="control-label">Title</label>
+										<?php echo form_input($input['title']) ?>
+									</div>
+									
+									<div class="col-sm-6">
+										<label for="status" class="control-label">Status</label>
+										<?php echo form_select($input['status']) ?>
 									</div>
 								</div>
 							</div>
@@ -57,7 +62,8 @@
                         <tr>
                             <th width="2%">No</th>
                             <th width="2%">Aksi</th>
-                            <th>Nama</th>
+                            <th>Title</th>
+							<th>Sinopsis</th>
                         </tr>
                     </thead>
                 </table>
@@ -90,7 +96,7 @@
 	$(document).ready(function() {
 		var base_url = "<?php echo base_url();?>";
 
-        $('.mn-Pengurus').addClass('active');
+        $('.mn-Berita, .mn-Berita .mn-Data').addClass('active');
 		
 		$(".filter").on('click', '.btn-cari', function(event) {
 			event.preventDefault();
@@ -106,7 +112,7 @@
             "bLengthChange": false,
             'ordering'    : false,
             "ajax": {
-                "url": "<?php echo base_url('pengurus/data');?>",
+                "url": "<?php echo base_url('berita/data');?>",
                 "type": "POST",
                 "data": function ( d ) {
 					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
@@ -178,7 +184,7 @@
 	            modal.off();
 
 	            $.ajax({
-	                url: '<?php echo base_url("pengurus/delete_proses") ?>',
+	                url: '<?php echo base_url("berita/delete_proses") ?>',
 					cache: false,
 	                type: 'POST',
 	                data: {

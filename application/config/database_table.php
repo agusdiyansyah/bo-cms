@@ -13,6 +13,7 @@ $config["tb_jenis_socmed"] = "jenis_socmed";
 $config["tb_team"] = "team";
 $config["tb_match"] = "match";
 $config["tb_berita"] = "berita";
+$config["tb_berita_kategori"] = "berita_kategori";
 
 $config["tb_pemain"] = "pemain";
 $config["tb_jadwal"] = "jadwal";

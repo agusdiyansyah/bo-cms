@@ -129,5 +129,11 @@ class M_berita extends CI_Model{
     public function getStatus () {
         return $this->status;
     }
+    
+    public function status () {
+        $status = array('' => ' ');
+        $status += $this->status;
+        return $status;
+    }
 
 }
