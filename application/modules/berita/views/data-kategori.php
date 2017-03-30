@@ -26,7 +26,7 @@
 								<div class="row">
 									<div class="col-xs-12">
 										<label for="kategori" class="control-label">Kategori</label>
-										<?php echo form_select($input['kategori']) ?>
+										<?php echo form_input($input['kategori']) ?>
 									</div>
 								</div>
 							</div>
@@ -109,7 +109,7 @@
                 "url": "<?php echo base_url('berita/kategori/data');?>",
                 "type": "POST",
                 "data": function ( d ) {
-					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
+					d.kategori = $(".filter").find('.kategori').val();
                 }, 
 				"beforeSend": function () {
 					Pace.restart();
@@ -185,7 +185,7 @@
 	                    id: id
 	                },
 	                success: function () {
-						location.reload();
+						refreshTable();
 	                }
 	            });
 	        });

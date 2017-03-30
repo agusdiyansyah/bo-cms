@@ -99,6 +99,22 @@ class M_kategori extends CI_Model{
 
     }
     
+    public function add ($data) {
+        return $this->db->insert($this->kategori, $data);
+    }
+    
+    public function edit ($data, $id) {
+        return $this->db
+            ->where('id_kategori', $id)
+            ->update($this->kategori, $data);
+    }
+    
+    public function delete ($id) {
+        return $this->db
+            ->where('id_kategori', $id)
+            ->delete($this->kategori);
+    }
+    
     public function getData ($field = "*", $id = 0) {
         if ($id > 0) {
             $this->db
@@ -111,8 +127,11 @@ class M_kategori extends CI_Model{
             ->get($this->kategori);
     }
     
-    public function checkJumlahKategori () {
-        
+    public function checkJumlahKategori ($cari = "") {
+        return $this->db
+            ->where("kategori", $cari)
+            ->get($this->kategori, 1)
+            ->num_rows();
     }
 
 }

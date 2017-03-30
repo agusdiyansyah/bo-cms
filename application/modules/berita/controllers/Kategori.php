@@ -36,12 +36,9 @@ class Kategori extends Controller{
             "link_add" => site_url("berita/$this->module/add"),
             "input" => array(
                 "kategori" => array(
-                    "config" => array(
-                        "name" => "kategori",
-                        "class" => "form-control select2 kategori",
-                        "id" => "kategori",
-                    ),
-                    "list" => array("" => "")
+                    "name" => "kategori",
+                    "class" => "form-control kategori",
+                    "type" => "text"
                 )
             )
         );
@@ -74,10 +71,6 @@ class Kategori extends Controller{
         $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
 		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
 		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-        
-        // ckeditor
-        $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
-		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
         
         // $objKategori = $this->M_kategori->getData("id_kategori, kategori")->result();
         // $kategori = array("" => "");
@@ -130,7 +123,7 @@ class Kategori extends Controller{
 
                 redirect("berita/kategori/add");
             } else {
-                $nama_pengurus = $this->input->post('kategori');
+                $kategori = $this->input->post('kategori');
 
                 $data = array(
                     "kategori" => $kategori,
@@ -156,7 +149,7 @@ class Kategori extends Controller{
     }
     
     public function edit ($id = 0) {
-        $res = $this->M_pengurus->getDataPengurusById($id);
+        $res = $this->M_kategori->getData("id_kategori, kategori", $id);
         
         if (
             $id > 0 AND
@@ -170,8 +163,10 @@ class Kategori extends Controller{
             $row = $res->row();
 
             $data = array(
-                "form_action" => base_url("$this->module/edit_proses"),
-                "link_back" => site_url("pengurus"),
+                "title" => ucwords($this->module),
+                "subtitle" => "Ubah Data",
+                "form_action" => base_url("berita/$this->module/edit_proses"),
+                "link_back" => site_url("berita/$this->module"),
                 "input" => array(
                     "id_hide" => array(
                         "name" => "id",
@@ -180,21 +175,28 @@ class Kategori extends Controller{
                         "type" => "hidden"
                     ),
 
-                    "nama_pengurus" => array(
-                        "name" => "nama_pengurus",
-                        "value" => $row->nama_pengurus,
-                        "type" => "text",
-                        "class" => "form-control nama_pengurus",
-                        "id" => "nama_pengurus"
-                    )
-                ),
-                "error" => array(
-                    "nama_pengurus" => $this->session->flashdata('nama_pengurus'),
+                    "kategori" => array(
+                        "config" => array(
+                            "name" => "kategori",
+                            "class" => "form-control select2 kategori",
+                            "id" => "kategori",
+                        ),
+                        "list" => array($row->id_kategori => $row->kategori)
+                    ),
                 )
             );
             
-            $this->output->set_title(ucwords($this->module) . " " . $data['subtitle']);
-            $this->load->view('pengurus/form', $data);
+            // validate
+            $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+    		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+            
+            // select2
+            $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
+    		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
+    		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
+            
+            $this->output->set_title($data['title'] . " " . $data['subtitle']);
+            $this->load->view("berita/form-kategori", $data);
         }
 
     }
@@ -204,7 +206,7 @@ class Kategori extends Controller{
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('nama_pengurus'))
+            !empty($this->input->post('kategori'))
         ) {
             $this->valid = true;
         }
@@ -218,22 +220,22 @@ class Kategori extends Controller{
             if (!$this->form_validation->run()) {
                 $errorMsg = "";
                 
-                if (form_error("nama_pengurus")) {
-                    $errorMsg .= form_error("nama_pengurus");
+                if (form_error("kategori")) {
+                    $errorMsg .= form_error("kategori");
                 }
 
                 $notif = notification_proses("warning", "Gagal", $errorMsg);
                 $this->session->set_flashdata('message', $notif);
 
-                redirect("pengurus/edit/$id");
+                redirect("berita/$this->module/edit/$id");
             } else {
-                $nama_pengurus = $this->input->post('nama_pengurus');
+                $kategori = $this->input->post('kategori');
 
                 $data = array(
-                    "nama_pengurus" => $nama_pengurus,
+                    "kategori" => $kategori,
                 );
 
-                $edit = $this->M_pengurus->edit($data, $id);
+                $edit = $this->M_kategori->edit($data, $id);
 
                 if ($edit) {
                     $this->stat = true;
@@ -250,7 +252,7 @@ class Kategori extends Controller{
             $this->session->set_flashdata('message', $notif);
         }
         
-        redirect("pengurus");
+        redirect("berita/$this->module");
 
     }
     
@@ -266,7 +268,7 @@ class Kategori extends Controller{
         if ($this->valid) {
             $id = $this->input->post('id');
             
-            $del = $this->M_pengurus->delete($id);
+            $del = $this->M_kategori->delete($id);
 
             if ($del) {
                 $this->stat = true;
@@ -284,7 +286,36 @@ class Kategori extends Controller{
     }
     
     public function checkKategori () {
+        $this->output->unset_template();
+        
         $cari = $this->input->post('q');
+        
+        if ($this->M_kategori->checkJumlahKategori($cari) > 0) {
+            $data = array('disabled' => true, 'id' => 0, 'text' => 'Data telah terdaftar');
+        } else {
+            $data = array('disabled' => false, 'id' => $cari, 'text' => $cari);
+        }
+        
+        echo json_encode(array($data));
+    }
+    
+    public function srcKategori () {
+        $this->output->unset_template();
+        
+        $cari = $this->input->post('q');
+        $this->db->like("kategori", $cari, "both");
+        $sql = $this->M_kategori->getData("id_kategori, kategori");
+        $data = array();
+        if ($sql->num_rows() > 0) {
+            foreach ($sql->result() as $val) {
+                $res = array('disabled' => false, 'id' => $val->id_kategori, 'text' => $val->kategori);
+                array_push($data, $res);
+            }
+        } else {
+            $data = array(array('disabled' => true, 'id' => 0, 'text' => 'Data tidak di temukan'));
+        }
+        
+        echo json_encode($data);
     }
     
     protected function rules () {
@@ -293,8 +324,8 @@ class Kategori extends Controller{
         
         $config = array(
             array(
-                "field" => "title",
-                "label" => "Title berita",
+                "field" => "kategori",
+                "label" => "Kategori berita",
                 "rules" => "required|xss_clean",
                 "errors" => array(
                     "required" => "%s tidak boleh kosong"

@@ -15,14 +15,13 @@
 			<div class="col-xs-12">
                 <label for="kategori" class="control-label">Kategori</label>
                 <?php echo form_select($input['kategori']) ?>
-				<a href="#" class="btn-add-kategori" style="margin-top: 5px; display: block">Tambah data kategori berita</a>
             </div>
         </div>
         
         <div class="row">
         	<div class="col-xs-12">
 				<div style="text-align: right">
-		            <button type="submit" class="btn btn-primary">Tambah Data</button>
+		            <button type="submit" class="btn btn-primary">Proses</button>
 		            <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
 		        </div>
         	</div>
@@ -40,16 +39,33 @@
 			width: "100%"
 		});
 		
-		$("#content").ckeditor({
-	        filebrowserBrowseUrl: '<?php echo base_url("media/editor") ?>',
-	    	height: 400,
-	    	wordcount:{
-	    		showParagraphs: false,
-	    		showCharCount: true
-	    	}
-	    }).on( 'dialogDefinition', function( ev ) {
-	        ev.data.definition.resizable = CKEDITOR.DIALOG_RESIZE_NONE;
-	    });
+		$('.kategori').select2({
+			placeholder        : '',
+		    minimumInputLength : 2,
+		    theme: 'bootstrap',
+		  	ajax: {
+			    url      : '<?php echo base_url('berita/kategori/checkKategori') ?>',
+			    dataType : 'json',
+			    type     : 'POST',
+			    delay    : 250,
+			    data: function (params) {
+				    return {
+				        q : params.term
+				    };
+		    	},
+			    processResults: function (json) {
+				    return {
+				       	results: json
+				    };
+			    },
+			    cache: false,
+			    initSelection: function(element, callback) {
+	            	if (result) {
+	            		return callback({id: result, text: result});
+	            	}
+	            }
+		  	}
+		});
 		
 		$('.form').validate({
 		   ignore: [],
