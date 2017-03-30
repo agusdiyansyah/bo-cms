@@ -187,14 +187,16 @@
             dataType: 'json',
             data: {id: ''},
             success: function (json) {
-                if (json.stat) {
+                // if (json.stat) {
                     var opt = '<option value="0">Undefined</option>';
+                    
                     $.each(json.data, function(index, data) {
                         opt += '<option value="'+data.id_galeri+'">'+data.title+'</option>';
                     });
+                    
                     $(".form-image").find('.galeri').html(opt);
                     $(".form-image").find('.galeri').select2({width: '100%'});
-                }
+                // }
             }
         });
         
@@ -352,54 +354,54 @@
             dataType: 'json',
             data: {id: ''},
             success: function (json) {
-                if (json.stat) {
-                    var opt = '<option value="0">Undefined</option>';
-                    $.each(json.data, function(index, data) {
-                        opt += '<option value="'+data.id_galeri+'">'+data.title+'</option>';
-                    });
-                    $(".form-image").find('.galeri').html(opt);
-                    $(".form-image").find('.galeri').select2({width: '100%'});
+                var opt = '<option value="0">Undefined</option>';
+                
+                $.each(json.data, function(index, data) {
+                    opt += '<option value="'+data.id_galeri+'">'+data.title+'</option>';
+                });
+                
+                $(".form-image").find('.galeri').html(opt);
+                $(".form-image").find('.galeri').select2({width: '100%'});
+                
+                var fileInput = {
+                    maxFilePreviewSize: 10240,
+                    autoReplace     : true,
+                    showUpload      : false,
+                    showCaption     : false,
+                    showBrowse      : true,
+                    showCancel      : false,
+                    browseLabel     : "Browse",
+                    previewSettings : {
+                        image: { width: "98.5%", height: "auto" },
+                    },
+                };
+                
+                if (data.file != '') {
+                    var link = '<?php echo base_url('assets/upload/images') ?>/' + data.file;
                     
-                    var fileInput = {
-                        maxFilePreviewSize: 10240,
-                        autoReplace     : true,
-                        showUpload      : false,
-                        showCaption     : false,
-                        showBrowse      : true,
-                        showCancel      : false,
-                        browseLabel     : "Browse",
-                        previewSettings : {
-                            image: { width: "98.5%", height: "auto" },
-                        },
+                    $(".form-image").find('.fileinput-reset').removeClass('hide');
+                    
+                    var image = {
+                        initialPreview: [
+                            "<img src='"+ link +"' class='file-preview-image' style='width: 100%; height: auto' alt='"+ data.title +"' title='"+ data.title +"'>",
+                        ]
                     };
                     
-                    if (data.file != '') {
-                        var link = '<?php echo base_url('assets/upload/images') ?>/' + data.file;
-                        
-                        $(".form-image").find('.fileinput-reset').removeClass('hide');
-                        
-                        var image = {
-                            initialPreview: [
-                                "<img src='"+ link +"' class='file-preview-image' style='width: 100%; height: auto' alt='"+ data.title +"' title='"+ data.title +"'>",
-                            ]
-                        };
-                        
-                        $.extend(fileInput, image);
-                    }
-                    
-                    $("#file")
-                        .fileinput(fileInput)
-                        .on('fileimageloaded', function(event, previewId) {
-                            $(".form-image").find('.fileinput-reset').removeClass('hide');
-                        })
-                        .on('fileclear', function(event) {
-                            $(".form-image").find('.fileinput-reset').addClass('hide');
-                        });
-                        
-                    $(".form-image").find('.galeri').select2('val', data.id_galeri);
-                    // $(".form-image").find('.title').val(json.data.title);
-                    // $(".form-image").find('.keterangan').html(json.data.keterangan);
+                    $.extend(fileInput, image);
                 }
+                
+                $("#file")
+                    .fileinput(fileInput)
+                    .on('fileimageloaded', function(event, previewId) {
+                        $(".form-image").find('.fileinput-reset').removeClass('hide');
+                    })
+                    .on('fileclear', function(event) {
+                        $(".form-image").find('.fileinput-reset').addClass('hide');
+                    });
+                    
+                $(".form-image").find('.galeri').select2('val', data.id_galeri);
+                // $(".form-image").find('.title').val(json.data.title);
+                // $(".form-image").find('.keterangan').html(json.data.keterangan);
             }
         });
         

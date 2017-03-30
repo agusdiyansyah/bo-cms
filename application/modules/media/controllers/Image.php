@@ -28,9 +28,10 @@ class Image extends Controller {
             "upload_path" => "./assets/upload/images/"
         ));
         if ($upload) {
+            $id_galeri = ( empty( $this->input->post('galeri') ) ) ? 0 : $this->input->post('galeri');
             $data = array(
                 "title" => $this->input->post('title'),
-                "id_galeri" => $this->input->post('galeri'),
+                "id_galeri" => $id_galeri,
                 "keterangan" => $this->input->post('keterangan'),
                 "file" => $this->file_name
             );
