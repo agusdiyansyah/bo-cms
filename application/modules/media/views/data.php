@@ -1,33 +1,51 @@
 <?php if ($editor > 0): ?>
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/font-awesome.css">
-    <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/AdminLTE.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/_all-skins.min.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/custom-skin.css" rel="stylesheet">
-    
-    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js" charset="utf-8"></script>
-    <script src="<?php echo base_url();?>assets/themes/adminLTE/js/bootstrap.min.js"></script>
-    <script src="<?php echo base_url();?>assets/themes/adminLTE/js/app.min.js"></script>
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/bootstrap.min.css">
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/font-awesome.css">
+            
+            <!-- adminLTE -->
+            <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/AdminLTE.css" rel="stylesheet">
+            <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/_all-skins.min.css" rel="stylesheet">
+            <link href="<?php echo base_url(); ?>assets/themes/adminLTE/css/skins/custom-skin.css" rel="stylesheet">
+            
+            <!-- select2 -->
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2.min.css">
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2-bootstrap.css">
+            
+            <!-- file input -->
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/file-input/fileinput.min.css">
+
+            <!-- magnific popup -->
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.css">
+            
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/file-manager.css">
+            <link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/custom.css">
+        </head>
+        <body>
+<?php else: ?>
+    <?php 
+        // select2
+        $this->output->css("assets/themes/adminLTE/plugins/select2/select2.min.css");
+        $this->output->css("assets/themes/adminLTE/plugins/select2/select2-bootstrap.css");
+        $this->output->js("assets/themes/adminLTE/plugins/select2/select2.min.js");
+        
+        // fileinput
+        $this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
+        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
+        
+        // magnifig popup
+        $this->output->css("assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.css");
+        $this->output->js("assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.js");
+        
+        // validate
+        $this->output->js("assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js");
+        $this->output->js("assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js");
+        
+        $this->output->css("assets/themes/adminLTE/css/file-manager.css"); 
+    ?>
 <?php endif; ?>
-
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/css/file-manager.css">
-
-<!-- select2 -->
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2.min.css">
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2-bootstrap.css">
-<script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2.min.js" charset="utf-8"></script>
-
-<!-- file input -->
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/file-input/fileinput.min.css">
-<script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/file-input/fileinput.min.js" charset="utf-8"></script>
-
-<!-- magnific popup -->
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.css">
-<script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.js" charset="utf-8"></script>
-
-<!-- validate -->
-<script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js" charset="utf-8"></script>
-<script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js" charset="utf-8"></script>
 
 <div class="hide">
     <input type="text" name="editor" class="editor" value="<?php echo $editor ?>">
@@ -53,8 +71,30 @@
             </div>
         </div>
     </section>
-    
-    <?php $this->load->view($content['view'], @$content['data']); ?>
+
+    <section class="file">
+        <div class="container-fluid galeri-wrapper">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4><i class="fa fa-folder-open-o"></i> Galeri</h4>
+                    <div class="galeri-content">
+                        <div class="row galeri-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4><i class="fa fa-image"></i> <span class="galeri-title">Uncategories</span></h4>
+                    <div class="file-content">
+                        <div class="row image-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     
 </div>
 
@@ -75,9 +115,33 @@
 	</div>
 </div>
 
+<?php if ($editor > 0): ?>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js" charset="utf-8"></script>
+    <script src="<?php echo base_url();?>assets/themes/adminLTE/js/bootstrap.min.js"></script>
+    <script src="<?php echo base_url();?>assets/themes/adminLTE/js/app.min.js"></script>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/select2/select2.min.js" charset="utf-8"></script>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/file-input/fileinput.min.js" charset="utf-8"></script>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/magnific-popup/magnific-popup.js" charset="utf-8"></script>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js" charset="utf-8"></script>
+    <script src="<?php echo base_url() ?>assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js" charset="utf-8"></script>
+<?php endif; ?>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $(".mn-ProfilTeam, .mn-Galeri").addClass('active');
+        
+        setGaleriList();
+        setImageList();
+        
+        $(".galeri-wrapper").on('click', '.galeri-item > .icon, .galeri-item > .title', function() {
+            var id = $(this).parents('.galeri-item').data('id');
+            var title = $(this).parents('.galeri-item').data('title');
+            $(".subtitle").removeClass('hide').html(title);
+            $(".galeri-title").html(title);
+            $(".id_galeri").val(id);
+            setGaleriList();
+            setImageList();
+        });
         
         $(".btn-tambah-galeri").click(function() {
             tambahGaleri();
@@ -132,6 +196,130 @@
             setImageList();
         });
     });
+    
+    function setGaleriList () {
+        var id = $(".id_galeri").val();
+        $.ajax({
+            url: '<?php echo base_url() ?>media/getDataGaleri',
+            type: 'POST',
+            dataType: 'json',
+            data: {id: id},
+            success: function (json) {
+                if (json.stat) {
+                    var html = "";
+                    $.each(json.data, function(index, val) {
+                        var data = {
+                            title: val.title,
+                            id_galeri: val.id_galeri,
+                            status: (val.status == 0) ? 'unpublish' : '',
+                        };
+                        html += htmlGaleri(data);
+                    });
+                    $(".galeri-list").html(html);
+                    if ($(".media-wrapper").find('.js-notif').hasClass('alert')) {
+                        $(".media-wrapper").find('.js-notif').remove();
+                    }
+                } else {
+                    var conf = {
+                        tipe: 'warning',
+                        title: 'Not Found',
+                        msg: 'Tidak terdapat data galeri, harap menginputkan data galeri terlebih dahulu'
+                    };
+                    notification(conf);
+                    $(".galeri-list").html("");
+                }
+            }
+        });
+        
+    }
+    
+    function setImageList () {
+        var id_galeri = $(".id_galeri").val();
+        $.ajax({
+            url: '<?php echo base_url('media/getDataImage') ?>',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                id: id_galeri
+            },
+            success: function (json) {
+                if (json.stat) {
+                    var html = "";
+                    $.each(json.data, function(index, val) {
+                        var data = {
+                            id_file: val.id_file,
+                            title: val.title,
+                            file: val.file
+                        };
+                        html += htmlImage(data);
+                    });
+                    $(".image-list").html(html);
+                    
+                    var image = $(".image-list").find(".image-item .image");
+                    var imageWidth = image.width();
+                    var imageHeight = ratio(imageWidth);
+                    image.css('height', imageHeight);
+                    
+                    checkEditor();
+                } else {
+                    if (id_galeri != '') {
+                        var conf = {
+                            tipe: 'warning',
+                            title: 'Not Found',
+                            msg: 'Data image tidak di temukan'
+                        };
+                        notification(conf);
+                    }
+                    $(".image-list").html("");
+                }
+            }
+        });
+        
+    }
+    
+    function htmlImage (data) {
+        var image = '';
+        var url = "<?php echo base_url('assets/upload/images/thumb') ?>/";
+        
+        image += '<div class="col-md-3 col-sm-4 col-lg-2">';
+        image += '    <div class="image-item">';
+        image += '        <div class="icon image" style="background-image: url(\''+url+data.file+'\')"></div>';
+        image += '        <div class="title">';
+        image += '            ' + data.title;
+        image += '        </div>';
+        image += '        <div class="aksi text-right">';
+        image += '            <div class="btn-group">';
+        image += '                <a href="#" class="btn btn-default btn-gunakan">Gunakan</a>';
+        image += '                <a href="#" class="btn btn-default btn-ubah" data-id="'+data.id_file+'"><i class="fa fa-edit"></i></a>';
+        image += '                <a href="#" class="btn btn-default btn-hapus" data-id="'+data.id_file+'"><i class="fa fa-trash"></i></a>';
+        image += '            </div>';
+        image += '        </div>';
+        image += '    </div>';
+        image += '</div>';
+        
+        return image;
+    }
+    
+    function htmlGaleri (data) {
+        var galeri = '';
+        
+        galeri += '<div class="col-md-3 col-sm-4 col-lg-2">';
+        galeri += '    <div class="galeri-item '+data.status+'" data-id="'+data.id_galeri+'" data-title="'+data.title+'">';
+        galeri += '        <div class="icon" style="background-image: url(\'<?php echo base_url() ?>assets/themes/adminLTE/img/002-folder.svg\')"></div>';
+        galeri += '        <div class="title">';
+        galeri += '            ' + data.title;
+        galeri += '        </div>';
+        galeri += '        <div class="aksi text-right">';
+        galeri += '            <div class="btn-group">';
+        galeri += '                <a href="#" class="btn btn-default btn-edit" data-id="'+data.id_galeri+'"><i class="fa fa-edit"></i></a>';
+        galeri += '                <a href="#" class="btn btn-default btn-hapus" data-id="'+data.id_galeri+'"><i class="fa fa-trash"></i></a>';
+        galeri += '            </div>';
+        galeri += '        </div>';
+        galeri += '    </div>';
+        galeri += '</div>';
+        
+        return galeri;
+    }
     
     function uploadImage () {
         var modal = $("#modal");
@@ -852,3 +1040,8 @@
         }, timeout);
     }
 </script>
+
+<?php if ($editor > 0): ?>
+    </body>
+</html>
+<?php endif; ?>

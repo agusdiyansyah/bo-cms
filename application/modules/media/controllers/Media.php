@@ -19,10 +19,7 @@ class Media extends Controller {
         }
         
         $data = array(
-            'editor' => $unset,
-            'content' => array(
-                'view' => 'media/partial/all_data',
-            )
+            'editor' => $unset
         );
         
         $this->load->view('media/data', $data);

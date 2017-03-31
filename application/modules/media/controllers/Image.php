@@ -166,28 +166,19 @@ class Image extends Controller {
         
         $valid = true;
         $file_name = "";
-        $upload = true;
         
         if ($opt['update']) {
-            if (
-                file_exists($opt['upload_path'] . $opt['update']) AND
-                file_exists($opt['upload_path'] . "thumb/" . $opt['update'])
-            ) {
-                if (
-                    unlink($opt['upload_path'] . $opt['update']) AND
-                    unlink($opt['upload_path'] . "thumb/" . $opt['update'])
-                ) {
-                    $upload = true;
-                } else {
-                    $upload = false;
-                }
-            } else {
-                $upload = false;
+            if (file_exists($opt['upload_path'] . $opt['update'])) {
+                unlink($opt['upload_path'] . $opt['update']);
+            }
+            
+            if (file_exists($opt['upload_path'] . "thumb/" . $opt['update'])) {
+                unlink($opt['upload_path'] . "thumb/" . $opt['update']);
             }
         }
         
         $file_element_name = $opt['file_element_name']; // input file name
-        if (is_uploaded_file($_FILES[$file_element_name]['tmp_name']) AND $upload) {
+        if (is_uploaded_file($_FILES[$file_element_name]['tmp_name'])) {
             $upload_path = $opt['upload_path'];
             
             if (!file_exists($upload_path)) {
