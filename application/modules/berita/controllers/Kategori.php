@@ -102,7 +102,7 @@ class Kategori extends Controller{
             )
         );
         
-        $this->output->set_title(ucwords($this->module) . " " . $data['subtitle']);
+        $this->output->set_title($data['title'] . " " . $data['subtitle']);
 		$this->load->view('form-kategori', $data);
     }
     

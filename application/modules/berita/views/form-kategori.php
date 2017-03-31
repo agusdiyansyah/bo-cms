@@ -33,16 +33,12 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('.mn-Berita, .mn-Berita .mn-Data').addClass('active');
-		
-		$(".select2").select2({
-			width: "100%"
-		});
+		$('.mn-Berita, .mn-Berita .mn-Kategori').addClass('active');
 		
 		$('.kategori').select2({
 			placeholder        : '',
 		    minimumInputLength : 2,
-		    theme: 'bootstrap',
+		    width: '100%',
 		  	ajax: {
 			    url      : '<?php echo base_url('berita/kategori/checkKategori') ?>',
 			    dataType : 'json',
