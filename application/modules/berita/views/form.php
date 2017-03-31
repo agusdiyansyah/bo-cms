@@ -15,7 +15,7 @@
 			<div class="col-sm-6">
                 <label for="kategori" class="control-label">Kategori</label>
                 <?php echo form_select($input['kategori']) ?>
-				<a href="#" class="btn-add-kategori" style="margin-top: 5px; display: block">Tambah data kategori berita</a>
+				<a href="<?php echo site_url("berita/kategori/add") ?>" class="btn-add-kategori" style="margin-top: 5px; display: block">Tambah data kategori berita</a>
             </div>
 			
 			<div class="col-sm-6">

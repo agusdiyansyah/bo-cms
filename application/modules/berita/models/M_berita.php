@@ -3,20 +3,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_berita extends CI_Model{
     private $berita;
+    private $kategori;
     private $status = array(
-        'publish' => 'Publish',
         'draf' => 'Draf',
+        'publish' => 'Publish',
     );
 
     public function __construct() {
         parent::__construct();
         $tb = $this->config->load("database_table", true);
         $this->berita = $tb['tb_berita'];
+        $this->kategori = $tb['tb_berita_kategori'];
     }
     
     public function data ($post, $debug = false) {
 
         $this->db->start_cache();
+        
+            $this->db->from("$this->berita b");
 
             // filter
             if (!empty($post['title'])) {
@@ -27,19 +31,20 @@ class M_berita extends CI_Model{
             $this->db->order_by('id_berita', 'DESC');
 
             // join
-
+            $this->db->join("$this->kategori k", "k.id_kategori = b.id_kategori", "left");
+            
         $this->db->stop_cache();
 
             // get num rows
             $this->db->select('id_berita');
-            $rowCount = $this->db->get($this->berita)->num_rows();
+            $rowCount = $this->db->get()->num_rows();
 
             // get result
-            $this->db->select('id_berita, title, sinopsis');
+            $this->db->select('id_berita, title, kategori, status, sinopsis');
 
             $this->db->limit($post['length'], $post['start']);
 
-            $val = $this->db->get($this->berita)->result();
+            $val = $this->db->get()->result();
 
         $this->db->flush_cache();
 
@@ -86,11 +91,17 @@ class M_berita extends CI_Model{
 				</ul>
 			</div>
 			";
+            
+            $title = $data->title;
+            if ($data->status == "draf") {
+                $title .= " <i><span class='label label-warning'>Draft</span></i>";
+            }
 
             $baris = array(
                 $no,
                 $aksi,
-                $data->title,
+                $title,
+                $data->kategori,
                 $data->sinopsis,
             );
 
@@ -119,11 +130,16 @@ class M_berita extends CI_Model{
             ->delete($this->berita);
     }
     
-    public function getDataById ($id, $field = "*") {
+    public function getData ($field = "*", $id = 0) {
+        if ($id > 0) {
+            $this->db
+                ->where("id_berita", $id)
+                ->limit(1);
+        }
+        
         return $this->db
             ->select($field)
-            ->where('id_berita', $id)
-            ->get($this->berita, 1);
+            ->get($this->berita);
     }
     
     public function getStatus () {
@@ -131,9 +147,7 @@ class M_berita extends CI_Model{
     }
     
     public function status () {
-        $status = array('' => ' ');
-        $status += $this->status;
-        return $status;
+        return $this->status;
     }
 
 }

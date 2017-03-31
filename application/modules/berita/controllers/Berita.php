@@ -55,7 +55,7 @@ class Berita extends Controller{
         
         $this->output->set_title($data['title'] . " " . $data['subtitle']);
         
-		$this->load->view('data', $data);
+		$this->load->view("$this->module/data", $data);
 	}
     
     public function data () {
@@ -144,14 +144,11 @@ class Berita extends Controller{
                     "class" => "form-control content",
                     "id" => "content"
                 ),
-            ),
-            "error" => array(
-                "nama_pengurus" => $this->session->flashdata('nama_pengurus'),
             )
         );
         
-        $this->output->set_title(ucwords($this->module) . " " . $data['subtitle']);
-		$this->load->view('form', $data);
+        $this->output->set_title($data['title'] . " " . $data['subtitle']);
+		$this->load->view("$this->module/form", $data);
     }
     
     public function add_proses () {
@@ -162,22 +159,39 @@ class Berita extends Controller{
             if (!$this->form_validation->run()) {
                 $errorMsg = "";
                 
-                if (form_error("nama_pengurus")) {
-                    $errorMsg .= form_error("nama_pengurus");
+                if (form_error("kategori")) {
+                    $errorMsg .= form_error("kategori");
+                }
+                if (form_error("title")) {
+                    $errorMsg .= form_error("title");
+                }
+                if (form_error("sinopsis")) {
+                    $errorMsg .= form_error("sinopsis");
+                }
+                if (form_error("cpntent")) {
+                    $errorMsg .= form_error("cpntent");
                 }
 
                 $notif = notification_proses("warning", "Gagal", $errorMsg);
                 $this->session->set_flashdata('message', $notif);
 
-                redirect("pengurus/add");
+                redirect("berita/add");
             } else {
-                $nama_pengurus = $this->input->post('nama_pengurus');
+                $title = $this->input->post('title');
+                $sinopsis = $this->input->post('sinopsis');
+                $content = $this->input->post('content');
+                $kategori = $this->input->post('kategori');
+                $status = $this->input->post('status');
 
                 $data = array(
-                    "nama_pengurus" => $nama_pengurus,
+                    "title" => $title,
+                    "sinopsis" => $sinopsis,
+                    "content" => $content,
+                    "id_kategori" => $kategori,
+                    "status" => $status
                 );
 
-                $add = $this->M_pengurus->add($data);
+                $add = $this->M_berita->add($data);
 
                 if ($add) {
                     $this->stat = true;
@@ -193,11 +207,11 @@ class Berita extends Controller{
             $this->session->set_flashdata('message', $notif);
         }
         
-        redirect("pengurus");
+        redirect($this->module);
     }
     
     public function edit ($id = 0) {
-        $res = $this->M_pengurus->getDataPengurusById($id);
+        $res = $this->M_berita->getData("id_berita, id_kategori, title, sinopsis, status, content", $id);
         
         if (
             $id > 0 AND
@@ -208,34 +222,89 @@ class Berita extends Controller{
 
         if ($this->valid) {
             
-            $row = $res->row();
+            $objKategori = $this->M_kategori->getData("id_kategori, kategori")->result();
+            $kategori = array("" => "");
+            foreach ($objKategori as $val) {
+                $kategori += array($val->id_kategori => $val->kategori);
+            }
+            
+            $val = $res->row();
 
             $data = array(
+                "title" => ucwords($this->module),
+                "subtitle" => "Ubah Data",
                 "form_action" => base_url("$this->module/edit_proses"),
-                "link_back" => site_url("pengurus"),
+                "link_back" => site_url("berita"),
                 "input" => array(
                     "id_hide" => array(
                         "name" => "id",
                         "class" => "id",
-                        "value" => $id,
-                        "type" => "hidden"
+                        "type" => "hidden",
+                        "value" => $val->id_berita
+                    ),
+                    
+                    "status" => array(
+                        "config" => array(
+                            "name" => "status",
+                            "class" => "form-control select2 status",
+                            "id" => "status",
+                        ),
+                        "list" => $this->M_berita->status(),
+                        "selected" => $val->status
+                    ),
+                    
+                    "kategori" => array(
+                        "config" => array(
+                            "name" => "kategori",
+                            "class" => "form-control select2 kategori",
+                            "id" => "kategori",
+                        ),
+                        "list" => $kategori,
+                        "selected" => $val->id_kategori
                     ),
 
-                    "nama_pengurus" => array(
-                        "name" => "nama_pengurus",
-                        "value" => $row->nama_pengurus,
+                    "title" => array(
+                        "name" => "title",
                         "type" => "text",
-                        "class" => "form-control nama_pengurus",
-                        "id" => "nama_pengurus"
-                    )
-                ),
-                "error" => array(
-                    "nama_pengurus" => $this->session->flashdata('nama_pengurus'),
+                        "class" => "form-control title",
+                        "id" => "title",
+                        "value" => $val->title
+                    ),
+                    
+                    "sinopsis" => array(
+                        "name" => "sinopsis",
+                        "type" => "text",
+                        "class" => "form-control sinopsis",
+                        "id" => "sinopsis",
+                        "rows" => "2",
+                        "value" => $val->sinopsis
+                    ),
+                    
+                    "content" => array(
+                        "name" => "content",
+                        "type" => "text",
+                        "class" => "form-control content",
+                        "id" => "content",
+                        "value" => $val->content
+                    ),
                 )
             );
             
-            $this->output->set_title(ucwords($this->module) . " " . $data['subtitle']);
-            $this->load->view('pengurus/form', $data);
+            // validate
+            $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+    		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+            
+            // select2
+            $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
+    		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
+    		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
+            
+            // ckeditor
+            $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
+    		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
+            
+            $this->output->set_title($data['title'] . " " . $data['subtitle']);
+            $this->load->view("$this->module/form", $data);
         }
 
     }
@@ -245,7 +314,11 @@ class Berita extends Controller{
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('nama_pengurus'))
+            !empty($this->input->post('title')) AND
+            !empty($this->input->post('sinopsis')) AND
+            !empty($this->input->post('content')) AND
+            !empty($this->input->post('kategori')) AND
+            !empty($this->input->post('status'))
         ) {
             $this->valid = true;
         }
@@ -259,22 +332,39 @@ class Berita extends Controller{
             if (!$this->form_validation->run()) {
                 $errorMsg = "";
                 
-                if (form_error("nama_pengurus")) {
-                    $errorMsg .= form_error("nama_pengurus");
+                if (form_error("kategori")) {
+                    $errorMsg .= form_error("kategori");
+                }
+                if (form_error("title")) {
+                    $errorMsg .= form_error("title");
+                }
+                if (form_error("sinopsis")) {
+                    $errorMsg .= form_error("sinopsis");
+                }
+                if (form_error("cpntent")) {
+                    $errorMsg .= form_error("cpntent");
                 }
 
                 $notif = notification_proses("warning", "Gagal", $errorMsg);
                 $this->session->set_flashdata('message', $notif);
 
-                redirect("pengurus/edit/$id");
+                redirect("$this->module/edit/$id");
             } else {
-                $nama_pengurus = $this->input->post('nama_pengurus');
+                $title = $this->input->post('title');
+                $sinopsis = $this->input->post('sinopsis');
+                $content = $this->input->post('content');
+                $kategori = $this->input->post('kategori');
+                $status = $this->input->post('status');
 
                 $data = array(
-                    "nama_pengurus" => $nama_pengurus,
+                    "title" => $title,
+                    "sinopsis" => $sinopsis,
+                    "content" => $content,
+                    "id_kategori" => $kategori,
+                    "status" => $status
                 );
 
-                $edit = $this->M_pengurus->edit($data, $id);
+                $edit = $this->M_berita->edit($data, $id);
 
                 if ($edit) {
                     $this->stat = true;
@@ -291,7 +381,7 @@ class Berita extends Controller{
             $this->session->set_flashdata('message', $notif);
         }
         
-        redirect("pengurus");
+        redirect($this->module);
 
     }
     
@@ -307,7 +397,7 @@ class Berita extends Controller{
         if ($this->valid) {
             $id = $this->input->post('id');
             
-            $del = $this->M_pengurus->delete($id);
+            $del = $this->M_berita->delete($id);
 
             if ($del) {
                 $this->stat = true;
@@ -336,7 +426,39 @@ class Berita extends Controller{
                 "errors" => array(
                     "required" => "%s tidak boleh kosong"
                 )
-            )
+            ),
+            array(
+                "field" => "sinopsis",
+                "label" => "Sinopsis",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+            array(
+                "field" => "content",
+                "label" => "Content",
+                "rules" => "required",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+            array(
+                "field" => "kategori",
+                "label" => "Kategori",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+            array(
+                "field" => "status",
+                "label" => "Status",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
         );
         
         $this->form_validation->set_error_delimiters("<div class='text-danger'>", "</div>");

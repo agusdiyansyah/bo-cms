@@ -62,7 +62,8 @@
                         <tr>
                             <th width="2%">No</th>
                             <th width="2%">Aksi</th>
-                            <th>Title</th>
+							<th>Title</th>
+                            <th>Kategori</th>
 							<th>Sinopsis</th>
                         </tr>
                     </thead>
