@@ -133,6 +133,15 @@
         setGaleriList();
         setImageList();
         
+        $(".image-list").on('click', '.image-item .btn-gunakan', function(event) {
+            event.preventDefault();
+            var link = $(this).data('link');
+            var funcNum = getUrlParam( 'CKEditorFuncNum' );
+            
+            window.opener.CKEDITOR.tools.callFunction( funcNum, link );
+            window.close();
+        });
+        
         $(".galeri-wrapper").on('click', '.galeri-item > .icon, .galeri-item > .title', function() {
             var id = $(this).parents('.galeri-item').data('id');
             var title = $(this).parents('.galeri-item').data('title');
@@ -196,6 +205,13 @@
             setImageList();
         });
     });
+    
+    function getUrlParam( paramName ) {
+        var reParam = new RegExp( '(?:[\?&]|&)' + paramName + '=([^&]+)', 'i' ) ;
+        var match = window.location.search.match(reParam) ;
+
+        return ( match && match.length > 1 ) ? match[ 1 ] : null ;
+    }
     
     function setGaleriList () {
         var id = $(".id_galeri").val();
@@ -279,17 +295,18 @@
     
     function htmlImage (data) {
         var image = '';
-        var url = "<?php echo base_url('assets/upload/images/thumb') ?>/";
+        var thumb_image = "<?php echo base_url('assets/upload/images/thumb') ?>/";
+        var base_image = "<?php echo base_url('assets/upload/images') ?>/";
         
         image += '<div class="col-md-3 col-sm-4 col-lg-2">';
         image += '    <div class="image-item">';
-        image += '        <div class="icon image" style="background-image: url(\''+url+data.file+'\')"></div>';
+        image += '        <div class="icon image" style="background-image: url(\''+thumb_image+data.file+'\')"></div>';
         image += '        <div class="title">';
         image += '            ' + data.title;
         image += '        </div>';
         image += '        <div class="aksi text-right">';
         image += '            <div class="btn-group">';
-        image += '                <a href="#" class="btn btn-default btn-gunakan">Gunakan</a>';
+        image += '                <a href="#" class="btn btn-default btn-gunakan" data-link="'+base_image+data.file+'">Gunakan</a>';
         image += '                <a href="#" class="btn btn-default btn-ubah" data-id="'+data.id_file+'"><i class="fa fa-edit"></i></a>';
         image += '                <a href="#" class="btn btn-default btn-hapus" data-id="'+data.id_file+'"><i class="fa fa-trash"></i></a>';
         image += '            </div>';
