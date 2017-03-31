@@ -48,7 +48,7 @@
         <div class="row">
         	<div class="col-xs-12">
 				<div style="text-align: right">
-		            <button type="submit" class="btn btn-primary">Tambah Data</button>
+		            <button type="submit" class="btn btn-primary">Proses</button>
 		            <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
 		        </div>
         	</div>

@@ -191,7 +191,7 @@
 	                    id: id
 	                },
 	                success: function () {
-						location.reload();
+						refreshTable();
 	                }
 	            });
 	        });
