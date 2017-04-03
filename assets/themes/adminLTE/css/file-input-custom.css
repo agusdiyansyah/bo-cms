@@ -1,0 +1,33 @@
+.file-input {
+    /*text-align: right;*/
+}
+.file-input .btn,
+.file-error-message,
+.file-input .file-preview {
+    border-radius: 0px;
+}
+.file-input .file-preview .close {
+    display: none
+}
+.file-input .file-drop-zone {
+    padding: 0px;
+    border-radius: 0px;
+    cursor: pointer;
+}
+.file-input .file-preview-frame {
+    margin: 0px;
+    padding: 0px;
+    padding-top: 5px;
+    border: 0px;
+    box-shadow: none !important;
+}
+.file-input .file-actions {
+    padding: 4px;
+}
+.file-input .btn-file,
+.file-input .fileinput-remove,
+.file-input .file-upload-indicator,
+.file-input .kv-file-upload,
+.file-input .kv-file-remove {
+    display: none;
+}
