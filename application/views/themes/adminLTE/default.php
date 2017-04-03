@@ -67,8 +67,8 @@
 		<header class="main-header">
 		    <!-- Logo -->
 		    <a href="#" class="logo">
-		      <span class="logo-mini"><small><b>BKD</b></small></span>
-		      <span class="logo-lg"><b><i>PESAT</i></b></span>
+		      <span class="logo-mini"><small><b>BO</b></small></span>
+		      <span class="logo-lg"><b>BO CMS</b></span>
 		    </a>
 
 		    <!-- Header Navbar -->
