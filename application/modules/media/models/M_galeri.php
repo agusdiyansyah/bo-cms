@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class M_galeri extends CI_Model{
+class M_galeri extends CI_Model {
     
     private $tb_galeri;
     private $file;
@@ -13,9 +13,14 @@ class M_galeri extends CI_Model{
         $this->file = $table['tb_file'];
     }
     
-    public function data ($id) {
+    public function data ($id, $status = "") {
         if ($id != "") {
             $this->db->where('id_galeri', $id);
+        }
+        if ($status == "publish") {
+            $this->db->where('status', 1);
+        } elseif ($status == "unpublish") {
+            $this->db->where('status', 0);
         }
         return $this->db
             ->select('id_galeri, title, status')
