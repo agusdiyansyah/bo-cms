@@ -35,7 +35,7 @@ class M_image extends CI_Model{
         if ($data->file != '') {
             if (file_exists($upload_path . $data->file)) {
                 unlink($upload_path . $data->file);
-                if ($upload_path . 'thumb/' . $data->file) {
+                if (file_exists($upload_path . 'thumb/' . $data->file)) {
                     unlink($upload_path . 'thumb/' . $data->file);
                 }
             }
