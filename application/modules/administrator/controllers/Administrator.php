@@ -88,12 +88,18 @@ class Administrator extends Controller {
         $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
 		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
 		
+		// fileinput
+        $this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
+		$this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
+        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
+		
         $data = array(
             'title' => $this->title,
             'subtitle' => 'Tambah',
             'form_action' => site_url('administrator/add_proses'),
 			'link_back' => site_url('administrator'),
 			
+			"adminFoto" => base_url('assets/themes/adminLTE/img/boxed-bg.png'),
 			"input" => array(
 				"hide_id" => array(
                     "name" => "id",
@@ -146,7 +152,8 @@ class Administrator extends Controller {
         $this->output->append_title($data['subtitle'] . " " . $data['title']);
         $this->load->view('form', $data);
 	}
-	function add_proses(){
+	
+	public function add_proses(){
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('username', 'Username', 'required');
 		$this->form_validation->set_rules('password', 'Password', 'required');
@@ -212,7 +219,7 @@ class Administrator extends Controller {
 		}
 	}
 	
-	function edit($id){
+	public function edit($id){
 		$query = $this->M_admin->getById($id);
 		if ($query->num_rows() > 0) {
 			$this->valid = true;
@@ -228,7 +235,14 @@ class Administrator extends Controller {
 	        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
 			$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
 			
+			// fileinput
+			$this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
+	        $this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
+	        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
+			
 			$row = $query->row();
+			
+			$adminFoto = (empty($row->foto)) ? base_url('assets/themes/adminLTE/img/boxed-bg.png') : base_url("assets/admin_foto/thumb/$row->foto");
 			
 	        $data = array(
 	            'title' => $this->title,
@@ -236,6 +250,7 @@ class Administrator extends Controller {
 	            'form_action' => site_url('administrator/edit_proses'),
 				'link_back' => site_url('administrator'),
 				
+				"adminFoto" => $adminFoto, 
 				"input" => array(
 					"hide_id" => array(
 	                    "name" => "id",
@@ -372,11 +387,20 @@ class Administrator extends Controller {
 		$id = $this->input->post('id');
 		$row = $this->M_admin->getById($id);
         if ($row) {
+			$data = $row->row();
+			$upload_path = "./assets/admin_foto/";
+			
             $this->M_admin->delete($id);
-            $notif = notification_proses("success","Sukses","Data Berhasil di Hapus");
+			if (file_exists($upload_path . $data->foto)) {
+				if (unlink($upload_path . $data->foto) AND file_exists($upload_path . "thumb/" . $data->foto)) {
+					unlink($upload_path . "thumb/" . $data->foto);
+				}
+			}
+			
+            $notif = notification_proses("success","Sukses","Data Berhasil di Hapus $exists");
             $this->session->set_flashdata('message', $notif);
         } else {
-            $notif = notification_proses("danger","Gagal","Data Gagal di Hapus");
+            $notif = notification_proses("danger","Gagal", "Data Gagal di Hapus");
             $this->session->set_flashdata('message', $notif);
         }
 	}
