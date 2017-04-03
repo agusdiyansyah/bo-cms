@@ -142,10 +142,6 @@ class M_berita extends CI_Model{
             ->get($this->berita);
     }
     
-    public function getStatus () {
-        return $this->status;
-    }
-    
     public function status () {
         return $this->status;
     }
