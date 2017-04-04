@@ -168,7 +168,7 @@ class Berita extends Controller{
                 if (form_error("sinopsis")) {
                     $errorMsg .= form_error("sinopsis");
                 }
-                if (form_error("cpntent")) {
+                if (form_error("content")) {
                     $errorMsg .= form_error("cpntent");
                 }
 
@@ -341,7 +341,7 @@ class Berita extends Controller{
                 if (form_error("sinopsis")) {
                     $errorMsg .= form_error("sinopsis");
                 }
-                if (form_error("cpntent")) {
+                if (form_error("content")) {
                     $errorMsg .= form_error("cpntent");
                 }
 
