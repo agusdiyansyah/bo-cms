@@ -68,17 +68,17 @@ class Image extends Controller {
             
             $image = $this->M_image->getFieldValueById('file', $id);
             
-            $uploadConf["upload_path"] = "./assets/upload/images/";
             
             if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
-                $uploadConf["update"] = $image->file;
+                $upload = $this->_imageUpload(array(
+                    "upload_path" => "./assets/upload/images/",
+                    "update" => $image->file,
+                ));
+                if (!empty($this->file_name)) {
+                    $data['file'] = $this->file_name;
+                }
             }
             
-            $upload = $this->_imageUpload($uploadConf);
-            
-            if (!empty($this->file_name)) {
-                $data['file'] = $this->file_name;
-            }
             
             $data['id_galeri'] = $this->input->post('galeri');
             $data['title'] = $this->input->post('title');
