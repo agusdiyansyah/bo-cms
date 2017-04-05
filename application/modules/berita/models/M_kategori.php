@@ -4,9 +4,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class M_kategori extends CI_Model{
     
     private $kategori;
+    private $ci;
     
     public function __construct() {
         parent::__construct();
+        $this->ci =& get_instance();
+        
         $table = $this->config->load("database_table", true);
         $this->kategori = $table['tb_berita_kategori'];
     }
@@ -100,6 +103,8 @@ class M_kategori extends CI_Model{
     }
     
     public function add ($data) {
+        $this->ci->load->library("slug");
+        $data['slug'] = $this->ci->slug->createSlugDB($data['kategori'], $this->kategori, "slug");
         return $this->db->insert($this->kategori, $data);
     }
     
