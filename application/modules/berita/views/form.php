@@ -145,6 +145,7 @@
 		
 		if (imageLink == "" || conf.reset) {
 			imageLink = "<?php echo base_url("assets/themes/adminLTE/img/boxed-bg.png") ?>";
+			$(".form").find('.fileinput-reset').addClass('hide');
 		} else {
 			$(".form").find('.fileinput-reset').removeClass('hide');
 		}
