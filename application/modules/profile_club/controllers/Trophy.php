@@ -82,7 +82,7 @@ class Trophy extends Controller{
             "subtitle" => "Tambah Data",
             "link_back" => site_url("$this->moduleLink"),
             
-            "photo" => base_url('assets/themes/adminLTE/img/boxed-bg.png'),
+            "photo" => "",
             
             "form_action" => base_url("$this->moduleLink/add_proses"),
             "input" => array(
@@ -149,16 +149,16 @@ class Trophy extends Controller{
                 $keterangan = $this->input->post('keterangan');
                 $galeri = $this->input->post('galeri');
                 
-                $this->load->library('image');
-                
-                $image = $this->image->upload(array(
-                    "upload_path" => $this->ImageUploadPath,
-                ));
-                
                 $photo = "";
                 
-                if ($image['stat']) {
-                    $photo = $image['file_name'];
+                if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+                    $this->load->library('image');
+                    $image = $this->image->upload(array(
+                        "upload_path" => $this->ImageUploadPath,
+                    ));
+                    if ($image['stat']) {
+                        $photo = $image['file_name'];
+                    }
                 }
 
                 $data = array(
@@ -202,7 +202,7 @@ class Trophy extends Controller{
             
             $val = $res->row();
             
-            $photo = (empty($val->photo)) ? base_url("assets/themes/adminLTE/img/boxed-bg.png") : base_url("assets/upload/images/trophy/$val->photo");
+            $photo = (empty($val->photo)) ? "" : base_url("assets/upload/images/trophy/$val->photo");
 
             $data = array(
                 "moduleLink'" => $this->moduleLink,
@@ -299,10 +299,10 @@ class Trophy extends Controller{
                 $keterangan = $this->input->post('keterangan');
                 $galeri = $this->input->post('galeri');
                 
+                $photo = "";
+                
+                $image = $this->M_trophy->getData("photo", $id)->row();
                 if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
-                    
-                    $image = $this->M_trophy->getData("photo", $id)->row();
-                    
                     $this->load->library('image');
                     $upload = $this->image->upload(array(
                         "upload_path" => $this->ImageUploadPath,
@@ -310,14 +310,20 @@ class Trophy extends Controller{
                     ));
                     
                     if ($upload['stat']) {
-                        $data['photo'] = $upload['file_name'];
+                        $photo = $upload['file_name'];
                     }
+                } elseif ($this->input->post('stat_removecover') == 1) {
+                    unlink($this->ImageUploadPath . $image->photo);
+                    unlink($this->ImageUploadPath . "thumb/" . $image->photo);
                 }
                 
-                $data["nama_trophy"] = $nama_trophy;
-                $data["tahun"] = $tahun;
-                $data["keterangan"] = $keterangan;
-                $data["id_galeri"] = $galeri;
+                $data = array(
+                    "nama_trophy" => $nama_trophy,
+                    "tahun" => $tahun,
+                    "keterangan" => $keterangan,
+                    "id_galeri" => $galeri,
+                    "photo" => $photo
+                );
 
                 $edit = $this->M_trophy->edit($data, $id);
 

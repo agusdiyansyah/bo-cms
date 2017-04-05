@@ -11,8 +11,9 @@
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         
         <?php echo form_input($input['id_hide']) ?>
+		<input type="hidden" name="stat_removecover" class="stat_removecover" value="0">
 		
-		<div class="row">
+		<div class="row remove-margin-top">
 			<div class="col-sm-3">
 				<div class="row">
 					<div class="col-xs-12">
@@ -128,11 +129,23 @@
 	
 	function fileInputReset () {
 		$("#file").fileinput('destroy');
-		fileInputInit();
+		$(".stat_removecover").val(1);
+		fileInputInit({
+			reset: true
+		});
 	}
 	
-	function fileInputInit () {
-		var linkDefaultImage = "<?php echo $photo ?>";
+	function fileInputInit (conf = {
+		reset: false
+	}) {
+		var imageLink = "<?php echo $photo ?>";
+		
+		if (imageLink == "" || conf.reset) {
+			imageLink = "<?php echo base_url("assets/themes/adminLTE/img/boxed-bg.png") ?>";
+			$(".form").find('.fileinput-reset').addClass('hide');
+		} else {
+			$(".form").find('.fileinput-reset').removeClass('hide');
+		}
 		
 		var fileInput = {
  		   maxFilePreviewSize: 10240,
@@ -146,7 +159,7 @@
  			   image: { width: "98.5%", height: "auto" },
  		   },
  		   initialPreview: [
- 			   "<img src='"+ linkDefaultImage +"' class='file-preview-image' style='width: 100%; height: auto' alt='Default Image' title='Default Image'>",
+ 			   "<img src='"+ imageLink +"' class='file-preview-image' style='width: 100%; height: auto' alt='Default Image' title='Default Image'>",
  		   ]
  	   };
  	   
@@ -154,6 +167,7 @@
  		   	.fileinput(fileInput)
  		   	.on('fileimageloaded', function(event, previewId) {
  			   	$(".form").find('.fileinput-reset').removeClass('hide');
+				$(".stat_removecover").val(0);
  		   	})
  		   	.on('fileclear', function(event) {
  			   	$(".form").find('.fileinput-reset').addClass('hide');
