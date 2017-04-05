@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class M_berita extends CI_Model{
     private $berita;
     private $kategori;
+    private $ci;
     private $status = array(
         'draf' => 'Draf',
         'publish' => 'Publish',
@@ -11,6 +12,8 @@ class M_berita extends CI_Model{
 
     public function __construct() {
         parent::__construct();
+        $this->ci =& get_instance();
+        
         $tb = $this->config->load("database_table", true);
         $this->berita = $tb['tb_berita'];
         $this->kategori = $tb['tb_berita_kategori'];
@@ -115,6 +118,8 @@ class M_berita extends CI_Model{
     }
     
     public function add ($data) {
+        $this->ci->load->library("slug");
+        $data['slug'] = $this->ci->slug->createSlugDB($data['title'], $this->berita, "slug");
         return $this->db->insert($this->berita, $data);
     }
     
