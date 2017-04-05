@@ -12,60 +12,58 @@
         
         <?php echo form_input($input['id_hide']) ?>
 		
-		<div class="contsiner">
-			<div class="row">
-				<div class="col-sm-3">
-					<div class="row">
-						<div class="col-xs-12">
-							<label for="file" class="control-label">Photo Trophy</label>
-							<input id="file" name="file" type="file" class="file-loading">
-							<!-- <div id="errorBlock" class="help-block"></div> -->
-							
-							<div class="btn-group btn-group-justified" style="margin-bottom: 15px;">
-							    <a href="#" class="btn btn-default fileinput-reset hide">Reset</a>
-							    <a href="#" class="btn btn-primary fileinput-browse">Browse</a>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-xs-12">
-							<label for="id_galeri" class="control-label">Galeri Terkait</label>
-							<?php echo form_select($input['galeri']) ?>
-							<a href="<?php echo site_url("media") ?>" class="btn-add-kategori" style="margin-top: 5px; display: block">Tambah data galeri</a>
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="row">
+					<div class="col-xs-12">
+						<label for="file" class="control-label">Photo Trophy</label>
+						<input id="file" name="file" type="file" class="file-loading">
+						<!-- <div id="errorBlock" class="help-block"></div> -->
+						
+						<div class="btn-group btn-group-justified" style="margin-bottom: 15px;">
+						    <a href="#" class="btn btn-default fileinput-reset hide">Reset</a>
+						    <a href="#" class="btn btn-primary fileinput-browse">Browse</a>
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-9">
-					
-					<div class="row">
-			            <div class="col-sm-6">
-			                <label for="nama_trophy" class="control-label">Nama Trophy</label>
-			                <?php echo form_input($input['nama_trophy']) ?>
-			            </div>
-			            <div class="col-sm-6">
-			                <label for="tahun" class="control-label">Tahun</label>
-			                <?php echo form_input($input['tahun']) ?>
-			            </div>
-			        </div>
-			        
-			        <div class="row">
-			            <div class="col-xs-12">
-			                <label for="Keterangan" class="control-label">Keterangan</label>
-			                <?php echo form_textarea($input['keterangan']) ?>
-			            </div>
-			        </div>
-					
-					<div class="row">
-			            <div class="col-xs-12">
-			                <div style="text-align: right">
-			                    <button type="submit" class="btn btn-primary">Proses</button>
-			                    <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
-			                </div>
-			            </div>
-			        </div>
-					
+				
+				<div class="row">
+					<div class="col-xs-12">
+						<label for="id_galeri" class="control-label">Galeri Terkait</label>
+						<?php echo form_select($input['galeri']) ?>
+						<a href="<?php echo site_url("media") ?>" class="btn-add-kategori" style="margin-top: 5px; display: block">Tambah data galeri</a>
+					</div>
 				</div>
+			</div>
+			<div class="col-sm-9">
+				
+				<div class="row">
+		            <div class="col-sm-6">
+		                <label for="nama_trophy" class="control-label">Nama Trophy</label>
+		                <?php echo form_input($input['nama_trophy']) ?>
+		            </div>
+		            <div class="col-sm-6">
+		                <label for="tahun" class="control-label">Tahun</label>
+		                <?php echo form_input($input['tahun']) ?>
+		            </div>
+		        </div>
+		        
+		        <div class="row">
+		            <div class="col-xs-12">
+		                <label for="Keterangan" class="control-label">Keterangan</label>
+		                <?php echo form_textarea($input['keterangan']) ?>
+		            </div>
+		        </div>
+				
+				<div class="row">
+		            <div class="col-xs-12">
+		                <div style="text-align: right">
+		                    <button type="submit" class="btn btn-primary">Proses</button>
+		                    <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
+		                </div>
+		            </div>
+		        </div>
+				
 			</div>
 		</div>
         
