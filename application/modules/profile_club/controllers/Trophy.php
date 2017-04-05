@@ -8,6 +8,7 @@ class Trophy extends Controller{
     private $moduleLink;
     private $stat   = false;
     private $valid  = false;
+    private $ImageUploadPath = "./assets/upload/images/trophy/";
 
     public function __construct() {
         parent::__construct();
@@ -151,7 +152,7 @@ class Trophy extends Controller{
                 $this->load->library('image');
                 
                 $image = $this->image->upload(array(
-                    "upload_path" => "./assets/upload/trophy/",
+                    "upload_path" => $this->ImageUploadPath,
                 ));
                 
                 $photo = "";
@@ -201,7 +202,7 @@ class Trophy extends Controller{
             
             $val = $res->row();
             
-            $photo = (empty($val->photo)) ? base_url("assets/themes/adminLTE/img/boxed-bg.png") : base_url("assets/upload/trophy/thumb/$val->photo");
+            $photo = (empty($val->photo)) ? base_url("assets/themes/adminLTE/img/boxed-bg.png") : base_url("assets/upload/images/trophy/$val->photo");
 
             $data = array(
                 "moduleLink'" => $this->moduleLink,
@@ -299,10 +300,13 @@ class Trophy extends Controller{
                 $galeri = $this->input->post('galeri');
                 
                 if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
+                    
+                    $image = $this->M_trophy->getData("photo", $id)->row();
+                    
                     $this->load->library('image');
                     $upload = $this->image->upload(array(
-                        "upload_path" => "./assets/upload/trophy/",
-                        "update" => $image->file,
+                        "upload_path" => $this->ImageUploadPath,
+                        "update" => $image->photo,
                     ));
                     
                     if ($upload['stat']) {
