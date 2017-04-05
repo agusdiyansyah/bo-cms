@@ -6,6 +6,8 @@ class Berita extends Controller{
     private $module = "berita";
     private $stat   = false;
     private $valid  = false;
+    
+    private $ImageUploadPath = "./assets/upload/images/berita/";
 
     public function __construct() {
         parent::__construct();
@@ -73,18 +75,7 @@ class Berita extends Controller{
 	}
     
     public function add () {
-        // validate
-        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
-		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
-        
-        // select2
-        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
-		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
-		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-        
-        // ckeditor
-        $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
-		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
+        $this->_formAssets();
         
         $objKategori = $this->M_kategori->getData("id_kategori, kategori")->result();
         $kategori = array("" => "");
@@ -96,6 +87,8 @@ class Berita extends Controller{
             "title" => ucwords($this->module),
             "subtitle" => "Tambah Data",
             "link_back" => site_url($this->module),
+            
+            "cover" => "",
             
             "form_action" => base_url("$this->module/add_proses"),
             "input" => array(
@@ -135,7 +128,7 @@ class Berita extends Controller{
                     "type" => "text",
                     "class" => "form-control sinopsis",
                     "id" => "sinopsis",
-                    "rows" => "2"
+                    "style" => "margin: 0px -0.25px 0px 0px; height: 60px; max-width: 100%;"
                 ),
                 
                 "content" => array(
@@ -152,6 +145,7 @@ class Berita extends Controller{
     }
     
     public function add_proses () {
+        $this->output->unset_template();
         if ($this->input->post()) {
 
             $this->rules();
@@ -182,13 +176,25 @@ class Berita extends Controller{
                 $content = $this->input->post('content');
                 $kategori = $this->input->post('kategori');
                 $status = $this->input->post('status');
+                
+                $cover = "";
+                if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+                    $this->load->library('image');
+                    $upload = $this->image->upload(array(
+                        "upload_path" => $this->ImageUploadPath,
+                    ));
+                    if ($upload['stat']) {
+                        $cover = $upload['file_name'];
+                    }
+                }
 
                 $data = array(
                     "title" => $title,
                     "sinopsis" => $sinopsis,
                     "content" => $content,
                     "id_kategori" => $kategori,
-                    "status" => $status
+                    "status" => $status,
+                    "cover" => $cover,
                 );
 
                 $add = $this->M_berita->add($data);
@@ -211,7 +217,7 @@ class Berita extends Controller{
     }
     
     public function edit ($id = 0) {
-        $res = $this->M_berita->getData("id_berita, id_kategori, title, sinopsis, status, content", $id);
+        $res = $this->M_berita->getData("id_berita, id_kategori, title, sinopsis, status, content, cover", $id);
         
         if (
             $id > 0 AND
@@ -229,12 +235,17 @@ class Berita extends Controller{
             }
             
             $val = $res->row();
+            
+            $cover = (empty($val->cover)) ? "" : base_url("assets/upload/images/berita/$val->cover");
 
             $data = array(
                 "title" => ucwords($this->module),
                 "subtitle" => "Ubah Data",
                 "form_action" => base_url("$this->module/edit_proses"),
                 "link_back" => site_url("berita"),
+                
+                "cover" => $cover,
+                
                 "input" => array(
                     "id_hide" => array(
                         "name" => "id",
@@ -277,6 +288,7 @@ class Berita extends Controller{
                         "class" => "form-control sinopsis",
                         "id" => "sinopsis",
                         "rows" => "2",
+                        "style" => "margin: 0px -0.25px 0px 0px; height: 60px; max-width: 100%;",
                         "value" => $val->sinopsis
                     ),
                     
@@ -290,18 +302,7 @@ class Berita extends Controller{
                 )
             );
             
-            // validate
-            $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
-    		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
-            
-            // select2
-            $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
-    		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
-    		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-            
-            // ckeditor
-            $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
-    		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
+            $this->_formAssets();
             
             $this->output->set_title($data['title'] . " " . $data['subtitle']);
             $this->load->view("$this->module/form", $data);
@@ -355,13 +356,30 @@ class Berita extends Controller{
                 $content = $this->input->post('content');
                 $kategori = $this->input->post('kategori');
                 $status = $this->input->post('status');
+                
+                $cover = "";
+                $image = $this->M_berita->getData("cover")->row();
+                if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+                    $this->load->library('image');
+                    $upload = $this->image->upload(array(
+                        "upload_path" => $this->ImageUploadPath,
+                        "update" => $image->cover
+                    ));
+                    if ($upload['stat']) {
+                        $cover = $upload['file_name'];
+                    }
+                } elseif ($this->input->post('stat_removecover') == 1) {
+                    unlink($this->ImageUploadPath . $image->cover);
+                    unlink($this->ImageUploadPath . "thumb/" . $image->cover);
+                }
 
                 $data = array(
                     "title" => $title,
                     "sinopsis" => $sinopsis,
                     "content" => $content,
                     "id_kategori" => $kategori,
-                    "status" => $status
+                    "status" => $status,
+                    "cover" => $cover,
                 );
 
                 $edit = $this->M_berita->edit($data, $id);
@@ -464,6 +482,26 @@ class Berita extends Controller{
         $this->form_validation->set_error_delimiters("<div class='text-danger'>", "</div>");
         
         $this->form_validation->set_rules($config);
+    }
+    
+    private function _formAssets () {
+        // validate
+        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+        
+        // select2
+        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
+		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
+		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
+        
+        // ckeditor
+        $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
+		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
+        
+        // fileinput
+        $this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
+		$this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
+        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
     }
 
 }
