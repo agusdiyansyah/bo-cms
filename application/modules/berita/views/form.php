@@ -12,7 +12,7 @@
         <?php echo form_input($input['id_hide']) ?>
 		<input type="hidden" name="stat_removecover" class="stat_removecover" value="0">
 		
-		<div class="row">
+		<div class="row remove-margin-top">
 			
 			<div class="col-sm-push-8 col-md-push-9 col-md-3 col-sm-4">
 				<div class="row">

@@ -10,7 +10,7 @@
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         <?php echo form_input($input['hide_id']) ?>
 		
-		<div class="row">
+		<div class="row remove-margin-top">
 			<div class="col-sm-3">
 				<div class="row">
 					<div class="col-xs-12">

@@ -11,20 +11,26 @@
         
         <?php echo form_input($input['id_hide']) ?>
         
-        <div class="row">
-            <div class="col-xs-12">
-                <label for="nama_pengurus" class="control-label">Nama Pengurus</label>
-                <?php echo form_input($input['nama_pengurus']) ?>
-            </div>
-        </div>
-        
-        <div class="row">
-        	<div class="col-xs-12">
-				<div style="text-align: right">
-		            <button type="submit" class="btn btn-primary">Tambah Data</button>
-		            <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
+        <div class="row remove-margin-top">
+        	
+			<div class="col-xs-12">
+				<div class="row">
+		            <div class="col-xs-12">
+		                <label for="nama_pengurus" class="control-label">Nama Pengurus</label>
+		                <?php echo form_input($input['nama_pengurus']) ?>
+		            </div>
 		        </div>
-        	</div>
+		        
+		        <div class="row">
+		        	<div class="col-xs-12">
+						<div style="text-align: right">
+				            <button type="submit" class="btn btn-primary">Tambah Data</button>
+				            <a href="<?php echo @$link_back ?>" class="btn btn-default">Kembali</a>
+				        </div>
+		        	</div>
+		        </div>
+			</div>
+			
         </div>
         
     </form>

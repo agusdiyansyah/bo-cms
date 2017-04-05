@@ -4,6 +4,10 @@
     font-size: 12px;
 }
 
+.remove-margin-top {
+    margin-top: -15px !important;
+}
+
 .form-group small {
     font-size: 10px;
 }
