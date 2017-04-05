@@ -1,5 +1,7 @@
 /application/session/*
-/assets/upload/images/*.*
-/assets/upload/images/thumb/*.*
-/assets/upload/trophy/*.*
-/assets/upload/trophy/thumb/*.*
+/assets/upload/images/berita/*.*
+/assets/upload/images/berita/thumb/*.*
+/assets/upload/images/trophy/*.*
+/assets/upload/images/trophy/thumb/*.*
+/assets/upload/images/media/*.*
+/assets/upload/images/media/thumb/*.*
