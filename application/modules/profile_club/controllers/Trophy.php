@@ -73,7 +73,7 @@ class Trophy extends Controller{
 	}
     
     public function add () {
-        $this->_assets();
+        $this->_formAssets();
         
         $data = array(
             "moduleLink'" => $this->moduleLink,
@@ -255,7 +255,7 @@ class Trophy extends Controller{
                 )
             );
             
-            $this->_assets();
+            $this->_formAssets();
             
             $this->output->set_title($data['title'] . " " . $data['subtitle']);
             $this->load->view("$this->moduleLink/form", $data);
@@ -365,7 +365,7 @@ class Trophy extends Controller{
 
     }
     
-    private function _assets () {
+    private function _formAssets () {
         // validate
         $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
 		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
