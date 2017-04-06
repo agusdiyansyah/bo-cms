@@ -306,7 +306,7 @@
         image += '        </div>';
         image += '        <div class="aksi text-right">';
         image += '            <div class="btn-group">';
-        image += '                <a href="#" class="btn btn-default btn-gunakan" data-link="'+base_image+data.file+'">Gunakan</a>';
+        image += '                <a href="#" class="btn btn-default btn-gunakan" data-link="'+base_image+ "/" +data.file+'">Gunakan</a>';
         image += '                <a href="#" class="btn btn-default btn-ubah" data-id="'+data.id_file+'"><i class="fa fa-edit"></i></a>';
         image += '                <a href="#" class="btn btn-default btn-hapus" data-id="'+data.id_file+'"><i class="fa fa-trash"></i></a>';
         image += '            </div>';
