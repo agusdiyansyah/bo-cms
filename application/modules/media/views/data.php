@@ -295,12 +295,12 @@
     
     function htmlImage (data) {
         var image = '';
-        var thumb_image = "<?php echo base_url('assets/upload/images/thumb') ?>/";
-        var base_image = "<?php echo base_url('assets/upload/images') ?>/";
+        var thumb_image = "<?php echo base_url("assets/upload/images/media/thumb/") ?>";
+        var base_image = "<?php echo base_url("assets/upload/images/media/") ?>";
         
         image += '<div class="col-md-3 col-sm-4 col-lg-2">';
         image += '    <div class="image-item">';
-        image += '        <div class="icon image" style="background-image: url(\''+thumb_image+data.file+'\')"></div>';
+        image += '        <div class="icon image" style="background-image: url(\''+thumb_image+ "/" +data.file+'\')"></div>';
         image += '        <div class="title">';
         image += '            ' + data.title;
         image += '        </div>';
