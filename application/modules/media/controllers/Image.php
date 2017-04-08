@@ -12,6 +12,8 @@ class Image extends Controller {
     private $ResizeHeight = 350;
     
     private $file_name = "";
+    
+    private $ImageUploadPath = "./assets/upload/images/media/";
 
     public function __construct() {
         parent::__construct();
@@ -25,7 +27,7 @@ class Image extends Controller {
     public function tambahProses () {
         $this->output->unset_template();
         $upload = $this->_imageUpload(array(
-            "upload_path" => "./assets/upload/images/"
+            "upload_path" => $this->ImageUploadPath
         ));
         if ($upload) {
             $id_galeri = ( empty( $this->input->post('galeri') ) ) ? 0 : $this->input->post('galeri');
@@ -71,7 +73,7 @@ class Image extends Controller {
             
             if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
                 $upload = $this->_imageUpload(array(
-                    "upload_path" => "./assets/upload/images/",
+                    "upload_path" => $this->ImageUploadPath,
                     "update" => $image->file,
                 ));
                 if (!empty($this->file_name)) {
