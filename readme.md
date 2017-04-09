@@ -9,3 +9,13 @@ FITUR BO-CMS
 - Galeri
 - Tentang Kami
 - Kontak Kami
+
+- [ ] Mercury
+- [x] Venus
+- [x] Earth (Orbit/Moon)
+- [x] Mars
+- [ ] Jupiter
+- [ ] Saturn
+- [ ] Uranus
+- [ ] Neptune
+- [ ] Comet Haley
