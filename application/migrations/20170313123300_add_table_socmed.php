@@ -27,9 +27,9 @@ class Migration_add_table_socmed extends CI_Migration {
                 'null' => FALSE,
             ),
             'tipe' => array(
-                'type' => 'ENUM("player", "team", "pengurus")',
-                'default' => 'player',
-                'null' => FALSE
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+                'null' => FALSE,
             ),
             'link' => array(
                 'type' => 'VARCHAR',

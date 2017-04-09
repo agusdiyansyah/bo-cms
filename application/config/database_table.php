@@ -15,8 +15,8 @@ $config["tb_match"] = "match";
 $config["tb_berita"] = "berita";
 $config["tb_berita_kategori"] = "berita_kategori";
 $config["tb_pengurus_jabatan"] = "pengurus_jabatan";
-
 $config["tb_pemain"] = "pemain";
+
 $config["tb_jadwal"] = "jadwal";
 $config["tb_hasil_pertandingan"] = "hasil_pertandingan";
 $config["tb_page"] = "page";

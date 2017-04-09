@@ -107,7 +107,9 @@ class M_pengurus extends CI_Model{
         } else {
             $photo = $data->photo;
             $this->ci->load->model("socmed/M_socmed");
-            if (!$this->ci->M_socmed->delete($id, "pengurus")) {
+            if (!$this->ci->M_socmed
+                ->tipe("pengurus")
+                ->delete($id)) {
                 $msg = "Data socmed gagal di hapus";
             } else {
                 $stat = true;

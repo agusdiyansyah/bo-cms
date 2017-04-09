@@ -70,7 +70,7 @@ class M_socmed extends CI_Model {
             ->get("$this->socmed s");
     }
     
-    public function getDataSocmedArray ($id = 0) {
+    public function getDataSocmedArray () {
         $sql = $this->getData("id_jenis_socmed, link");
         $socmed = array();
         foreach ($sql->result() as $data) {
