@@ -266,10 +266,7 @@ class Pengurus extends Controller{
                 $photo = base_url($this->ImageUploadPath.$data->photo);
             }
             
-            $this->db
-                ->where('p.id_pengurus', $id)
-                ->where('s.tipe', 'pengurus');
-            $socmed = $this->M_socmed->getDataSocmedArray();
+            $socmed = $this->M_pengurus->getStafDataSocmedArray($id);
             
             $data = array(
                 "title" => ucwords($this->module),
@@ -502,8 +499,7 @@ class Pengurus extends Controller{
         
         $data = $this->M_pengurus->getData("*", "hc")->row();
         
-        $this->db->where("id_jabatan", 0);
-        $socmed = $this->M_socmed->getDataSocmedArray();
+        $socmed = $this->M_pengurus->getHCDataSocmedArray();
         
         $photo = (empty($data->photo)) ? "" : base_url($this->ImageUploadPath . $data->photo);
         

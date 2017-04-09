@@ -52,7 +52,9 @@ class M_pengurus extends CI_Model{
         } else {
             $id = $this->db->insert_id();
             
-            if (!$this->ci->M_socmed->add($id, $dataSocmed)) {
+            if (!$this->ci->M_socmed
+                ->tipe("pengurus")
+                ->add($id, $dataSocmed)) {
                 $msg = "Gagal proses data socmed";
             } else {
                 $msg = "Data berhasil di proses";
@@ -77,7 +79,9 @@ class M_pengurus extends CI_Model{
             ->update($this->pengurus, $dataPengurus)) {
             $msg = "Gagal proses data pengurus";
         } else {
-            if (!$this->ci->M_socmed->edit($id, $dataSocmed)) {
+            if (!$this->ci->M_socmed
+                ->tipe("pengurus")
+                ->edit($id, $dataSocmed)) {
                 $msg = "Gagal proses data socmed";
             } else {
                 $msg = "Data berhasil di proses";
@@ -141,6 +145,24 @@ class M_pengurus extends CI_Model{
         return $this->db
             ->select($field)
             ->get($this->pengurus);
+    }
+
+    public function getStafDataSocmedArray ($id) {
+        $this->ci->load->model("socmed/M_socmed");
+        $this->db
+            ->where('p.id_pengurus', $id)
+            ->where('s.tipe', 'pengurus')
+            ->join("$this->pengurus p", "p.id_pengurus = s.id_relasi", "left");
+        return $this->ci->M_socmed->getDataSocmedArray();
+    }
+    
+    public function getHCDataSocmedArray () {
+        $this->ci->load->model("socmed/M_socmed");
+        $this->db
+            ->where("p.id_jabatan", 0)
+            ->where('s.tipe', 'pengurus')
+            ->join("$this->pengurus p", "p.id_pengurus = s.id_relasi", "left");
+        return $this->ci->M_socmed->getDataSocmedArray();
     }
 
 }

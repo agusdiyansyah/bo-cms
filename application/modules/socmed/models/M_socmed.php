@@ -15,6 +15,7 @@ class M_socmed extends CI_Model {
         "youtube" => 7,
         "tumblr" => 8,
     );
+    private $tipe;
 
     public function __construct() {
         parent::__construct();
@@ -29,7 +30,7 @@ class M_socmed extends CI_Model {
                 $data = array(
                     "id_relasi" => $id_relasi,
                     "id_jenis_socmed" => $this->id_socmed[$key],
-                    "tipe" => "pengurus",
+                    "tipe" => $this->tipe,
                     "link" => $data,
                 );
                 
@@ -40,14 +41,19 @@ class M_socmed extends CI_Model {
         return true;
     }
     
+    public function tipe ($tipe) {
+        $this->tipe = $tipe;
+        return $this;
+    }
+    
     public function edit ($id_relasi, $socmed) {
-        $this->delete($id_relasi, "pengurus");
+        $this->delete($id_relasi);
         return $this->add($id_relasi, $socmed);
     }
     
-    public function delete ($id_relasi, $tipe) {
+    public function delete ($id_relasi) {
         return $this->db
-            ->where("tipe", $tipe)
+            ->where("tipe", $this->tipe)
             ->where("id_relasi", $id_relasi)
             ->delete($this->socmed);
     }
@@ -65,9 +71,6 @@ class M_socmed extends CI_Model {
     }
     
     public function getDataSocmedArray ($id = 0) {
-        $this->db
-            ->join("$this->pengurus p", "p.id_pengurus = s.id_relasi", "left");
-        
         $sql = $this->getData("id_jenis_socmed, link");
         $socmed = array();
         foreach ($sql->result() as $data) {
