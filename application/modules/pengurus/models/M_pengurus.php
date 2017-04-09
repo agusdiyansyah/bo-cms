@@ -2,116 +2,119 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_pengurus extends CI_Model{
-    protected $tb_pengurus = "";
+    private $pengurus;
+    private $socmed;
+    private $jabatan;
+    private $ci;
 
     public function __construct() {
         parent::__construct();
         $tb = $this->config->load("database_table", true);
-        $this->tb_pengurus = $tb['tb_pengurus'];
+        $this->pengurus = $tb['tb_pengurus'];
+        $this->socmed = $tb['tb_socmed'];
+        $this->jabatan = $tb['tb_pengurus_jabatan'];
+        
+        $this->ci =& get_instance();
     }
     
-    public function data ($post, $debug = false) {
-
-        $this->db->start_cache();
-
-            // filter
-            if (!empty($post['nama_pengurus'])) {
-                $this->db->like('nama_pengurus', $post['nama_pengurus'], 'both');
-            }
-
-            // order
-            $this->db->order_by('id_pengurus', 'DESC');
-
-            // join
-
-        $this->db->stop_cache();
-
-            // get num rows
-            $this->db->select('id_pengurus');
-            $rowCount = $this->db->get($this->tb_pengurus)->num_rows();
-
-            // get result
-            $this->db->select('id_pengurus, nama_pengurus');
-
-            $this->db->limit($post['length'], $post['start']);
-
-            $val = $this->db->get($this->tb_pengurus)->result();
-
-        $this->db->flush_cache();
-
-        $output['draw']            = $post['draw'];
-        $output['recordsTotal']    = $rowCount;
-        $output['recordsFiltered'] = $rowCount;
-		$output['data']            = array();
-
-		if ($debug) {
-		    $output['sql']             = $this->db->last_query();
-		}
-
-        $no = 1 + $post['start'];
-
-        $base = base_url();
-
-        foreach ($val as $data) {
-
-            $btnAksi = "";
-
-            $btnAksi .= "
-            <li>
-                <a href='{$base}pengurus/edit/$data->id_pengurus' id='btn-edit'>
-                    Ubah
-                </a>
-            </li>
-            ";
-
-            $btnAksi .= "
-            <li>
-                <a href='#' id='btn-hapus' data-id='$data->id_pengurus'>
-                    Hapus
-                </a>
-            </li>
-            ";
-
-            $aksi = "
-			<div class='btn-group'>
-				<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-					<i class='fa fa-gear'></i>
-				</button>
-				<ul class='dropdown-menu pull-right'>
-					$btnAksi
-				</ul>
-			</div>
-			";
-
-            $baris = array(
-                $no,
-                $aksi,
-                $data->nama_pengurus
-            );
-
-            array_push($output['data'], $baris);
-
-            $no++;
+    public function getStaf () {
+        $this->db
+            ->join($this->jabatan, "$this->pengurus.id_jabatan = $this->jabatan.id_jabatan", "left")
+            ->where("$this->pengurus.id_jabatan !=", 0);
+        return $this->getData("id_pengurus, nama, photo, jabatan")->result();
+    }
+    
+    public function add ($dataPengurus, $dataSocmed) {
+        return $this->_add_proses($dataPengurus, $dataSocmed);
+    }
+    
+    public function edit ($id, $dataPengurus, $dataSocmed) {
+        return $this->_edit_proses($id, $dataPengurus, $dataSocmed);
+    }
+    
+    public function hc_proses ($dataPengurus, $dataSocmed) {
+        $sql = $this->getData("id_pengurus", "hc");
+        if ($sql->num_rows() > 0) {
+            $data = $sql->row();
+            $proses = $this->_edit_proses($data->id_pengurus, $dataPengurus, $dataSocmed);
+        } else {
+            $proses = $this->_add_proses($dataPengurus, $dataSocmed);
         }
-
-        return json_encode($output);
-
+        
+        return $proses;
     }
     
-    public function add ($data) {
-        return $this->db->insert($this->tb_pengurus, $data);
+    private function _add_proses ($dataPengurus, $dataSocmed) {
+        $stat = false;
+        $this->ci->load->model("socmed/M_socmed");
+        if (!$this->db->insert($this->pengurus, $dataPengurus)) {
+            $msg = "Gagal proses data pengurus";
+        } else {
+            $id = $this->db->insert_id();
+            
+            if (!$this->ci->M_socmed->add($id, $dataSocmed)) {
+                $msg = "Gagal proses data socmed";
+            } else {
+                $msg = "Data berhasil di proses";
+                $stat = true;
+            }
+        }
+        
+        return array(
+            "stat" => $stat,
+            "msg" => $msg,
+        );
     }
     
-    public function edit ($data, $id) {
-        return $this->db
-            ->where('id_pengurus', $id)
-            ->update($this->tb_pengurus, $data);
+    private function _edit_proses ($id, $dataPengurus, $dataSocmed) {
+        $stat = false;
+        $this->ci->load->model("socmed/M_socmed");
+        $data = $this->getData("id_jabatan", $id)->row();
+        $msg = "Gagal masuk";
+        if (!$this->db
+            ->where("id_jabatan", $data->id_jabatan)
+            ->where("id_pengurus", $id)
+            ->update($this->pengurus, $dataPengurus)) {
+            $msg = "Gagal proses data pengurus";
+        } else {
+            if (!$this->ci->M_socmed->edit($id, $dataSocmed)) {
+                $msg = "Gagal proses data socmed";
+            } else {
+                $msg = "Data berhasil di proses";
+                $stat = true;
+            }
+        }
+        
+        return array(
+            "stat" => $stat,
+            "msg" => $msg,
+        );
     }
     
     public function delete ($id) {
-        return $this->db
+        $stat = false;
+        $msg = "Gagal proses";
+        $data = $this->getData("photo", $id)->row();
+        $photo = "";
+        if (!$this->db
             ->where('id_pengurus', $id)
-            ->delete($this->tb_pengurus);
+            ->delete($this->pengurus)) {
+            $msg = "Gagal menghapus data pengurus";
+        } else {
+            $photo = $data->photo;
+            $this->ci->load->model("socmed/M_socmed");
+            if (!$this->ci->M_socmed->delete($id, "pengurus")) {
+                $msg = "Data socmed gagal di hapus";
+            } else {
+                $stat = true;
+            }
+        }
+        
+        return array(
+            "stat" => $stat,
+            "msg" => $stat,
+            "photo" => $photo
+        );
     }
     
     public function getDataPengurusById ($id) {
@@ -119,7 +122,25 @@ class M_pengurus extends CI_Model{
             ->select('id_pengurus, nama_pengurus')
             ->where('id_pengurus', $id)
             ->limit(1, 0)
-            ->get($this->tb_pengurus);
+            ->get($this->pengurus);
+    }
+
+    public function getData ($field = "*", $id = 0) {
+        if ($id > 0) {
+            $this->db
+                ->where("id_pengurus", $id)
+                ->limit(1);
+        }
+        
+        if ($id === "hc") {
+            $this->db
+                ->where("id_jabatan", 0)
+                ->limit(1);
+        }
+        
+        return $this->db
+            ->select($field)
+            ->get($this->pengurus);
     }
 
 }

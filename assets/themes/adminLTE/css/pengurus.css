@@ -1,0 +1,59 @@
+.title-section {
+    font-size: 18px;
+}
+
+.row hr {
+    margin: 15px 0;
+}
+
+.thumbnail {
+    border-radius: 0px;
+    margin-bottom: 5px;
+}
+
+.photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    width: 100%;
+    /*height: 200px;*/
+    
+    border-bottom: 1px solid #eee;
+}
+
+.pengurus-wrapper {
+    border: 1px solid #eee
+}
+
+.info {
+    padding: 10px 15px;
+    line-height: 25px;
+}
+
+.info .name {
+    font-size: 20px;
+}
+
+.info p {
+    margin: 0px;
+}
+
+.btn-group-justified {
+    width: 100.5%;
+}
+
+.btn-group-justified .btn {
+    border-color: #eee;
+    border: none;
+    border-top: 1px solid #eee !important;
+}
+
+.btn-group-justified .btn-default:active:focus {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+}
+
+.btn-hapus {
+    border-left: 1px solid #ddd !important
+}

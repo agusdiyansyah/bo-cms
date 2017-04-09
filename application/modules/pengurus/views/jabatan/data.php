@@ -25,8 +25,8 @@
 								<!-- form field -->
 								<div class="row">
 									<div class="col-xs-12">
-										<label for="nama_pengurus" class="control-label">Nama Pengurus</label>
-										<?php echo form_input($input['nama_pengurus']) ?>
+										<label for="jabatan" class="control-label">Jabatan Staf</label>
+										<?php echo form_input($input['jabatan']) ?>
 									</div>
 								</div>
 							</div>
@@ -57,7 +57,7 @@
                         <tr>
                             <th width="2%">No</th>
                             <th width="2%">Aksi</th>
-                            <th>Nama</th>
+							<th>Jabatan</th>
                         </tr>
                     </thead>
                 </table>
@@ -90,7 +90,7 @@
 	$(document).ready(function() {
 		var base_url = "<?php echo base_url();?>";
 
-        $('.mn-Pengurus').addClass('active');
+        $('.mn-Pengurus, .mn-Pengurus .mn-Jabatan').addClass('active');
 		
 		$(".filter").on('click', '.btn-cari', function(event) {
 			event.preventDefault();
@@ -106,10 +106,10 @@
             "bLengthChange": false,
             'ordering'    : false,
             "ajax": {
-                "url": "<?php echo base_url('pengurus/data');?>",
+                "url": "<?php echo base_url("$moduleLink/data");?>",
                 "type": "POST",
                 "data": function ( d ) {
-					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
+					d.jabatan = $(".filter").find('.jabatan').val();
                 }, 
 				"beforeSend": function () {
 					Pace.restart();
@@ -178,14 +178,14 @@
 	            modal.off();
 
 	            $.ajax({
-	                url: '<?php echo base_url("pengurus/delete_proses") ?>',
+	                url: '<?php echo base_url("$moduleLink/delete_proses") ?>',
 					cache: false,
 	                type: 'POST',
 	                data: {
 	                    id: id
 	                },
 	                success: function () {
-						location.reload();
+						refreshTable();
 	                }
 	            });
 	        });

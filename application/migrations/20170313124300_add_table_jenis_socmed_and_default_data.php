@@ -24,7 +24,7 @@ class Migration_add_table_jenis_socmed_and_default_data extends CI_Migration {
             ),
             'title' => array(
                 'type' => 'VARCHAR',
-                'constraint' => 10,
+                'constraint' => 20,
                 'null' => FALSE
             )
         );

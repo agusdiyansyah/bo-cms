@@ -27,7 +27,7 @@ class Migration_add_table_socmed extends CI_Migration {
                 'null' => FALSE,
             ),
             'tipe' => array(
-                'type' => 'ENUM("player", "team")',
+                'type' => 'ENUM("player", "team", "pengurus")',
                 'default' => 'player',
                 'null' => FALSE
             ),
