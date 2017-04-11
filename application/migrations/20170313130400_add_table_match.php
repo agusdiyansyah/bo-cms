@@ -28,6 +28,11 @@ class Migration_add_table_match extends CI_Migration {
             ),
             'match_rival' => array(
                 'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => FALSE,
+            ),
+            'alamat' => array(
+                'type' => 'VARCHAR',
                 'constraint' => 200,
                 'null' => FALSE,
             ),
