@@ -115,24 +115,34 @@ class Migration_add_default_menu extends CI_Migration {
             ),
             array(
                 "id_menu" => null,
-                "name" => "Jadwal Pertandingan",
-                "link" => "pertandingan/jadwal",
-                "icon" => "fa fa-futbol-o",
+                "name" => "Pertandingan",
+                "link" => "#",
+                "icon" => "fa fa-trophy",
                 "order" => 8,
                 "is_active" => 1,
                 "is_parent" => 0,
                 "level" => 0
             ),
-            array(
-                "id_menu" => null,
-                "name" => "Hasil Pertandingan",
-                "link" => "pertandingan/hasil",
-                "icon" => "fa fa-trophy",
-                "order" => 9,
-                "is_active" => 1,
-                "is_parent" => 0,
-                "level" => 0
-            ),
+                array(
+                    "id_menu" => null,
+                    "name" => "Jadwal",
+                    "link" => "pertandingan/jadwal",
+                    "icon" => "fa fa-angle-right",
+                    "order" => 1,
+                    "is_active" => 1,
+                    "is_parent" => 11,
+                    "level" => 0
+                ),
+                array(
+                    "id_menu" => null,
+                    "name" => "Hasil",
+                    "link" => "pertandingan/hasil",
+                    "icon" => "fa fa-angle-right",
+                    "order" => 2,
+                    "is_active" => 1,
+                    "is_parent" => 11,
+                    "level" => 0
+                ),
             array(
                 "id_menu" => null,
                 "name" => "Setting",
