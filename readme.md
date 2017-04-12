@@ -6,7 +6,7 @@ FITUR BO-CMS
 - [x] Pemain
 - [x] Pengurus
 - [x] Jabatan Pengurus
-- [ ] Jadwal Pertandingan
+- [x] Jadwal Pertandingan
 - [ ] Hasil Pertandingan
 - [x] Galeri
 - [ ] Tentang Kami
