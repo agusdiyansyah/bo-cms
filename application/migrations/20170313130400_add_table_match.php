@@ -42,7 +42,8 @@ class Migration_add_table_match extends CI_Migration {
                 'null' => FALSE,
             ),
             'match_resultstatus' => array(
-                'type' => 'ENUM("win", "lose", "draw")',
+                'type' => 'ENUM("", "win", "lose", "draw")',
+                'default' => "",
                 'null' => FALSE,
             ),
             'match_resultscore1' => array(

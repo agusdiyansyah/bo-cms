@@ -224,6 +224,36 @@ class Jadwal extends Controller{
 
     }
     
+    public function selesai () {
+        $this->output->unset_template();
+        
+        if ($this->input->post()) {
+            $id = $this->input->post('id');
+            
+            $match_resultscore1 = $this->input->post('match_resultscore1');
+            $match_resultscore2 = $this->input->post('match_resultscore2');
+            $match_resultstatus = ($match_resultscore1 > $match_resultscore2) ? "win" : ($match_resultscore1 == $match_resultscore2) ? "draw" : "lose";
+            
+            $data = array(
+                "match_resultscore1" => $match_resultscore1,
+                "match_resultscore2" => $match_resultscore2,
+                "match_resultstatus" => $match_resultstatus,
+                "match_status" => "hasil"
+            );
+            
+            $selesai = $this->M_match->edit($data, $id);
+            if ($selesai) {
+                $this->stat = true;
+            }
+            
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
+        } else {
+            show_404();
+        }
+    }
+    
     public function srcRival () {
         $this->output->unset_template();
         if ($this->input->post()) {
