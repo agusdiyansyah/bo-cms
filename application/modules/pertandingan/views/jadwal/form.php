@@ -12,7 +12,6 @@
         
         <?php 
 			echo form_input($input['hide']['id']);
-			echo form_input($input['hide']['match_homeaway']);
 		?>
 		
 		<div class="row remove-margin-top">
@@ -35,10 +34,13 @@
 				<div class="row">
 		            <div class="col-xs-12">
 						<div class="">
-							<label for="match_date" class="control-label">Bermain Sebagai</label>
+							<label class="control-label">Bermain Sebagai</label>
 						</div>
-						<a href="#" class="btn btn-default ha home">Tuan Rumah</a>
-						<a href="#" class="btn btn-default ha away">Lawan</a>
+						<div class="">
+							<a href="#" class="btn btn-default ha home" data-value="home">Tuan Rumah</a>
+							<a href="#" class="btn btn-default ha away" data-value="away">Lawan</a>
+						</div>
+						<?php echo form_input($input['hide']['match_homeaway']); ?>
 		            </div>
 		        </div>
 				
@@ -69,21 +71,79 @@
 	$(document).ready(function() {
 		$('.mn-ProfilTeam, .mn-ProfilTeam .mn-Trophy').addClass('active');
 		
-		$(".match_date").datepicker({
-			format: "yyyy-mm-dd",
-			autoclose: true
+		setHomeAway();
+		
+		$(".match_rival").easyAutocomplete({
+			url: function(phrase) {
+				return "<?php echo base_url("$moduleLink/srcRival") ?>";
+			},
+
+			getValue: function(element) {
+				return element.name;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					dataType: "json"
+				}
+			},
+
+			preparePostData: function(data) {
+				data.phrase = $(".match_rival").val();
+				return data;
+			},
+
+			// getValue: "name",
 		});
+		
+		$(".ha").click(function(e) {
+			e.preventDefault();
+			
+			$(".ha.btn-primary").removeClass("btn-primary").addClass("btn-default");
+    		$(this).removeClass("btn-default").addClass("btn-primary");
+			
+			var data = $(this).data("value");
+			
+			$(".match_homeaway").val(data);
+		});
+		
+		$('.match_date').bootstrapMaterialDatePicker({
+            format : 'YYYY-MM-DD HH:mm',
+            lang : 'en',
+            weekStart : 0,
+            time: true,
+            cancelText : 'Kembali'
+        });
 		
 		$('.form').validate({
 		   	ignore: [],
-		  	errorClass: 'error',
+			errorClass: 'error',
 		 	rules: {
-				nama_pengurus : {required: true},
+				match_rival : {required: true},
+				match_date : {required: true},
+				match_homeaway : {required: true},
 			},
 			messages: {
-				nama_pengurus : {required: "Nama pengurus tidak boleh kosong"}	,
-			}
+				match_rival : {required: "Rival tidak boleh kosong"} ,
+				match_date : {required: "Tanggal main tidak boleh kosong"},
+				match_homeaway : {required: "Bermain sebagai harus di pilih"},
+			},
 	   	});
-	   
 	});
+	
+	function setHomeAway () {
+		var data = $(".match_homeaway").val();
+		switch (data) {
+			case "home":
+				$(".ha.home").removeClass('btn-default').addClass('btn-primary');
+			break;
+			case "away":
+				$(".ha.away").removeClass('btn-default').addClass('btn-primary');
+			break;
+			default:
+				
+		}
+	}
 </script>

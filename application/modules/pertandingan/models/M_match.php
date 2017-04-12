@@ -12,7 +12,8 @@ class M_match extends CI_Model{
     }
     
     public function data ($post, $debug = false) {
-
+        $this->load->helper("z");
+        
         $this->db->start_cache();
         
             $this->db->from("$this->match m");
@@ -98,7 +99,7 @@ class M_match extends CI_Model{
                 $no,
                 $aksi,
                 $data->match_rival,
-                $data->match_date,
+                indoDateFormat($data->match_date, "j F Y H:i"),
                 $data->alamat,
             );
 

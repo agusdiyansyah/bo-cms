@@ -54,7 +54,7 @@ function webinfo()
     }
     return $web;
 }
-function konversi_tanggal($waktu="", $format="") {
+function indoDateFormat ($waktu="", $format="") {
     //{tanggalIndoTiga tgl=0000-00-00 00:00:00 format="l, d/m/Y H:i:s"}
     if ($waktu != "" || $format != "") {
         if($waktu == "0000-00-00" || !$waktu || $waktu == "0000-00-00 00:00:00") {

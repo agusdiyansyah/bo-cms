@@ -79,7 +79,7 @@ class Jadwal extends Controller{
         
         if ($this->input->post()) {
 
-            $this->rules();
+            $this->_rules();
 
             if (!$this->form_validation->run()) {
                 $errorMsg = "";
@@ -91,30 +91,7 @@ class Jadwal extends Controller{
 
                 redirect("$this->moduleLink/add");
             } else {
-                $nama_trophy = $this->input->post('nama_trophy');
-                $tahun = $this->input->post('tahun');
-                $keterangan = $this->input->post('keterangan');
-                $galeri = $this->input->post('galeri');
-                
-                $photo = "";
-                
-                if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-                    $this->load->library('image');
-                    $image = $this->image->upload(array(
-                        "upload_path" => $this->ImageUploadPath,
-                    ));
-                    if ($image['stat']) {
-                        $photo = $image['file_name'];
-                    }
-                }
-
-                $data = array(
-                    "nama_trophy" => $nama_trophy,
-                    "tahun" => $tahun,
-                    "keterangan" => $keterangan,
-                    "id_galeri" => $galeri,
-                    "photo" => $photo
-                );
+                $data = $this->_postData();
 
                 $add = $this->M_match->add($data);
 
@@ -136,7 +113,7 @@ class Jadwal extends Controller{
     }
     
     public function edit ($id = 0) {
-        $res = $this->M_match->getData("id_galeri, nama_trophy, tahun, keterangan, photo", $id);
+        $res = $this->M_match->getData("match_rival, match_date, match_homeaway, alamat", $id);
         
         if (
             $id > 0 AND
@@ -148,60 +125,17 @@ class Jadwal extends Controller{
         if ($this->valid) {
             
             $val = $res->row();
-            
-            $photo = (empty($val->photo)) ? "" : base_url("assets/upload/images/trophy/$val->photo");
 
-            $data = array(
-                "moduleLink'" => $this->moduleLink,
-                "title" => ucwords($this->submodule),
+            $data = $this->_formData(array(
+                "form_action" => "$this->moduleLink/edit_proses",
                 "subtitle" => "Ubah Data",
-                "link_back" => site_url("$this->moduleLink"),
                 
-                "photo" => $photo,
-                
-                "form_action" => base_url("$this->moduleLink/edit_proses"),
-                "input" => array(
-                    "id_hide" => array(
-                        "name" => "id",
-                        "class" => "id",
-                        "type" => "hidden",
-                        "value" => $id,
-                    ),
-                    
-                    "galeri" => array(
-                        "config" => array(
-                            "name" => "galeri",
-                            "class" => "form-control select2 galeri",
-                            "id" => "galeri",
-                        ),
-                        "list" => $this->M_match->galeriArray(),
-                        "selected" => $val->id_galeri
-                    ),
-                    
-                    "nama_trophy" => array(
-                        "name" => "nama_trophy",
-                        "type" => "text",
-                        "class" => "form-control nama_trophy",
-                        "id" => "nama_trophy",
-                        "value" => $val->nama_trophy,
-                    ),
-                    
-                    "tahun" => array(
-                        "name" => "tahun",
-                        "type" => "text",
-                        "class" => "form-control tahun",
-                        "id" => "tahun",
-                        "value" => $val->tahun,
-                    ),
-                    
-                    "keterangan" => array(
-                        "name" => "keterangan",
-                        "class" => "form-control keterangan",
-                        "id" => "keterangan",
-                        "value" => $val->keterangan,
-                    ),
-                )
-            );
+                "id" => $id,
+                "match_homeaway" => $val->match_homeaway,
+                "match_rival" => $val->match_rival,
+                "match_date" => $val->match_date,
+                "alamat" => $val->alamat,
+            ));
             
             $this->_formAssets();
             
@@ -216,18 +150,14 @@ class Jadwal extends Controller{
         $this->output->unset_template();
         
         if (
-            $this->input->post() AND
-            !empty($this->input->post('id')) AND
-            !empty($this->input->post('nama_trophy')) AND
-            !empty($this->input->post('tahun')) AND
-            !empty($this->input->post('keterangan'))
+            $this->input->post()
         ) {
             $this->valid = true;
         }
 
         if ($this->valid) {
             
-            $this->rules();
+            $this->_rules();
             
             $id = $this->input->post('id');
             
@@ -241,36 +171,8 @@ class Jadwal extends Controller{
 
                 redirect("$this->moduleLink/edit/$id");
             } else {
-                $nama_trophy = $this->input->post('nama_trophy');
-                $tahun = $this->input->post('tahun');
-                $keterangan = $this->input->post('keterangan');
-                $galeri = $this->input->post('galeri');
                 
-                $photo = "";
-                
-                $image = $this->M_match->getData("photo", $id)->row();
-                if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
-                    $this->load->library('image');
-                    $upload = $this->image->upload(array(
-                        "upload_path" => $this->ImageUploadPath,
-                        "update" => $image->photo,
-                    ));
-                    
-                    if ($upload['stat']) {
-                        $photo = $upload['file_name'];
-                    }
-                } elseif ($this->input->post('stat_removecover') == 1) {
-                    unlink($this->ImageUploadPath . $image->photo);
-                    unlink($this->ImageUploadPath . "thumb/" . $image->photo);
-                }
-                
-                $data = array(
-                    "nama_trophy" => $nama_trophy,
-                    "tahun" => $tahun,
-                    "keterangan" => $keterangan,
-                    "id_galeri" => $galeri,
-                    "photo" => $photo
-                );
+                $data = $this->_postData();
 
                 $edit = $this->M_match->edit($data, $id);
 
@@ -322,21 +224,51 @@ class Jadwal extends Controller{
 
     }
     
+    public function srcRival () {
+        $this->output->unset_template();
+        if ($this->input->post()) {
+            $hasil = array();
+            $cari = $this->input->post("phrase");
+            
+            $this->db->like("match_rival", $cari, "both");
+            $sql = $this->M_match->getData("match_rival");
+            
+            foreach ($sql->result() as $data) {
+                array_push($hasil, array(
+                    "name" => $data->match_rival,
+                    "sql" => $this->db->last_query()
+                ));
+            }
+            
+            echo json_encode($hasil);
+        } else {
+            show_404();
+        }
+        
+    }
+    
     private function _formAssets () {
         // validate
         $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
 		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
         
-        // datepicker
-        $this->output->css('assets/themes/adminLTE/plugins/datepicker/datepicker3.css');
-		$this->output->js('assets/themes/adminLTE/plugins/datepicker/bootstrap-datepicker.js');
+        // material datetime picker
+        $this->output->css('assets/themes/adminLTE/plugins/bootstrap-materialdatetimepicker/css/bootstrap-material-datetimepicker.css');
+        $this->output->css('assets/themes/adminLTE/css/bootstrap-materialdatetimepicker-skin.css');
+        $this->output->css('https://fonts.googleapis.com/icon?family=Material+Icons');
+        $this->output->js('assets/themes/adminLTE/plugins/moment/moment.js');
+        $this->output->js('assets/themes/adminLTE/plugins/bootstrap-materialdatetimepicker/js/bootstrap-material-datetimepicker.js');
+        
+        // easy autocomplete
+        $this->output->css('assets/themes/adminLTE/plugins/easyautocomplete/easyautocomplete.css');
+        $this->output->js('assets/themes/adminLTE/plugins/easyautocomplete/easyautocomplete.js');
     }
     
     private function _formData ($data = array()) {
         return array(
             "title" => ucwords($this->submodule),
             "subtitle" => $data['subtitle'],
-            "moduleLink'" => $this->moduleLink,
+            "moduleLink" => $this->moduleLink,
             "link_back" => site_url($this->moduleLink),
             "form_action" => base_url($data['form_action']),
             
@@ -384,48 +316,61 @@ class Jadwal extends Controller{
         );
     }
     
+    private function _postData () {
+        $match_rival = $this->input->post('match_rival');
+        $match_date = $this->input->post('match_date');
+        $match_homeaway = $this->input->post('match_homeaway');
+        $alamat = $this->input->post('alamat');
+
+        return array(
+            "match_rival" => $match_rival,
+            "match_date" => $match_date,
+            "match_homeaway" => $match_homeaway,
+            "alamat" => $alamat,
+        );
+    }
+    
     private function _postProsesError () {
-        if (form_error("nama_trophy")) {
-            $errorMsg .= form_error("nama_trophy");
+        if (form_error("match_rival")) {
+            $errorMsg .= form_error("match_rival");
         }
-        if (form_error("tahun")) {
-            $errorMsg .= form_error("tahun");
+        if (form_error("match_homeaway")) {
+            $errorMsg .= form_error("match_homeaway");
         }
-        if (form_error("keterangan")) {
-            $errorMsg .= form_error("keterangan");
+        if (form_error("match_date")) {
+            $errorMsg .= form_error("match_date");
         }
         
         return $errorMsg;
     }
     
-    private function rules () {
+    private function _rules () {
         $this->load->library('form_validation');
         $this->load->helper('security');
         
         $config = array(
             array(
-                "field" => "nama_trophy",
-                "label" => "Nama trophy",
+                "field" => "match_rival",
+                "label" => "Rival",
                 "rules" => "required|xss_clean",
                 "errors" => array(
                     "required" => "%s tidak boleh kosong"
                 )
             ),
             array(
-                "field" => "tahun",
-                "label" => "Tahun",
-                "rules" => "required|xss_clean|numeric",
+                "field" => "match_date",
+                "label" => "Tanggal main",
+                "rules" => "required|xss_clean",
                 "errors" => array(
                     "required" => "%s tidak boleh kosong",
-                    "numeric" => "%s harus berupa nomor %s"
                 )
             ),
             array(
-                "field" => "keterangan",
-                "label" => "Keterangan",
-                "rules" => "required",
+                "field" => "match_homeaway",
+                "label" => "Bermain sebagai",
+                "rules" => "required|xss_clean",
                 "errors" => array(
-                    "required" => "%s tidak boleh kosong"
+                    "required" => "%s harus diisi"
                 )
             )
         );

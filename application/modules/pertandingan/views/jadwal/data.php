@@ -111,14 +111,13 @@
                 "url": "<?php echo base_url("$moduleLink/data");?>",
                 "type": "POST",
                 "data": function ( d ) {
-					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
+					d.match_rival = $(".filter").find('.match_rival').val();
                 }, 
 				"beforeSend": function () {
 					Pace.restart();
 				}
             },
             "displayLength": 50,
-            // "order": [[ 5, "desc" ]]
         });
 
         $(".filter").submit(function(event) {

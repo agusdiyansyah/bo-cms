@@ -1,0 +1,30 @@
+.dtp .p10 > a {
+    color: rgba(69,90,100,1);
+}
+
+.dtp > .dtp-content > .dtp-date-view > header.dtp-header {
+    background: rgba(144,164,174,1);
+    /*color: #fff;*/
+}
+
+.dtp .dtp-date {
+    color: rgba(69,90,100,1) !important;
+}
+
+.dtp div.dtp-actual-year {
+    color: rgba(69,90,100,1) !important;
+}
+
+.dtp div.dtp-date, .dtp div.dtp-time {
+    background: rgba(207,216,220,1);
+}
+
+.dtp table.dtp-picker-days tr > td > a.selected {
+    background: rgba(144,164,174,1);
+}
+
+.dtp-buttons button {
+    margin-right: 1px;
+    background-color: rgba(207,216,220,1);
+    color: rgba(69,90,100,1) !important;
+}
