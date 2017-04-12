@@ -28,6 +28,9 @@ class M_match extends CI_Model{
 
             // join
             
+            // 
+            $this->db->where('match_status != ', 'hasil');
+            
         $this->db->stop_cache();
 
             // get num rows

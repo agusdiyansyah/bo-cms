@@ -1,4 +1,6 @@
-<?php echo $this->session->flashdata('message');?>
+<div class="msg">
+	<?php echo $this->session->flashdata('message');?>
+</div>
 <section class="content-header">
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
@@ -72,9 +74,6 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
 				<h4 class="modal-title">Default Modal</h4>
 			</div>
 			<div class="modal-body">
@@ -135,6 +134,17 @@
 	        var id = $(this).data('id');
 	        hapus(id);
 	    });
+		
+		$(".table").on('click', '#btn-selesai', function() {
+	        var data = {
+				id: $(this).data("id"),
+				rival: $(this).parents("tr").find("td").eq(2).html(),
+				tanggal_main: $(this).parents("tr").find("td").eq(3).html(),
+				tempat_main: $(this).parents("tr").find("td").eq(4).html(),
+			}
+			
+	        selesai(data);
+	    });
 
 	});
     
@@ -192,5 +202,120 @@
 	        });
 	    }
 	}
+	
+	function selesai (data) {
+	    if (data.id > 0) {
+	        var modal = $("#modal");
+			var form  = "";
+			
+			form += '<form class="form-modal">';
+			form += '    <input type="hidden" name="id" value="'+ data.id +'">';
+			form += '    <div class="row">';
+			form += '        <div class="col-sm-6">';
+			form += '            <label for="match_resultscore1" class="control-label">Skor Tim Anda</label>';
+			form += '            <input type="number" name="match_resultscore1" class="form-control match_resultscore1" value="0" min="0" required autofocus>';
+			form += '        </div>';
+			form += '        <div class="col-sm-6">';
+			form += '            <label for="match_resultscore2" class="control-label">'+ data.rival +'</label>';
+			form += '            <input type="number" name="match_resultscore2" class="form-control match_resultscore2" value="0" min="0" required>';
+			form += '        </div>';
+			form += '    </div>';
+			form += '	 <div className="row">'
+			form += '	 	<br />'
+			form += '	 	<div className="col-xs-12">'
+			form += '	 		<table class="table table-striped table-hover">'
+			form += '	 			<tr>'
+			form += '	 				<td>Tanggal dan Jam</td>'
+			form += '	 				<td>'+ data.tanggal_main +'</td>'
+			form += '	 			</tr>'
+			form += '	 			<tr>'
+			form += '	 				<td>Tempat</td>'
+			form += '	 				<td>'+ data.tempat_main +'</td>'
+			form += '	 			</tr>'
+			form += '	 		</table>'
+			form += '	 	</div>'
+			form += '	 </div>'
+			form += '</form>';
+			
+	        modal.find('.modal-title').html("HASIL PERTANDINGAN");
+	        modal.find('.modal-body').html(form);
+	        modal.find('.modal-confirm').html("Proses");
+
+	        $.magnificPopup.open({
+	            items: {
+			    	src             : '#modal',
+			    	type            : 'inline',
+					fixedContentPos : false,
+					fixedBgPos      : true,
+					overflowY       : 'auto',
+					closeBtnInside  : true,
+					preloader       : false,
+					midClick        : true,
+					removalDelay    : 300,
+					mainClass       : 'my-mfp-slide-bottom',
+					modal           : true
+			  	}
+	        });
+
+	        modal.on('click', '.modal-dismiss', function(event) {
+	            event.preventDefault();
+	            $.magnificPopup.close();
+	            modal.off();
+	        });
+
+	        modal.on('click', '.modal-confirm', function(event) {
+	            event.preventDefault();
+
+	            $.ajax({
+	                url: '<?php echo base_url("$moduleLink/selesai") ?>',
+					cache: false,
+	                type: 'POST',
+					dataType: 'json',
+	                data: $(".form-modal").serialize(),
+	                success: function (json) {
+						if (json.stat) {
+							$(".form-modal").remove();
+							refreshTable();
+							
+							var conf = {
+								tipe: "success",
+								title: "Berhasil",
+								msg: "Data berhasil di proses"
+							};
+						} else {
+							var conf = {
+								tipe: "warning",
+								title: "Gagal",
+								msg: "Data gagal di proses"
+							};
+						}
+						notification(conf);
+	                }
+	            });
+				
+				$.magnificPopup.close();
+	            modal.off();
+	        });
+	    }
+	}
+	
+	function notification (data) {
+        var content = $(".msg");
+        var notif    = "";
+        
+        notif += '<div class="alert alert-' + data.tipe + ' alert-dismissable js-notif" style="border-radius: 0px;">';
+        notif += '    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>';
+        notif += '    <h4><i class="icon fa fa-check"></i> ' + data.title + '</h4>';
+        notif += '    ' + data.msg;
+        notif += '</div>';
+		
+        var timeout = 2500;
+        
+        content.html(notif)
+        
+        setTimeout(function(){ 
+            content.html("");
+        }, timeout);
+    }
 
 </script>
