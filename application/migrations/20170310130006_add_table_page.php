@@ -37,6 +37,11 @@ class Migration_add_table_page extends CI_Migration {
                 'constraint' => 150,
                 'null' => FALSE
             ),
+            'cover' => array(
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => FALSE
+            ),
             'content' => array(
                 'type' => 'TEXT',
                 'null' => TRUE
