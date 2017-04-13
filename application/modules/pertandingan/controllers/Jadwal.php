@@ -260,7 +260,9 @@ class Jadwal extends Controller{
             $hasil = array();
             $cari = $this->input->post("phrase");
             
-            $this->db->like("match_rival", $cari, "both");
+            $this->db
+                ->group_by("match_rival")
+                ->like("match_rival", $cari, "both");
             $sql = $this->M_match->getData("match_rival");
             
             foreach ($sql->result() as $data) {
