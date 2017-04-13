@@ -13,6 +13,7 @@
         <?php 
 			echo form_input($input['hide']['id']);
 		?>
+		<input type="hidden" name="submodule" value="<?php echo @$submodule ?>">
 		
 		<div class="row remove-margin-top">
 			<div class="col-xs-12">
