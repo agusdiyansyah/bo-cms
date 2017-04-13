@@ -7,7 +7,7 @@ FITUR BO-CMS
 - [x] Pengurus
 - [x] Jabatan Pengurus
 - [x] Jadwal Pertandingan
-- [ ] Hasil Pertandingan
+- [x] Hasil Pertandingan
 - [x] Galeri
 - [ ] Tentang Kami
 - [ ] Kontak Kami
