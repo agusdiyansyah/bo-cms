@@ -9,7 +9,7 @@ FITUR BO-CMS
 - [x] Jadwal Pertandingan
 - [x] Hasil Pertandingan
 - [x] Galeri
-- [ ] Tentang Kami
+- [x] Tentang Kami
 - [ ] Kontak Kami
 - [x] Administrator
 - [x] Manajemen Menu
