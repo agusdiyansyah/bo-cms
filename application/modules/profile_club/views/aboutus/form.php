@@ -10,7 +10,7 @@
     
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         
-		<input type="text" name="stat_removecover" class="stat_removecover" value="0">
+		<input type="hide" name="stat_removecover" class="stat_removecover" value="0">
 		
 		<div class="row remove-margin-top">
 			<div class="col-sm-3">
