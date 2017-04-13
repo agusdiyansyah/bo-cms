@@ -112,7 +112,7 @@ class Jadwal extends Controller{
         redirect($this->moduleLink);
     }
     
-    public function edit ($id = 0) {
+    public function edit ($id = 0, $submodule = "") {
         $res = $this->M_match->getData("match_rival, match_date, match_homeaway, alamat", $id);
         
         if (
@@ -136,6 +136,8 @@ class Jadwal extends Controller{
                 "match_date" => $val->match_date,
                 "alamat" => $val->alamat,
             ));
+            
+            $data += array("submodule" => $submodule);
             
             $this->_formAssets();
             
@@ -191,11 +193,19 @@ class Jadwal extends Controller{
             $this->session->set_flashdata('message', $notif);
         }
         
-        redirect($this->moduleLink);
+        if ($this->input->post('submodule') != "") {
+            $back = $this->module . "/" . $this->input->post('submodule');
+        } else {
+            $back = $this->moduleLink;
+        }
+        
+        
+        redirect($back);
 
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
@@ -212,14 +222,12 @@ class Jadwal extends Controller{
             if ($del) {
                 $this->stat = true;
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
 
     }

@@ -5,7 +5,7 @@
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
 <section class="content-header aksi">
-	<?php echo anchor(@$link_add, 'Tambah Data');?>
+	<?php echo anchor(@$link_add, 'Buat Jadwal');?>
 </section>
 
 <section class="pencarian">
@@ -57,12 +57,17 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th width="2%">No</th>
-                            <th width="2%">Aksi</th>
-							<th>Rival</th>
-							<th>Tanggal Main</th>
-                            <th>Tempat Tanding</th>
+                            <th rowspan="2" width="2%">No</th>
+                            <th rowspan="2" width="2%">Aksi</th>
+							<th rowspan="2">Rival</th>
+							<th rowspan="2">Tanggal Main</th>
+							<th rowspan="2">Tempat Tanding</th>
+                            <th colspan="2" class="text-center">Skor</th>
                         </tr>
+						<tr>
+							<th>Tim Anda</th>
+							<th>Rival</th>
+						</tr>
                     </thead>
                 </table>
             </div>
@@ -91,7 +96,7 @@
 	$(document).ready(function() {
 		var base_url = "<?php echo base_url();?>";
 
-        $('.mn-Pertandingan, .mn-Pertandingan .mn-Jadwal').addClass('active');
+        $('.mn-Pertandingan, .mn-Pertandingan .mn-Hasil').addClass('active');
 		
 		$(".filter").on('click', '.btn-cari', function(event) {
 			event.preventDefault();
@@ -135,15 +140,17 @@
 	        hapus(id);
 	    });
 		
-		$(".table").on('click', '#btn-selesai', function() {
+		$(".table").on('click', '#btn-skor', function() {
 	        var data = {
 				id: $(this).data("id"),
 				rival: $(this).parents("tr").find("td").eq(2).html(),
 				tanggal_main: $(this).parents("tr").find("td").eq(3).html(),
 				tempat_main: $(this).parents("tr").find("td").eq(4).html(),
+				skor1: $(this).parents("tr").find("td").eq(5).html(),
+				skor2: $(this).parents("tr").find("td").eq(6).html(),
 			}
 			
-	        selesai(data);
+	        skor(data);
 	    });
 
 	});
@@ -189,7 +196,7 @@
 	            modal.off();
 
 	            $.ajax({
-	                url: '<?php echo base_url("$moduleLink/delete_proses") ?>',
+	                url: '<?php echo $link_hapus ?>',
 					cache: false,
 	                type: 'POST',
 					dataType: 'json',
@@ -219,7 +226,7 @@
 	    }
 	}
 	
-	function selesai (data) {
+	function skor (data) {
 	    if (data.id > 0) {
 	        var modal = $("#modal");
 			var form  = "";
@@ -229,11 +236,11 @@
 			form += '    <div class="row">';
 			form += '        <div class="col-sm-6">';
 			form += '            <label for="match_resultscore1" class="control-label">Skor Tim Anda</label>';
-			form += '            <input type="number" name="match_resultscore1" class="form-control match_resultscore1" value="0" min="0" required autofocus>';
+			form += '            <input type="number" name="match_resultscore1" class="form-control match_resultscore1" value="'+ data.skor1 +'" min="0" required autofocus>';
 			form += '        </div>';
 			form += '        <div class="col-sm-6">';
 			form += '            <label for="match_resultscore2" class="control-label">'+ data.rival +'</label>';
-			form += '            <input type="number" name="match_resultscore2" class="form-control match_resultscore2" value="0" min="0" required>';
+			form += '            <input type="number" name="match_resultscore2" class="form-control match_resultscore2" value="'+ data.skor2 +'" min="0" required>';
 			form += '        </div>';
 			form += '    </div>';
 			form += '	 <div className="row">'
@@ -283,7 +290,7 @@
 	            event.preventDefault();
 
 	            $.ajax({
-	                url: '<?php echo base_url("$moduleLink/selesai") ?>',
+	                url: '<?php echo $link_skor ?>',
 					cache: false,
 	                type: 'POST',
 					dataType: 'json',
