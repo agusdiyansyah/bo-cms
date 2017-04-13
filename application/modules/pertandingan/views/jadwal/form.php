@@ -69,7 +69,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('.mn-ProfilTeam, .mn-ProfilTeam .mn-Trophy').addClass('active');
+		$('.mn-Pertandingan, .mn-Pertandingan .mn-Jadwal').addClass('active');
 		
 		setHomeAway();
 		
