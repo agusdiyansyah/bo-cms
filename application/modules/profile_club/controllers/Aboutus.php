@@ -54,7 +54,7 @@ class Aboutus extends Controller{
             } else {
                 $this->db->where("tipe", "aboutus");
                 $val = $this->M_page->getData("cover")->row();
-                $cover = "";
+                $cover = @$val->cover;
                 
                 if (is_uploaded_file($_FILES['file']['tmp_name']) AND $this->input->post('stat_removecover') == 0) {
                     $this->load->library('image');
@@ -68,6 +68,7 @@ class Aboutus extends Controller{
                 } elseif ($this->input->post('stat_removecover') > 0 AND !empty($val->cover)) {
                     unlink($this->ImageUploadPath . $val->cover);
                     unlink($this->ImageUploadPath . "thumb/" . $val->cover);
+                    $cover = "";
                 }
                 
                 $data = $this->_postData($cover);
