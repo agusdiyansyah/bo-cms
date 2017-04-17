@@ -18,3 +18,4 @@ $config["tb_pengurus_jabatan"] = "pengurus_jabatan";
 $config["tb_pemain"] = "pemain";
 $config["tb_match"] = "match";
 $config["tb_page"] = "page";
+$config["tb_meta"] = "meta";

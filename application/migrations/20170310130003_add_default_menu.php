@@ -75,10 +75,10 @@ class Migration_add_default_menu extends CI_Migration {
                 ),
                 array(
                     "id_menu" => null,
-                    "name" => "Kontak",
-                    "link" => "profile_club/contact",
+                    "name" => "Informasi Umum",
+                    "link" => "profile_club/info",
                     "icon" => "",
-                    "order" => 15,
+                    "order" => 1,
                     "is_active" => 1,
                     "is_parent" => 3,
                     "level" => 0
