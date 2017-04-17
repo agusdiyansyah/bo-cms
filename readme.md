@@ -11,6 +11,6 @@ FITUR BO-CMS
 - [x] Galeri
 - [x] Tentang Kami
 - [x] Histori
-- [ ] Kontak Kami
+- [x] Kontak Kami
 - [x] Administrator
 - [x] Manajemen Menu
