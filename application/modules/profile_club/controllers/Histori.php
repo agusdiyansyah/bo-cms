@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Aboutus extends Controller{
+class Histori extends Controller{
     
     private $module = "profile_club";
-    private $submodule = "aboutus";
+    private $submodule = "histori";
     private $moduleLink;
     private $stat   = false;
     private $valid  = false;
@@ -21,7 +21,7 @@ class Aboutus extends Controller{
     public function index () {
 		Modules::run('login/terlarang', 10);
         
-        $this->db->where("tipe", "aboutus");
+        $this->db->where("tipe", "histori");
         $data = $this->M_page->getData("cover, content")->row();
         
         $cover = (empty($data->cover)) ? "" : base_url($this->ImageUploadPath) . "/" . $data->cover;
@@ -52,7 +52,7 @@ class Aboutus extends Controller{
                 
                 $this->msg = $this->_postProsesError();
             } else {
-                $this->db->where("tipe", "aboutus");
+                $this->db->where("tipe", "histori");
                 $val = $this->M_page->getData("cover")->row();
                 $cover = @$val->cover;
                 
@@ -73,7 +73,7 @@ class Aboutus extends Controller{
                 
                 $data = $this->_postData($cover);
 
-                $proses = $this->M_page->prosesSpecialPage($data, "aboutus");
+                $proses = $this->M_page->prosesSpecialPage($data, "histori");
 
                 if ($proses) {
                     $this->stat = true;
@@ -135,9 +135,9 @@ class Aboutus extends Controller{
             "content" => $content,
             "cover" => $cover,
             "status" => 1,
-            "tipe" => "aboutus",
-            "title" => "Tentang Kami",
-            "slug" => "tentang-kami",
+            "tipe" => "histori",
+            "title" => "Histori",
+            "slug" => "histori",
         );
     }
     
