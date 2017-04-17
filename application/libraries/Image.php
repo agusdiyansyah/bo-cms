@@ -20,16 +20,25 @@ class Image {
      * max_size
      */
     public function upload ($opt = array()) {
-        $opt = array(
-            "file_element_name" => empty($opt['file_element_name']) ? "file" : $opt['file_element_name'],
-            "crop" => empty($opt['crop']) ? true : $opt['crop'],
-            "crop_center" => empty($opt['crop_center']) ? true : $opt['crop_center'],
-            "crop_width" => empty($opt['crop_width']) ? 350 : $opt['crop_width'],
-            "crop_height" => empty($opt['crop_height']) ? 350 : $opt['crop_height'],
-            "upload_path" => empty($opt['upload_path']) ? "./upload/image/" : $opt['upload_path'],
-            "update" => empty($opt['update']) ? false : $opt['update'],
-            "max_size" => empty($opt['max_size']) ? 1024*5 : $opt['max_size']
-        );
+        $opt["file_element_name"] = empty($opt['file_element_name']) ? "file" : $opt['file_element_name'];
+        $opt["upload_path"]       = empty($opt['upload_path']) ? "./upload/image/" : $opt['upload_path'];
+        $opt["thumbnail_path"]    = empty($opt['thumbnail_path']) ? $opt["upload_path"]."thumb/" : $opt['thumbnail_path'];
+        
+        $opt["crop"]              = empty($opt['crop']) ? true : $opt['crop'];
+        $opt["crop_file_name"]    = empty($opt['crop_file_name']) ? "" : $opt['crop_file_name'];
+        $opt["crop_center"]       = empty($opt['crop_center']) ? true : $opt['crop_center'];
+        $opt["crop_width"]        = empty($opt['crop_width']) ? 350 : $opt['crop_width'];
+        $opt["crop_height"]       = empty($opt['crop_height']) ? 350 : $opt['crop_height'];
+        
+        $opt["resize_file_name"]  = empty($opt['resize_file_name']) ? "" : $opt['resize_file_name'];
+        $opt["resize_width"]      = empty($opt['resize_width']) ? $opt["crop_width"] : $opt['resize_width'];
+        $opt["resize_height"]     = empty($opt['resize_height']) ? $opt["crop_height"] : $opt['resize_height'];
+        
+        $opt["update"]            = empty($opt['update']) ? false : $opt['update'];
+        $opt["encrypt_name"]      = empty($opt['encrypt_name']) ? true : $opt['encrypt_name'];
+        
+        $opt["max_size"]          = empty($opt['max_size']) ? 1024*5 : $opt['max_size'];
+        $opt["min_size"]          = empty($opt['min_size']) ? 0 : $opt['min_size'];
         
         $valid = true;
         $file_name = "";
@@ -40,8 +49,8 @@ class Image {
                 unlink($opt['upload_path'] . $opt['update']);
             }
             
-            if (file_exists($opt['upload_path'] . "thumb/" . $opt['update'])) {
-                unlink($opt['upload_path'] . "thumb/" . $opt['update']);
+            if (file_exists($opt['thumbnail_path'] . $opt['update'])) {
+                unlink($opt['thumbnail_path'] . $opt['update']);
             }
         }
         
@@ -63,7 +72,7 @@ class Image {
                 "upload_path" => $upload_path,
                 "allowed_types" => "jpg|jpeg|gif|png",
                 "max_size" => $opt['max_size'],
-                "encrypt_name" => true
+                "encrypt_name" => $opt['encrypt_name']
             );
             
             $this->ci->load->library('upload' , $conf);
@@ -92,9 +101,9 @@ class Image {
                     "master_dim" => $fit,
                     "quality" => "100%",
                     "source_image" => $upload_path . $file_name,
-                    "new_image" => $upload_path . "thumb/",
-                    "width" => $opt['crop_width'],
-                    "height" => $opt['crop_height'],
+                    "new_image" => $opt['thumbnail_path'],
+                    "width" => $opt['resize_width'],
+                    "height" => $opt['resize_height'],
                 );
                 
                 $this->ci->image_lib->initialize($conf);
@@ -134,8 +143,8 @@ class Image {
                             "image_library" => "gd2",
                             "maintain_ratio" => false,
                             "quality" => "100%",
-                            "source_image" => $upload_path . "thumb/" . $file_name,
-                            "new_image" => $upload_path . "thumb/",
+                            "source_image" => $opt['thumbnail_path'] . $file_name,
+                            "new_image" => $opt['thumbnail_path'],
                             "width" => $opt['crop_width'],
                             "height" => $opt['crop_height'],
                             "x_axis" => $x,
@@ -150,7 +159,7 @@ class Image {
                             if (file_exists($upload_path . $file_name)) {
                                 unlink($upload_path . $file_name);
                             }
-                            if (file_exists($upload_path . "thumb/" . $file_name)) {
+                            if (file_exists($opt['thumbnail_path'] . $file_name)) {
                                 unlink($upload_path . $file_name);
                             }
                             $msg = $this->ci->image_lib->display_errors();
