@@ -237,14 +237,14 @@
     $(document).ready(function() {
         var tabSelected = "<?php echo $tabSelected ?>";
         $(".mn-ProfilTeam, .mn-ProfilTeam .mn-InformasiUmum").addClass("active");
-        
+		
         switch (tabSelected) {
             case "image":
 				$(".tab").removeClass("active");
 				$(".tab-pane").removeClass("active");
 				$(".tab-image").addClass("active");
 				$(".tab-pane-image").addClass("active");
-                // getDataMetaImage();
+                getDataMetaImage();
             break;
             
             case "socmed":
@@ -264,7 +264,7 @@
         });
         
         $(".tab-image").click(function(event) {
-            // getDataMetaImage();
+            getDataMetaImage();
         });
         
         $(".tab-socmed").click(function(event) {
@@ -281,26 +281,6 @@
  			   	nama_tim : {required: "Nama tim tidak boleh kosong"},
  		   	}
         });
-		
-		fileInputInit({
-			target: "cover"
-		});
-		
-		fileInputInit({
-			target: "logo"
-		});
-        
-		$(".form_image").on('click', '.fileinput-browse', function(event) {
-        	event.preventDefault();
-			var tipe = $(this).data("tipe");
-          	$("#" + tipe).trigger('click');
-     	});
-        
-		$(".form_image").on('click', '.fileinput-reset', function(event) {
-        	event.preventDefault();
-			var tipe = $(this).data("tipe");
- 			fileInputReset(tipe);
- 		});
     });
     
     function getDataMetaUmum () {
@@ -344,9 +324,61 @@
         });
     }
 	
+	function getDataMetaImage () {
+		$.ajax({
+            url: "<?php echo $data['image'] ?>",
+            type: "post",
+            dataType: "json",
+            data: {
+                ac: "image"
+            },
+            success: function (json) {
+				var imageLogo = "";
+				var imageCover = "";
+				var resetLogo = true;
+				var resetCover = true;
+				
+				if (json.meta_image_logo != null) {
+					imageLogo = json.ImageUploadPath + json.meta_image_logo;
+					resetLogo = false;
+				}
+				
+				if (json.meta_image_cover != null) {
+					imageCover = json.ImageUploadPath + json.meta_image_cover;
+					resetCover = false;
+				}
+				
+				
+				fileInputInit({
+					target: "cover",
+					imageLink: imageCover,
+					reset: resetCover,
+				});
+				
+				fileInputInit({
+					target: "logo",
+					imageLink: imageLogo,
+					reset: resetLogo,
+				});
+				
+				$(".form_image").on('click', '.fileinput-browse', function(event) {
+		        	event.preventDefault();
+					var tipe = $(this).data("tipe");
+		          	$("#" + tipe).trigger('click');
+		     	});
+		        
+				$(".form_image").on('click', '.fileinput-reset', function(event) {
+		        	event.preventDefault();
+					var tipe = $(this).data("tipe");
+		 			fileInputReset(tipe);
+		 		});
+            }
+        });
+	}
+	
 	function fileInputReset (target) {
 		$("#" + target).fileinput('destroy');
-		$(".remove_" + target).val(1);
+		$(".remove-" + target).val(1);
 		fileInputInit({
 			reset: true,
 			target: target
@@ -355,12 +387,14 @@
 	
 	function fileInputInit (conf = {
 		reset: false,
-		target: ""
+		target: "",
+		imageLink: ""
 	}) {
-		var imageLink = "<?php echo @$cover ?>";
-		
-		if (imageLink == "" || conf.reset) {
+		var imageLink = conf.imageLink;
+		if (typeof conf.imageLink === "undefined" || !conf.imageLink) {
 			imageLink = "<?php echo base_url("assets/themes/adminLTE/img/boxed-bg.png") ?>";
+		}
+		if (conf.reset) {
 			$(".form_image").find('.fileinput-reset.reset-'+conf.target).addClass('hide');
 		} else {
 			$(".form_image").find('.fileinput-reset.reset-'+conf.target).removeClass('hide');
@@ -381,12 +415,11 @@
  			   "<img src='"+ imageLink +"' class='file-preview-image' style='width: 100%; height: auto' alt='Default Image' title='Default Image'>",
  		   ]
  	   };
- 	   
- 	   	$("#" + conf.target)
+ 	   $("#" + conf.target)
  		   	.fileinput(fileInput)
  		   	.on('fileimageloaded', function(event, previewId) {
  			   	$(".form_image").find('.fileinput-reset.reset-'+conf.target).removeClass('hide');
-				$(".remove_" + conf.target).val(0);
+				$(".remove-" + conf.target).val(0);
  		   	})
  		   	.on('fileclear', function(event) {
  			   	$(".form_image").find('.fileinput-reset.reset-'+conf.target).addClass('hide');

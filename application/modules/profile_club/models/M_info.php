@@ -51,6 +51,26 @@ class M_info extends CI_Model {
         return $this->db->insert_batch($this->meta, $config);
     }
     
+    public function prosesMetaImage ($data) {
+        $sql = $this->getDataMetaSocmed();
+        if ($sql->num_rows() > 0) {
+            $this->db
+                ->where("tipe", "web_info")
+                ->like("label", "meta_image", "after")
+                ->delete($this->meta);
+        }
+        $config = array();
+        foreach ($data as $key => $val) {
+            array_push($config, array(
+                "id_relasi" => 0,
+                "tipe" => "web_info",
+                "label" => "meta_image_" . $key,
+                "value" => $val
+            ));
+        }
+        return $this->db->insert_batch($this->meta, $config);
+    }
+    
     public function getDataMetaUmum () {
         return $this->db
             ->select("label, value")
@@ -65,6 +85,25 @@ class M_info extends CI_Model {
             ->where("tipe", "web_info")
             ->like("label", "meta_socmed", "after")
             ->get($this->meta);
+    }
+    
+    public function getDataMetaImage ($arr = false) {
+        $sql = $this->db
+            ->select("label, value")
+            ->where("tipe", "web_info")
+            ->like("label", "meta_image", "after")
+            ->get($this->meta);
+            
+        if ($arr) {
+            $data = array();
+            foreach ($sql->result() as $val) {
+                $data[$val->label] = $val->value;
+            }
+            
+            $sql = $data;
+        }
+        
+        return $sql;
     }
     
     public function getData ($field = "*", $id = 0) {

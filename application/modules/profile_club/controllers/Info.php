@@ -82,6 +82,21 @@ class Info extends Controller{
         }
     }
     
+    public function getDataMetaImage () {
+        $this->output->unset_template();
+        if ($this->input->post("ac") == "image") {
+            $config = $this->M_info->getDataMetaImage(true);
+            $ImageUploadPath = str_replace(".", "", $this->ImageUploadPath);
+            echo json_encode(array(
+                "ImageUploadPath" => base_url($ImageUploadPath)."/",
+                "meta_image_logo" => (empty($config["meta_image_logo"])) ? null : $config["meta_image_logo"],
+                "meta_image_cover" => (empty($config["meta_image_cover"])) ? null : $config["meta_image_cover"],
+            ));
+        } else {
+            show_404();
+        }
+    }
+    
     public function prosesMetaUmum () {
         $this->output->unset_template();
         if ($this->input->post()) {
@@ -135,17 +150,21 @@ class Info extends Controller{
     
     public function prosesMetaImage () {
         $this->output->unset_template();
+        
         if ($this->input->post()) {
             $logo = "";
-            if (is_uploaded_file($_FILES['logo']['tmp_name']) AND $this->input->post('remove_logo') == 0) {
+            $val = $this->M_info->getDataMetaImage(true);
+            if (is_uploaded_file($_FILES['logo']['tmp_name']) AND $this->input->post('remove-logo') == 0) {
                 $this->load->library('image');
                 $upload = $this->image->upload(array(
                     "upload_path" => $this->ImageUploadPath,
                     "thumbnail_path" => $this->ImageUploadPath,
-                    "file_element_name" => "logo"
+                    "file_element_name" => "logo",
+                    "resize" => false,
+                    "update" => @$val['meta_image_logo']
                 ));
                 if ($upload['stat']) {
-                    $dataLogo['meta-image-logo'] = $upload['file_name'];
+                    $data['logo'] = $upload['file_name'];
                     $icon144 = $this->image->upload(array(
                         "upload_path" => $this->ImageUploadPath,
                         "thumbnail_path" => $this->ImageUploadPath,
@@ -153,9 +172,10 @@ class Info extends Controller{
                         "crop" => false,
                         "resize_width" => 144,
                         "resize_height" => 144,
+                        "update" => @$val['meta_image_icon_144']
                     ));
                     if ($icon144['stat']) {
-                        $dataLogo['meta-image-icon-144'] = $icon144['file_name'];
+                        $data['icon_144'] = $icon144['file_name'];
                         $icon72 = $this->image->upload(array(
                             "upload_path" => $this->ImageUploadPath,
                             "thumbnail_path" => $this->ImageUploadPath,
@@ -163,9 +183,10 @@ class Info extends Controller{
                             "crop" => false,
                             "resize_width" => 72,
                             "resize_height" => 72,
+                            "update" => @$val['meta_image_icon_72']
                         ));
                         if ($icon72['stat']) {
-                            $dataLogo['meta-image-icon-72'] = $icon72['file_name'];
+                            $data['icon_72'] = $icon72['file_name'];
                             $icon58 = $this->image->upload(array(
                                 "upload_path" => $this->ImageUploadPath,
                                 "thumbnail_path" => $this->ImageUploadPath,
@@ -173,39 +194,68 @@ class Info extends Controller{
                                 "crop" => false,
                                 "resize_width" => 58,
                                 "resize_height" => 58,
+                                "update" => @$val['meta_image_icon_58']
                             ));
                             if ($icon58['stat']) {
-                                $dataLogo['meta-image-icon-58'] = $icon58['file_name'];
+                                $data['icon_58'] = $icon58['file_name'];
                             }
                         }
                     }
                 }
-            } elseif ($this->input->post('remove_logo') > 0 AND !empty($val->cover)) {
-                unlink($this->ImageUploadPath . $val->cover);
-                unlink($this->ImageUploadPath . "thumb/" . $val->cover);
+            } elseif ($this->input->post('remove-logo') > 0) {
+                if (file_exists($this->ImageUploadPath . $val['meta_image_logo'])) {
+                    unlink($this->ImageUploadPath . $val['meta_image_logo']);
+                    $data['logo'] = "";
+                }
+                if (file_exists($this->ImageUploadPath . $val['meta_image_icon_144'])) {
+                    unlink($this->ImageUploadPath . $val['meta_image_icon_144']);
+                    $data['icon_144'] = "";
+                }
+                if (file_exists($this->ImageUploadPath . $val['meta_image_icon_72'])) {
+                    unlink($this->ImageUploadPath . $val['meta_image_icon_72']);
+                    $data['icon_72'] = "";
+                }
+                if (file_exists($this->ImageUploadPath . $val['meta_image_icon_58'])) {
+                    unlink($this->ImageUploadPath . $val['meta_image_icon_58']);
+                    $data['icon_58'] = "";
+                }
+            } else {
+                $data['logo'] = @$val['meta_image_logo'];
+                $data['icon_144'] = @$val['meta_image_icon_144'];
+                $data['icon_72'] = @$val['meta_image_icon_72'];
+                $data['icon_58'] = @$val['meta_image_icon_58'];
             }
             
-            if (count($dataLogo) > 0) {
-                $this->M_info->prosesMetaImage();
-            }
-            
-            if (is_uploaded_file($_FILES['cover']['tmp_name']) AND $this->input->post('remove_cover') == 0) {
+            if (is_uploaded_file($_FILES['cover']['tmp_name']) AND $this->input->post('remove-cover') == 0) {
                 $this->load->library('image');
                 $upload = $this->image->upload(array(
                     "upload_path" => $this->ImageUploadPath,
                     "thumbnail_path" => $this->ImageUploadPath,
-                    "file_element_name" => "logo",
-                    "update" => @$val->cover,
-                    "file"
+                    "file_element_name" => "cover",
+                    "resize_width" => 1024,
+                    "resize_height" => 768,
+                    "crop" => false,
+                    "update" => @$val['meta_image_cover'],
                 ));
                 if ($upload['stat']) {
-                    $cover = $upload['file_name'];
+                    $data['cover'] = $upload['file_name'];
                 }
-            } elseif ($this->input->post('stat_removecover') > 0 AND !empty($val->cover)) {
-                unlink($this->ImageUploadPath . $val->cover);
-                unlink($this->ImageUploadPath . "thumb/" . $val->cover);
+            } elseif ($this->input->post('remove-cover') > 0 AND !empty($val['meta_image_cover'])) {
+                if (file_exists($this->ImageUploadPath . $val['meta_image_cover'])) {
+                    unlink($this->ImageUploadPath . $val['meta_image_cover']);
+                    $data['cover'] = "";
+                }
+            } else {
+                $data['cover'] = @$val['meta_image_cover'];
             }
             
+            if (count($data) > 0) {
+                $this->M_info->prosesMetaImage($data);
+            }
+            
+            $this->stat = true;
+            
+            $this->_notif("index/image");
         } else {
             show_404();
         }
