@@ -33,7 +33,7 @@ class Image {
         $opt["resize_width"]      = empty($opt['resize_width']) ? $opt["crop_width"] : $opt['resize_width'];
         $opt["resize_height"]     = empty($opt['resize_height']) ? $opt["crop_height"] : $opt['resize_height'];
         
-        $opt["update"]            = ( !isset($opt['update']) OR $opt['update'] ) ? false : true;
+        $opt["update"]            = ( !isset($opt['update']) ) ? false : $opt["update"];
         $opt["encrypt_name"]      = ( !isset($opt['encrypt_name']) OR $opt['encrypt_name'] ) ? true : false;
         
         $opt["max_size"]          = empty($opt['max_size']) ? 1024*5 : $opt['max_size'];
@@ -179,7 +179,7 @@ class Image {
         
         return array(
             "stat" => $valid,
-            "msg" => $msg,
+            "msg" => $opt['update'],
             "file_name" => $file_name
         );
         
