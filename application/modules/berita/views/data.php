@@ -99,10 +99,7 @@
 
         $('.mn-Berita, .mn-Berita .mn-Data').addClass('active');
 		
-		$(".filter").on('click', '.btn-cari', function(event) {
-			event.preventDefault();
-			$(".filter").submit();
-		});
+		$(".select2").select2({width: "100%"});
 
 	    // DataTable
         $('.table').DataTable({
@@ -116,7 +113,8 @@
                 "url": "<?php echo base_url('berita/data');?>",
                 "type": "POST",
                 "data": function ( d ) {
-					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
+					d.title = $(".filter").find('.title').val();
+					d.status = $(".filter").find('.status').val();
                 }, 
 				"beforeSend": function () {
 					Pace.restart();
@@ -130,10 +128,15 @@
 	    	event.preventDefault();
 	    	refreshTable();
 	    });
-
-        $(".btn-reset").click(function(e) {
-            $('input').val('');
-
+		
+		$(".filter").on('click', '.btn-cari', function(event) {
+			event.preventDefault();
+			$(".filter").submit();
+		});
+		
+        $(".filter").on('click', '.btn-reset', function(event) {
+			$('input').val('');
+            $('.select2').select2('val', '');
 	    	refreshTable();
 	    });
 		
