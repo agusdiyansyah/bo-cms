@@ -24,9 +24,19 @@ class Migration_add_table_berita extends CI_Migration {
                 'null' => FALSE,
                 'default' => 0
             ),
+            'cover' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => FALSE
+            ),
             'title' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '50',
+                'null' => FALSE
+            ),
+            'slug' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
                 'null' => FALSE
             ),
             'sinopsis' => array(
@@ -56,18 +66,6 @@ class Migration_add_table_berita extends CI_Migration {
         $this->dbforge->add_key('id_berita', TRUE);
         $this->dbforge->create_table($this->berita);
         
-        $menuBerita = array(
-            "id_menu" => null,
-            "name" => "Berita",
-            "link" => "berita",
-            "icon" => "fa fa-newspaper-o",
-            "order" => 2,
-            "is_active" => 1,
-            "is_parent" => 0,
-            "level" => 0
-        );
-        
-        $this->db->insert($this->menu_admin, $menuBerita);
     }
     
     public function down () {

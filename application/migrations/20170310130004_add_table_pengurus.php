@@ -17,9 +17,36 @@ class Migration_add_table_pengurus extends CI_Migration {
                 'type' => 'INT',
                 'auto_increment' => TRUE,
             ),
-            'nama_pengurus' => array(
+            'nama' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '50',
+                'null' => FALSE
+            ),
+            'slug' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => FALSE
+            ),
+            'photo' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => FALSE
+            ),
+            'id_jabatan' => array(
+                'type' => 'INT',
+                'null' => FALSE
+            ),
+            "kota_kelahiran" => array(
+                'type' => 'VARCHAR',
+                'constraint' => '50',
+                'null' => FALSE
+            ),
+            "tanggal_lahir" => array(
+                'type' => 'DATE',
+                'null' => FALSE
+            ),
+            "biografi" => array(
+                'type' => 'TEXT',
                 'null' => FALSE
             ),
         );

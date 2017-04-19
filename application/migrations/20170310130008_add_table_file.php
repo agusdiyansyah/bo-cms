@@ -42,11 +42,6 @@ class Migration_add_table_file extends CI_Migration {
             ),
             'datecreate TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
             'dateupdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-            'isdelete' => array(
-                'type' => 'TINYINT',
-                'null' => FALSE,
-                'default' => 0
-            ),
         );
         $this->dbforge->add_field($field);
         $this->dbforge->add_key('id_file', TRUE);
