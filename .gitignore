@@ -1,1 +1,7 @@
 /application/session/*
+/assets/upload/images/**/*.jpg
+/assets/upload/images/**/*.jpeg
+/assets/upload/images/**/*.png
+/assets/upload/images/**/**/*.jpg
+/assets/upload/images/**/**/*.jpeg
+/assets/upload/images/**/**/*.png
