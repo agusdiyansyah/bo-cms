@@ -110,14 +110,14 @@ class Slideshow extends Controller{
             if ($this->stat) {
                 $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
                 $this->session->set_flashdata('message', $notif);
-                $directo = "slideshow";
+                $_backto = "slideshow";
             } else {
                 $notif = notification_proses("warning", "Gagal", $this->msg);
                 $this->session->set_flashdata('message', $notif);
-                $directo = "slideshow/add";
+                $_backto = "slideshow/add";
             }
             
-            redirect($directo);
+            redirect($_backto);
         } else {
             show_404();
         }
