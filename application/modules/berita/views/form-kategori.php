@@ -9,7 +9,7 @@
     
     <form class="form" action="<?php echo $form_action ?>" method="post">
         
-        <?php echo form_input($input['id_hide']) ?>
+        <?php echo form_input($input['hide']['id']) ?>
 		
 		<div class="row">
 			<div class="col-xs-12">
@@ -64,14 +64,14 @@
 		});
 		
 		$('.form').validate({
-		   ignore: [],
-		   errorClass: 'error',
-		   rules: {
-			   nama_pengurus : {required: true},
-		   },
-		   messages: {
-			   nama_pengurus : {required: "Nama pengurus tidak boleh kosong"},
-		   }
-	   });
+			ignore: [],
+			errorClass: 'error',
+			rules: {
+				kategori : {required: true},
+			},
+			messages: {
+				kategori : {required: "Kategori tidak boleh kosong"},
+			}
+		});
 	});
 </script>
