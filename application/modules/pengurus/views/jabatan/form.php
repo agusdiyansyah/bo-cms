@@ -10,7 +10,7 @@
     
     <form class="form" action="<?php echo $form_action ?>" method="post">
         
-        <?php echo form_input($input['id_hide']) ?>
+        <?php echo form_input($input['hide']['id']) ?>
 		
 		<div class="row">
 			<div class="col-xs-12">
@@ -41,7 +41,7 @@
 		    minimumInputLength : 2,
 		    width: '100%',
 			 	ajax: {
-			    url      : '<?php echo base_url("$moduleLink/checkJumlahRow") ?>',
+			    url      : '<?php echo "$moduleLink/checkJumlahRow" ?>',
 			    dataType : 'json',
 			    type     : 'POST',
 			    delay    : 250,
