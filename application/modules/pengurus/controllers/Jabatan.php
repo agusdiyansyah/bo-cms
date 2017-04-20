@@ -8,12 +8,13 @@ class Jabatan extends Controller{
     private $moduleLink;
     private $stat   = false;
     private $valid  = false;
+    private $msg = "Data gagal di proses";
 
     public function __construct() {
         parent::__construct();
         
         $this->load->model("$this->module/M_$this->submodule");
-        $this->moduleLink = "$this->module/$this->submodule";
+        $this->moduleLink = "$this->module/$this->submodule/";
     }
 
     public function index () {
@@ -65,32 +66,10 @@ class Jabatan extends Controller{
     public function add () {
         $this->_formAssets();
         
-        $data = array(
-            "title" => ucwords($this->submodule),
+        $data = $this->_formInputData(array(
             "subtitle" => "Tambah Data",
-            "link_back" => site_url("$this->moduleLink"),
-            
-            "moduleLink" => $this->moduleLink,
-            
-            "form_action" => base_url("$this->moduleLink/add_proses"),
-            "input" => array(
-                "id_hide" => array(
-                    "name" => "id",
-                    "class" => "id",
-                    "type" => "hidden"
-                ),
-                
-                "jabatan" => array(
-                    "config" => array(
-                        "name" => "jabatan",
-                        "class" => "form-control select2 jabatan",
-                        "id" => "jabatan",
-                    ),
-                    "list" => array("" => "")
-                ),
-                
-            )
-        );
+            "form_action" => "add_proses"
+        ));
         
         $this->output->set_title($data['title'] . " " . $data['subtitle']);
 		$this->load->view("$this->moduleLink/form", $data);
@@ -100,42 +79,30 @@ class Jabatan extends Controller{
         $this->output->unset_template();
         
         if ($this->input->post()) {
-
-            $this->rules();
-
+            $this->_rules();
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/add");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $jabatan = $this->input->post('jabatan');
-
-                $data = array(
-                    "jabatan" => $jabatan,
-                );
-
+                $data = $this->_formPostInputData();
                 $add = $this->M_jabatan->add($data);
-
                 if ($add) {
                     $this->stat = true;
                 }
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/add";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
     }
     
     public function edit ($id = 0) {
@@ -145,46 +112,21 @@ class Jabatan extends Controller{
             $id > 0 AND
             $res->num_rows() > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
             $val = $res->row();
 
-            $data = array(
-                "moduleLink" => $this->moduleLink,
-                "title" => ucwords($this->submodule),
+            $data = $this->_formInputData(array(
                 "subtitle" => "Ubah Data",
-                "link_back" => site_url("$this->moduleLink"),
-                
-                "form_action" => base_url("$this->moduleLink/edit_proses"),
-                "input" => array(
-                    "id_hide" => array(
-                        "name" => "id",
-                        "class" => "id",
-                        "type" => "hidden",
-                        "value" => $id,
-                    ),
-                    
-                    "jabatan" => array(
-                        "config" => array(
-                            "name" => "jabatan",
-                            "class" => "form-control select2 jabatan",
-                            "id" => "jabatan",
-                        ),
-                        "list" => array($val->jabatan => $val->jabatan)
-                    ),
-                    
-                )
-            );
+                "form_action" => "edit_proses",
+                "id" => $id
+            ));
             
             $this->_formAssets();
             
             $this->output->set_title($data['title'] . " " . $data['subtitle']);
             $this->load->view("$this->moduleLink/form", $data);
+        } else {
+            show_404();
         }
-
     }
     
     public function edit_proses () {
@@ -194,81 +136,55 @@ class Jabatan extends Controller{
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('jabatan'))
+            $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
-            $this->rules();
-            
+            $this->_rules();
             $id = $this->input->post('id');
             
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/edit/$id");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $jabatan = $this->input->post('jabatan');
-                
-                $data = array(
-                    "jabatan" => $jabatan
-                );
-
+                $data = $this->_formPostInputData();
                 $edit = $this->M_jabatan->edit($data, $id);
-
                 if ($edit) {
                     $this->stat = true;
                 }
             }
-
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/edit/$id";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
-
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
-            
             $del = $this->M_jabatan->delete($id);
-
             if ($del) {
                 $this->stat = true;
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-
     }
     
     public function checkJumlahRow () {
@@ -298,7 +214,51 @@ class Jabatan extends Controller{
 		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
     }
     
-    private function _postProsesError () {
+    private function _formInputData ($data) {
+        $jabatan = array("" => "");
+        if (!empty($data['id'])) {
+            $val = $this->M_jabatan->getData("jabatan", $data['id'])->row();
+            if (!empty($val->jabatan)) {
+                $jabatan = array($val->jabatan => $val->jabatan);
+            }
+        }
+        return array(
+            "title" => ucwords($this->module),
+            "subtitle" => @$data['subtitle'],
+            "link_back" => site_url($this->moduleLink),
+            "moduleLink" => base_url($this->moduleLink),
+            "form_action" => base_url($this->moduleLink . $data['form_action']),
+            
+            "input" => array(
+                "hide" => array(
+                    "id" => array(
+                        "name" => "id",
+                        "class" => "id",
+                        "type" => "hidden",
+                        "value" => @$data['id']
+                    ),
+                ),
+                
+                "jabatan" => array(
+                    "config" => array(
+                        "name" => "jabatan",
+                        "class" => "form-control select2 jabatan",
+                        "id" => "jabatan",
+                    ),
+                    "list" => $jabatan,
+                ),
+                
+            )
+        );
+    }
+    
+    private function _formPostInputData () {
+        return array(
+            "jabatan" => $this->input->post('jabatan'),
+        );;
+    }
+    
+    private function _formPostProsesError () {
         if (form_error("jabatan")) {
             $errorMsg .= form_error("jabatan");
         }
@@ -306,7 +266,7 @@ class Jabatan extends Controller{
         return $errorMsg;
     }
     
-    private function rules () {
+    private function _rules () {
         $this->load->library('form_validation');
         $this->load->helper('security');
         
