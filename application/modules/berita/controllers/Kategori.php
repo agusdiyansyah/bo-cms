@@ -161,30 +161,22 @@ class Kategori extends Controller{
         }
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
         $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            if ($this->valid) {
-                $id = $this->input->post('id');
-                
-                $del = $this->M_kategori->delete($id);
-
-                if ($del) {
-                    $this->stat = true;
-                }
+            $id = $this->input->post('id');
+            $del = $this->M_kategori->delete($id);
+            if ($del) {
+                $this->stat = true;
             }
 
-            if ($this->stat) {
-                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-                $this->session->set_flashdata('message', $notif);
-            } else {
-                $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-                $this->session->set_flashdata('message', $notif);
-            }
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
             show_404();
         }

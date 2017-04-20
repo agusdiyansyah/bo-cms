@@ -1,3 +1,4 @@
+<?php echo $this->session->flashdata('message');?>
 <section class="content-header">
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
