@@ -215,16 +215,13 @@ class Berita extends Controller{
         }
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
             $data = $this->M_berita->getData("cover", $id)->row();
             if (!empty($data->cover)) {
@@ -239,16 +236,13 @@ class Berita extends Controller{
             if ($del) {
                 $this->stat = true;
             }
-        }
 
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-
     }
     
     private function _formAssets () {
