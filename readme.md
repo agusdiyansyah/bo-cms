@@ -1,6 +1,6 @@
 FITUR BO-CMS
 ====================
-- [ ] Slideshow
+- [x] Slideshow
 - [x] Berita
 - [x] Kategori Berita
 - [x] Pemain

@@ -1,4 +1,6 @@
-<?php echo $this->session->flashdata('message');?>
+<div class="msg">
+	<?php echo $this->session->flashdata('message');?>
+</div>
 <section class="content-header">
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
@@ -99,10 +101,7 @@
 
         $('.mn-Berita, .mn-Berita .mn-Data').addClass('active');
 		
-		$(".filter").on('click', '.btn-cari', function(event) {
-			event.preventDefault();
-			$(".filter").submit();
-		});
+		$(".select2").select2({width: "100%"});
 
 	    // DataTable
         $('.table').DataTable({
@@ -116,7 +115,8 @@
                 "url": "<?php echo base_url('berita/data');?>",
                 "type": "POST",
                 "data": function ( d ) {
-					d.nama_pengurus = $(".filter").find('.nama_pengurus').val();
+					d.title = $(".filter").find('.title').val();
+					d.status = $(".filter").find('.status').val();
                 }, 
 				"beforeSend": function () {
 					Pace.restart();
@@ -130,10 +130,15 @@
 	    	event.preventDefault();
 	    	refreshTable();
 	    });
-
-        $(".btn-reset").click(function(e) {
-            $('input').val('');
-
+		
+		$(".filter").on('click', '.btn-cari', function(event) {
+			event.preventDefault();
+			$(".filter").submit();
+		});
+		
+        $(".filter").on('click', '.btn-reset', function(event) {
+			$('input').val('');
+            $('.select2').select2('val', '');
 	    	refreshTable();
 	    });
 		
@@ -188,15 +193,50 @@
 	                url: '<?php echo base_url("berita/delete_proses") ?>',
 					cache: false,
 	                type: 'POST',
+					dataType: "json",
 	                data: {
 	                    id: id
 	                },
-	                success: function () {
-						refreshTable();
+	                success: function (json) {
+						if (json.stat) {
+							conf = {
+								tipe: "success",
+								title: "Berhasil",
+								msg: "Data berhasil di proses",
+							}
+							refreshTable();
+						} else {
+							conf = {
+								tipe: "warning",
+								title: "Gagal",
+								msg: "Data gagal di proses",
+							}
+						}
+						
+						notification(conf);
 	                }
 	            });
 	        });
 	    }
 	}
-
+	
+	function notification (data) {
+        var content = $(".msg");
+        var html    = "";
+        
+        html += '<div class="alert alert-' + data.tipe + ' alert-dismissable js-notif" style="border-radius: 0px;">';
+        html += '    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>';
+        html += '    <h4><i class="icon fa fa-check"></i> ' + data.title + '</h4>';
+        html += '    ' + data.msg;
+        html += '</div>';
+        var timeout = 2500;
+        if ($(".msg").find('.js-notif').hasClass('alert')) {
+            $(".msg").find('.js-notif').remove();
+            timeout = 0;
+        }
+        content.html(html);
+        setTimeout(function(){ 
+            $(".msg").find('.js-notif').remove();
+        }, timeout);
+    }
 </script>
