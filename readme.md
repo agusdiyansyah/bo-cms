@@ -1,6 +1,6 @@
 FITUR BO-CMS
 ====================
-- [ ] Slideshow
+- [x] Slideshow
 - [x] Berita
 - [x] Kategori Berita
 - [x] Pemain
@@ -10,6 +10,7 @@ FITUR BO-CMS
 - [x] Hasil Pertandingan
 - [x] Galeri
 - [x] Tentang Kami
-- [ ] Kontak Kami
+- [x] Histori
+- [x] Kontak Kami
 - [x] Administrator
 - [x] Manajemen Menu
