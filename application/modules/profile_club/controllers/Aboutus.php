@@ -23,10 +23,10 @@ class Aboutus extends Controller{
         
         $this->db->where("tipe", "aboutus");
         $data = $this->M_page->getData("cover, content")->row();
+        $baseImage = str_replace(".", "", $this->ImageUploadPath);
+        $cover = (empty($data->cover)) ? "" : base_url($baseImage . $data->cover);
         
-        $cover = (empty($data->cover)) ? "" : base_url($this->ImageUploadPath) . "/" . $data->cover;
-        
-        $data = $this->_formData(array(
+        $data = $this->_formInputData(array(
             "subtitle" => "",
             "form_action" => "$this->moduleLink/prosesSpecialPage",
             "cover" => $cover,
@@ -48,9 +48,7 @@ class Aboutus extends Controller{
             $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $this->msg = $this->_postProsesError();
+                $this->msg = $this->_formPostProsesError();
             } else {
                 $this->db->where("tipe", "aboutus");
                 $val = $this->M_page->getData("cover")->row();
@@ -71,7 +69,7 @@ class Aboutus extends Controller{
                     $cover = "";
                 }
                 
-                $data = $this->_postData($cover);
+                $data = $this->_formPostInputData($cover);
 
                 $proses = $this->M_page->prosesSpecialPage($data, "aboutus");
 
@@ -79,17 +77,19 @@ class Aboutus extends Controller{
                     $this->stat = true;
                 }
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+            }
+            
+            redirect($this->moduleLink);
         } else {
-            $notif = notification_proses("warning", "Gagal", $this->msg);
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
     }
     
     private function _formAssets () {
@@ -107,7 +107,7 @@ class Aboutus extends Controller{
 		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
     }
     
-    private function _formData ($data = array()) {
+    private function _formInputData ($data = array()) {
         return array(
             "title" => ucwords($this->submodule),
             "subtitle" => $data['subtitle'],
@@ -128,7 +128,7 @@ class Aboutus extends Controller{
         );
     }
     
-    private function _postData ($cover = "") {
+    private function _formPostInputData ($cover = "") {
         $content = $this->input->post('content');
 
         return array(
@@ -141,7 +141,7 @@ class Aboutus extends Controller{
         );
     }
     
-    private function _postProsesError () {
+    private function _formPostProsesError () {
         if (form_error("content")) {
             $errorMsg .= form_error("content");
         }
