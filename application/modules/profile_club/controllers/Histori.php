@@ -23,10 +23,10 @@ class Histori extends Controller{
         
         $this->db->where("tipe", "histori");
         $data = $this->M_page->getData("cover, content")->row();
+        $baseImage = str_replace(".", "", $this->ImageUploadPath);
+        $cover = (empty($data->cover)) ? "" : base_url($baseImage . $data->cover);
         
-        $cover = (empty($data->cover)) ? "" : base_url($this->ImageUploadPath) . "/" . $data->cover;
-        
-        $data = $this->_formData(array(
+        $data = $this->_formInputData(array(
             "subtitle" => "",
             "form_action" => "$this->moduleLink/prosesSpecialPage",
             "cover" => $cover,
@@ -48,9 +48,7 @@ class Histori extends Controller{
             $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $this->msg = $this->_postProsesError();
+                $this->msg = $this->_formPostProsesError();
             } else {
                 $this->db->where("tipe", "histori");
                 $val = $this->M_page->getData("cover")->row();
@@ -71,7 +69,7 @@ class Histori extends Controller{
                     $cover = "";
                 }
                 
-                $data = $this->_postData($cover);
+                $data = $this->_formPostInputData($cover);
 
                 $proses = $this->M_page->prosesSpecialPage($data, "histori");
 
@@ -107,7 +105,7 @@ class Histori extends Controller{
 		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
     }
     
-    private function _formData ($data = array()) {
+    private function _formInputData ($data = array()) {
         return array(
             "title" => ucwords($this->submodule),
             "subtitle" => $data['subtitle'],
@@ -128,7 +126,7 @@ class Histori extends Controller{
         );
     }
     
-    private function _postData ($cover = "") {
+    private function _formPostInputData ($cover = "") {
         $content = $this->input->post('content');
 
         return array(
@@ -141,7 +139,7 @@ class Histori extends Controller{
         );
     }
     
-    private function _postProsesError () {
+    private function _formPostProsesError () {
         if (form_error("content")) {
             $errorMsg .= form_error("content");
         }

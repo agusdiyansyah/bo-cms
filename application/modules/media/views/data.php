@@ -582,7 +582,7 @@
                 };
                 
                 if (data.file != '') {
-                    var link = '<?php echo base_url('assets/upload/images') ?>/' + data.file;
+                    var link = '<?php echo base_url('assets/upload/images/media') ?>/' + data.file;
                     
                     $(".form-image").find('.fileinput-reset').removeClass('hide');
                     

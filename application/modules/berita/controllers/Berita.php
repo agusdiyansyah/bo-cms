@@ -13,7 +13,6 @@ class Berita extends Controller{
         parent::__construct();
         
         $this->load->model("M_berita");
-        $this->load->model("berita/M_kategori");
     }
 
     public function index () {
@@ -77,68 +76,10 @@ class Berita extends Controller{
     public function add () {
         $this->_formAssets();
         
-        $objKategori = $this->M_kategori->getData("id_kategori, kategori")->result();
-        $kategori = array("" => "");
-        foreach ($objKategori as $val) {
-            $kategori += array($val->id_kategori => $val->kategori);
-        }
-        
-        $data = array(
-            "title" => ucwords($this->module),
+        $data = $this->_formInputData(array(
             "subtitle" => "Tambah Data",
-            "link_back" => site_url($this->module),
-            
-            "cover" => "",
-            
-            "form_action" => base_url("$this->module/add_proses"),
-            "input" => array(
-                "id_hide" => array(
-                    "name" => "id",
-                    "class" => "id",
-                    "type" => "hidden"
-                ),
-                
-                "status" => array(
-                    "config" => array(
-                        "name" => "status",
-                        "class" => "form-control select2 status",
-                        "id" => "status",
-                    ),
-                    "list" => $this->M_berita->status()
-                ),
-                
-                "kategori" => array(
-                    "config" => array(
-                        "name" => "kategori",
-                        "class" => "form-control select2 kategori",
-                        "id" => "kategori",
-                    ),
-                    "list" => $kategori
-                ),
-
-                "title" => array(
-                    "name" => "title",
-                    "type" => "text",
-                    "class" => "form-control title",
-                    "id" => "title"
-                ),
-                
-                "sinopsis" => array(
-                    "name" => "sinopsis",
-                    "type" => "text",
-                    "class" => "form-control sinopsis",
-                    "id" => "sinopsis",
-                    "style" => "margin: 0px -0.25px 0px 0px; height: 60px; max-width: 100%;"
-                ),
-                
-                "content" => array(
-                    "name" => "content",
-                    "type" => "text",
-                    "class" => "form-control content",
-                    "id" => "content"
-                ),
-            )
-        );
+            "form_action" => "add_proses"
+        ));
         
         $this->output->set_title($data['title'] . " " . $data['subtitle']);
 		$this->load->view("$this->module/form", $data);
@@ -148,35 +89,14 @@ class Berita extends Controller{
         $this->output->unset_template();
         if ($this->input->post()) {
 
-            $this->rules();
+            $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                if (form_error("kategori")) {
-                    $errorMsg .= form_error("kategori");
-                }
-                if (form_error("title")) {
-                    $errorMsg .= form_error("title");
-                }
-                if (form_error("sinopsis")) {
-                    $errorMsg .= form_error("sinopsis");
-                }
-                if (form_error("content")) {
-                    $errorMsg .= form_error("cpntent");
-                }
-
+                $errorMsg = $this->_formPostProsesError();
                 $notif = notification_proses("warning", "Gagal", $errorMsg);
                 $this->session->set_flashdata('message', $notif);
-
                 redirect("berita/add");
             } else {
-                $title = $this->input->post('title');
-                $sinopsis = $this->input->post('sinopsis');
-                $content = $this->input->post('content');
-                $kategori = $this->input->post('kategori');
-                $status = $this->input->post('status');
-                
                 $cover = "";
                 if (is_uploaded_file($_FILES['file']['tmp_name'])) {
                     $this->load->library('image');
@@ -187,15 +107,8 @@ class Berita extends Controller{
                         $cover = $upload['file_name'];
                     }
                 }
-
-                $data = array(
-                    "title" => $title,
-                    "sinopsis" => $sinopsis,
-                    "content" => $content,
-                    "id_kategori" => $kategori,
-                    "status" => $status,
-                    "cover" => $cover,
-                );
+                
+                $data = $this->_formPostInputData($cover);
 
                 $add = $this->M_berita->add($data);
 
@@ -218,7 +131,6 @@ class Berita extends Controller{
     
     public function edit ($id = 0) {
         $res = $this->M_berita->getData("id_berita, id_kategori, title, sinopsis, status, content, cover", $id);
-        
         if (
             $id > 0 AND
             $res->num_rows() > 0
@@ -228,79 +140,21 @@ class Berita extends Controller{
 
         if ($this->valid) {
             
-            $objKategori = $this->M_kategori->getData("id_kategori, kategori")->result();
-            $kategori = array("" => "");
-            foreach ($objKategori as $val) {
-                $kategori += array($val->id_kategori => $val->kategori);
-            }
-            
             $val = $res->row();
-            
-            $cover = (empty($val->cover)) ? "" : base_url("assets/upload/images/berita/$val->cover");
+            $base_image = str_replace(".", "", $this->ImageUploadPath);
+            $cover = (empty($val->cover)) ? "" : base_url($base_image . $val->cover);
 
-            $data = array(
-                "title" => ucwords($this->module),
+            $data = $this->_formInputData(array(
                 "subtitle" => "Ubah Data",
-                "form_action" => base_url("$this->module/edit_proses"),
-                "link_back" => site_url("berita"),
-                
+                "form_action" => "edit_proses",
+                "id" => $id,
                 "cover" => $cover,
-                
-                "input" => array(
-                    "id_hide" => array(
-                        "name" => "id",
-                        "class" => "id",
-                        "type" => "hidden",
-                        "value" => $val->id_berita
-                    ),
-                    
-                    "status" => array(
-                        "config" => array(
-                            "name" => "status",
-                            "class" => "form-control select2 status",
-                            "id" => "status",
-                        ),
-                        "list" => $this->M_berita->status(),
-                        "selected" => $val->status
-                    ),
-                    
-                    "kategori" => array(
-                        "config" => array(
-                            "name" => "kategori",
-                            "class" => "form-control select2 kategori",
-                            "id" => "kategori",
-                        ),
-                        "list" => $kategori,
-                        "selected" => $val->id_kategori
-                    ),
-
-                    "title" => array(
-                        "name" => "title",
-                        "type" => "text",
-                        "class" => "form-control title",
-                        "id" => "title",
-                        "value" => $val->title
-                    ),
-                    
-                    "sinopsis" => array(
-                        "name" => "sinopsis",
-                        "type" => "text",
-                        "class" => "form-control sinopsis",
-                        "id" => "sinopsis",
-                        "rows" => "2",
-                        "style" => "margin: 0px -0.25px 0px 0px; height: 60px; max-width: 100%;",
-                        "value" => $val->sinopsis
-                    ),
-                    
-                    "content" => array(
-                        "name" => "content",
-                        "type" => "text",
-                        "class" => "form-control content",
-                        "id" => "content",
-                        "value" => $val->content
-                    ),
-                )
-            );
+                "status" => $val->status,
+                "kategori" => $val->id_kategori,
+                "title" => $val->title,
+                "sinopsis" => $val->sinopsis,
+                "content" => $val->content,
+            ));
             
             $this->_formAssets();
             
@@ -311,59 +165,28 @@ class Berita extends Controller{
     }
     
     public function edit_proses () {
-        
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('title')) AND
-            !empty($this->input->post('sinopsis')) AND
-            !empty($this->input->post('content')) AND
-            !empty($this->input->post('kategori')) AND
-            !empty($this->input->post('status'))
+            $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
-            $this->rules();
-            
+            $this->_rules();
             $id = $this->input->post('id');
             
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                if (form_error("kategori")) {
-                    $errorMsg .= form_error("kategori");
-                }
-                if (form_error("title")) {
-                    $errorMsg .= form_error("title");
-                }
-                if (form_error("sinopsis")) {
-                    $errorMsg .= form_error("sinopsis");
-                }
-                if (form_error("content")) {
-                    $errorMsg .= form_error("cpntent");
-                }
-
+                $errorMsg = $this->_formPostProsesError();
                 $notif = notification_proses("warning", "Gagal", $errorMsg);
                 $this->session->set_flashdata('message', $notif);
-
                 redirect("$this->module/edit/$id");
             } else {
-                $title = $this->input->post('title');
-                $sinopsis = $this->input->post('sinopsis');
-                $content = $this->input->post('content');
-                $kategori = $this->input->post('kategori');
-                $status = $this->input->post('status');
-                
-                $cover = "";
                 $image = $this->M_berita->getData("cover")->row();
+                $cover = @$image->cover;
                 if (is_uploaded_file($_FILES['file']['tmp_name'])) {
                     $this->load->library('image');
                     $upload = $this->image->upload(array(
                         "upload_path" => $this->ImageUploadPath,
-                        "update" => $image->cover
+                        "update" => @$image->cover
                     ));
                     if ($upload['stat']) {
                         $cover = $upload['file_name'];
@@ -372,67 +195,172 @@ class Berita extends Controller{
                     unlink($this->ImageUploadPath . $image->cover);
                     unlink($this->ImageUploadPath . "thumb/" . $image->cover);
                 }
-
-                $data = array(
-                    "title" => $title,
-                    "sinopsis" => $sinopsis,
-                    "content" => $content,
-                    "id_kategori" => $kategori,
-                    "status" => $status,
-                    "cover" => $cover,
-                );
-
+                $data = $this->_formPostInputData($cover);
                 $edit = $this->M_berita->edit($data, $id);
-
                 if ($edit) {
                     $this->stat = true;
                 }
+                
+                if ($this->stat) {
+                    $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                    $this->session->set_flashdata('message', $notif);
+                } else {
+                    $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
+                    $this->session->set_flashdata('message', $notif);
+                }
+                redirect($this->module);
             }
-
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->module);
-
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
-            
+            $data = $this->M_berita->getData("cover", $id)->row();
+            if (!empty($data->cover)) {
+                if (file_exists($this->ImageUploadPath . $data->cover)) {
+                    unlink($this->ImageUploadPath . $data->cover);
+                    if (file_exists($this->ImageUploadPath . "thumb/" . $data->cover)) {
+                        unlink($this->ImageUploadPath . "thumb/" . $data->cover);
+                    }
+                }
+            }
             $del = $this->M_berita->delete($id);
-
             if ($del) {
                 $this->stat = true;
             }
-        }
 
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-
     }
     
-    protected function rules () {
+    private function _formAssets () {
+        // validate
+        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+        
+        // select2
+        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
+		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
+		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
+        
+        // ckeditor
+        $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
+		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
+        
+        // fileinput
+        $this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
+		$this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
+        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
+    }
+    
+    private function _formInputData ($data) {
+        return array(
+            "title" => ucwords($this->module),
+            "subtitle" => @$data['subtitle'],
+            "link_back" => site_url($this->module),
+            "moduleLink" => base_url($this->module),
+            "ImageUploadPath" => $this->ImageUploadPath,
+            "form_action" => base_url($this->module . "/" . $data['form_action']),
+            
+            "cover" => @$data['cover'],
+            
+            "input" => array(
+                "id_hide" => array(
+                    "name" => "id",
+                    "class" => "id",
+                    "type" => "hidden",
+                    "value" => @$data['id']
+                ),
+                
+                "status" => array(
+                    "config" => array(
+                        "name" => "status",
+                        "class" => "form-control select2 status",
+                        "id" => "status",
+                    ),
+                    "list" => $this->M_berita->status(),
+                    "selected" => @$data['status']
+                ),
+                
+                "kategori" => array(
+                    "config" => array(
+                        "name" => "kategori",
+                        "class" => "form-control select2 kategori",
+                        "id" => "kategori",
+                    ),
+                    "list" => $this->M_berita->kategori(),
+                    "selected" => @$data['kategori']
+                ),
+
+                "title" => array(
+                    "name" => "title",
+                    "type" => "text",
+                    "class" => "form-control title",
+                    "id" => "title",
+                    "value" => @$data['title']
+                ),
+                
+                "sinopsis" => array(
+                    "name" => "sinopsis",
+                    "type" => "text",
+                    "class" => "form-control sinopsis",
+                    "id" => "sinopsis",
+                    "style" => "margin: 0px -0.25px 0px 0px; height: 60px; max-width: 100%;",
+                    "value" => @$data['sinopsis']
+                ),
+                
+                "content" => array(
+                    "name" => "content",
+                    "type" => "text",
+                    "class" => "form-control content",
+                    "id" => "content",
+                    "value" => @$data['content']
+                ),
+            )
+        );
+    }
+    
+    private function _formPostInputData ($cover = "") {
+        return array(
+            "title" => $this->input->post('title'),
+            "sinopsis" => $this->input->post('sinopsis'),
+            "content" => $this->input->post('content'),
+            "id_kategori" => $this->input->post('kategori'),
+            "status" => $this->input->post('status'),
+            "cover" => $cover,
+        );
+    }
+    
+    private function _formPostProsesError () {
+        $errorMsg = "";
+        if (form_error("kategori")) {
+            $errorMsg .= form_error("kategori");
+        }
+        if (form_error("title")) {
+            $errorMsg .= form_error("title");
+        }
+        if (form_error("sinopsis")) {
+            $errorMsg .= form_error("sinopsis");
+        }
+        if (form_error("content")) {
+            $errorMsg .= form_error("content");
+        }
+        return $errorMsg;
+    }
+    
+    private function _rules () {
         $this->load->library('form_validation');
         $this->load->helper('security');
         
@@ -482,26 +410,6 @@ class Berita extends Controller{
         $this->form_validation->set_error_delimiters("<div class='text-danger'>", "</div>");
         
         $this->form_validation->set_rules($config);
-    }
-    
-    private function _formAssets () {
-        // validate
-        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
-		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
-        
-        // select2
-        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
-		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
-		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-        
-        // ckeditor
-        $this->output->js('assets/themes/adminLTE/plugins/ckeditor/ckeditor.js');
-		$this->output->js('assets/themes/adminLTE/plugins/ckeditor/adapters/jquery.js');
-        
-        // fileinput
-        $this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
-		$this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
-        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
     }
 
 }
