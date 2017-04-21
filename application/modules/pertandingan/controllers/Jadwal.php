@@ -219,7 +219,7 @@ class Jadwal extends Controller{
             
             $match_resultscore1 = $this->input->post('match_resultscore1');
             $match_resultscore2 = $this->input->post('match_resultscore2');
-            $match_resultstatus = ($match_resultscore1 > $match_resultscore2) ? "win" : ($match_resultscore1 == $match_resultscore2) ? "draw" : "lose";
+            $match_resultstatus = ($match_resultscore1 > $match_resultscore2) ? "win" : ( ($match_resultscore1 == $match_resultscore2) ? "draw" : "lose" );
             
             $data = array(
                 "match_resultscore1" => $match_resultscore1,

@@ -24,7 +24,7 @@ date_default_timezone_set('Asia/Jakarta');
 |
 */
 // $config['base_url'] = 'http://localhost/bkdcuti/';
-$config['base_url'] = 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's' : '').'://'.$_SERVER['HTTP_HOST'] . '/bo-cms/';
+$config['base_url'] = 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's' : '').'://'.$_SERVER['HTTP_HOST'] . '/agus/bo-cms/';
 
 /*
 |--------------------------------------------------------------------------
