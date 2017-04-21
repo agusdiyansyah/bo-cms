@@ -48,6 +48,10 @@ class Home extends MX_Controller {
 		$this->db->where('no_jersey IN(2,5,7,8)');
 		$data['pemain'] = $this->db->get('pemain')->result();
 
+		// trophy
+		$this->db->order_by('tahun', 'desc');
+		$data['trophy'] = $this->db->get('trophy', 6)->result();
+
 		$this->load->view('home', $data);
 	}
 
