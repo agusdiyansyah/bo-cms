@@ -9,6 +9,7 @@ class Trophy extends Controller{
     private $stat   = false;
     private $valid  = false;
     private $ImageUploadPath = "./assets/upload/images/trophy/";
+    private $msg = "Data gagal di proses";
 
     public function __construct() {
         parent::__construct();
@@ -76,52 +77,10 @@ class Trophy extends Controller{
     public function add () {
         $this->_formAssets();
         
-        $data = array(
-            "moduleLink'" => $this->moduleLink,
-            "title" => ucwords($this->submodule),
+        $data = $this->_formInputData(array(
             "subtitle" => "Tambah Data",
-            "link_back" => site_url("$this->moduleLink"),
-            
-            "photo" => "",
-            
-            "form_action" => base_url("$this->moduleLink/add_proses"),
-            "input" => array(
-                "id_hide" => array(
-                    "name" => "id",
-                    "class" => "id",
-                    "type" => "hidden"
-                ),
-                
-                "galeri" => array(
-                    "config" => array(
-                        "name" => "galeri",
-                        "class" => "form-control select2 galeri",
-                        "id" => "galeri",
-                    ),
-                    "list" => $this->M_trophy->galeriArray()
-                ),
-                
-                "nama_trophy" => array(
-                    "name" => "nama_trophy",
-                    "type" => "text",
-                    "class" => "form-control nama_trophy",
-                    "id" => "nama_trophy"
-                ),
-                
-                "tahun" => array(
-                    "name" => "tahun",
-                    "type" => "text",
-                    "class" => "form-control tahun",
-                    "id" => "tahun"
-                ),
-                
-                "keterangan" => array(
-                    "name" => "keterangan",
-                    "class" => "form-control keterangan",
-                    "id" => "keterangan"
-                ),
-            )
-        );
+            "form_action" => "add_proses"
+        ));
         
         $this->output->set_title($data['title'] . " " . $data['subtitle']);
 		$this->load->view("$this->moduleLink/form", $data);
@@ -132,22 +91,11 @@ class Trophy extends Controller{
         
         if ($this->input->post()) {
 
-            $this->rules();
+            $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/add");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $nama_trophy = $this->input->post('nama_trophy');
-                $tahun = $this->input->post('tahun');
-                $keterangan = $this->input->post('keterangan');
-                $galeri = $this->input->post('galeri');
                 
                 $photo = "";
                 
@@ -161,13 +109,7 @@ class Trophy extends Controller{
                     }
                 }
 
-                $data = array(
-                    "nama_trophy" => $nama_trophy,
-                    "tahun" => $tahun,
-                    "keterangan" => $keterangan,
-                    "id_galeri" => $galeri,
-                    "photo" => $photo
-                );
+                $data = $this->_formPostInputData($photo);
 
                 $add = $this->M_trophy->add($data);
 
@@ -175,17 +117,20 @@ class Trophy extends Controller{
                     $this->stat = true;
                 }
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/add";
+            }
+            
+            redirect($this->moduleLink);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
     }
     
     public function edit ($id = 0) {
@@ -195,71 +140,25 @@ class Trophy extends Controller{
             $id > 0 AND
             $res->num_rows() > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
             $val = $res->row();
-            
-            $photo = (empty($val->photo)) ? "" : base_url("assets/upload/images/trophy/$val->photo");
 
-            $data = array(
-                "moduleLink'" => $this->moduleLink,
-                "title" => ucwords($this->submodule),
+            $data = $this->_formInputData(array(
                 "subtitle" => "Ubah Data",
-                "link_back" => site_url("$this->moduleLink"),
-                
-                "photo" => $photo,
-                
-                "form_action" => base_url("$this->moduleLink/edit_proses"),
-                "input" => array(
-                    "id_hide" => array(
-                        "name" => "id",
-                        "class" => "id",
-                        "type" => "hidden",
-                        "value" => $id,
-                    ),
-                    
-                    "galeri" => array(
-                        "config" => array(
-                            "name" => "galeri",
-                            "class" => "form-control select2 galeri",
-                            "id" => "galeri",
-                        ),
-                        "list" => $this->M_trophy->galeriArray(),
-                        "selected" => $val->id_galeri
-                    ),
-                    
-                    "nama_trophy" => array(
-                        "name" => "nama_trophy",
-                        "type" => "text",
-                        "class" => "form-control nama_trophy",
-                        "id" => "nama_trophy",
-                        "value" => $val->nama_trophy,
-                    ),
-                    
-                    "tahun" => array(
-                        "name" => "tahun",
-                        "type" => "text",
-                        "class" => "form-control tahun",
-                        "id" => "tahun",
-                        "value" => $val->tahun,
-                    ),
-                    
-                    "keterangan" => array(
-                        "name" => "keterangan",
-                        "class" => "form-control keterangan",
-                        "id" => "keterangan",
-                        "value" => $val->keterangan,
-                    ),
-                )
-            );
+                "form_action" => "edit_proses",
+                "id" => $id,
+                "photo" => $val->photo,
+                "galeri" => $val->id_galeri,
+                "nama_trophy" => $val->nama_trophy,
+                "tahun" => $val->tahun,
+                "keterangan" => $val->keterangan,
+            ));
             
             $this->_formAssets();
             
             $this->output->set_title($data['title'] . " " . $data['subtitle']);
             $this->load->view("$this->moduleLink/form", $data);
+        } else {
+            show_404();
         }
 
     }
@@ -271,58 +170,35 @@ class Trophy extends Controller{
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('nama_trophy')) AND
-            !empty($this->input->post('tahun')) 
+            $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
-            $this->rules();
-            
             $id = $this->input->post('id');
+            $this->_rules();
             
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/edit/$id");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $nama_trophy = $this->input->post('nama_trophy');
-                $tahun = $this->input->post('tahun');
-                $keterangan = $this->input->post('keterangan');
-                $galeri = $this->input->post('galeri');
-                
-                $photo = "";
                 
                 $image = $this->M_trophy->getData("photo", $id)->row();
-                if (is_uploaded_file($_FILES["file"]['tmp_name'])) {
+                $photo = @$image->photo;
+                
+                if (is_uploaded_file($_FILES["file"]['tmp_name']) AND $this->input->post('stat_removecover') == 0) {
                     $this->load->library('image');
                     $upload = $this->image->upload(array(
                         "upload_path" => $this->ImageUploadPath,
-                        "update" => $image->photo,
+                        "update" => @$image->photo,
                     ));
                     
                     if ($upload['stat']) {
                         $photo = $upload['file_name'];
                     }
-                } elseif ($this->input->post('stat_removecover') == 1) {
+                } elseif ($this->input->post('stat_removecover') > 0) {
                     unlink($this->ImageUploadPath . $image->photo);
                     unlink($this->ImageUploadPath . "thumb/" . $image->photo);
+                    $photo = "";
                 }
                 
-                $data = array(
-                    "nama_trophy" => $nama_trophy,
-                    "tahun" => $tahun,
-                    "keterangan" => $keterangan,
-                    "id_galeri" => $galeri,
-                    "photo" => $photo
-                );
+                $data = $this->_formPostInputData($photo);
 
                 $edit = $this->M_trophy->edit($data, $id);
 
@@ -330,46 +206,49 @@ class Trophy extends Controller{
                     $this->stat = true;
                 }
             }
-
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/edit/$id";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
 
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
             
+            $sql = $this->M_trophy->getData("photo", $id)->row();
+            if (!empty($sql->photo)) {
+                unlink($this->ImageUploadPath . $sql->photo);
+                unlink($this->ImageUploadPath . "thumb/" . $sql->photo);
+            }
+            
             $del = $this->M_trophy->delete($id);
-
+            
             if ($del) {
                 $this->stat = true;
             }
-        }
 
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
 
     }
@@ -398,7 +277,78 @@ class Trophy extends Controller{
 		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
     }
     
-    private function _postProsesError () {
+    private function _formInputData ($data) {
+        $photo = "";
+        if (!empty($data['photo'])) {
+            $baseImage = str_replace(".", "", $this->ImageUploadPath);
+            $photo = base_url($baseImage . $data['photo']);
+        }
+        return array(
+            "title" => ucwords($this->submodule),
+            "subtitle" => @$data['subtitle'],
+            "link_back" => site_url("$this->moduleLink"),
+            "moduleLink'" => $this->moduleLink,
+            "form_action" => base_url($this->moduleLink . "/" . $data['form_action']),
+            
+            "photo" => $photo,
+            
+            "input" => array(
+                "hide" => array(
+                    "id" => array(
+                        "name" => "id",
+                        "class" => "id",
+                        "type" => "hidden",
+                        "value" => @$data['id']
+                    )
+                ),
+                
+                "galeri" => array(
+                    "config" => array(
+                        "name" => "galeri",
+                        "class" => "form-control select2 galeri",
+                        "id" => "galeri",
+                    ),
+                    "list" => $this->M_trophy->galeriArray(),
+                    "selected" => @$data['galeri']
+                ),
+                
+                "nama_trophy" => array(
+                    "name" => "nama_trophy",
+                    "type" => "text",
+                    "class" => "form-control nama_trophy",
+                    "id" => "nama_trophy",
+                    "value" => @$data['nama_trophy']
+                ),
+                
+                "tahun" => array(
+                    "name" => "tahun",
+                    "type" => "text",
+                    "class" => "form-control tahun",
+                    "id" => "tahun",
+                    "value" => @$data['tahun']
+                ),
+                
+                "keterangan" => array(
+                    "name" => "keterangan",
+                    "class" => "form-control keterangan",
+                    "id" => "keterangan",
+                    "value" => @$data['keterangan']
+                ),
+            )
+        );
+    }
+    
+    private function _formPostInputData ($photo) {
+        return array(
+            "nama_trophy" => $this->input->post('nama_trophy'),
+            "tahun" => $this->input->post('tahun'),
+            "keterangan" => $this->input->post('keterangan'),
+            "id_galeri" => $this->input->post('galeri'),
+            "photo" => $photo
+        );
+    }
+    
+    private function _formPostProsesError () {
         if (form_error("nama_trophy")) {
             $errorMsg .= form_error("nama_trophy");
         }
@@ -412,7 +362,7 @@ class Trophy extends Controller{
         return $errorMsg;
     }
     
-    private function rules () {
+    private function _rules () {
         $this->load->library('form_validation');
         $this->load->helper('security');
         

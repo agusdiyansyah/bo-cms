@@ -10,7 +10,7 @@
     
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         
-        <?php echo form_input($input['id_hide']) ?>
+        <?php echo form_input($input['hide']['id']) ?>
 		<input type="hidden" name="stat_removecover" class="stat_removecover" value="0">
 		
 		<div class="row remove-margin-top">

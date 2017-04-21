@@ -4,7 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class M_trophy extends CI_Model{
     private $trophy;
     private $ci;
-    private $ImageUploadPath = "./assets/upload/images/trophy/";
 
     public function __construct() {
         parent::__construct();
@@ -123,11 +122,6 @@ class M_trophy extends CI_Model{
     }
     
     public function delete ($id) {
-        $sql = $this->getData("photo", $id)->row();
-        if (!empty($sql->photo)) {
-            unlink($this->ImageUploadPath . $sql->photo);
-            unlink($this->ImageUploadPath . "thumb/" . $sql->photo);
-        }
         return $this->db
             ->where('id_trophy', $id)
             ->delete($this->trophy);
