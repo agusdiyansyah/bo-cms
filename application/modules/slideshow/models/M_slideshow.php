@@ -112,4 +112,11 @@ class M_slideshow extends CI_Model {
             ->where("id_page", $id)
             ->delete($this->page);
     }
+
+    public function getPub()
+    {
+        $this->db->where('tipe', 'slideshow');
+        $this->db->where('isdelete', 0);
+        return $this->db->get('page');
+    }
 }
