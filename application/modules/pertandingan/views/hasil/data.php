@@ -54,19 +54,16 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped" width="100%">
                     <thead>
-                        <tr>
-                            <th rowspan="2" width="2%">No</th>
-                            <th rowspan="2" width="2%">Aksi</th>
-							<th rowspan="2">Rival</th>
-							<th rowspan="2">Tanggal Main</th>
-							<th rowspan="2">Tempat Tanding</th>
-                            <th colspan="2" class="text-center">Skor</th>
-                        </tr>
 						<tr>
-							<th>Tim Anda</th>
-							<th>Rival</th>
+							<th width="2%">No</th>
+							<th width="2%">Aksi</th>
+							<th></th>
+							<th width="10%">Tim Anda</th>
+							<th class="text-center">Skor / Tempat / Tanggal Main</th>
+							<th width="10%">Rival</th>
+							<th></th>
 						</tr>
                     </thead>
                 </table>
@@ -122,6 +119,15 @@
 				}
             },
             "displayLength": 50,
+			"columns":[
+	        	null,
+	        	null,
+				{className:"text-center"},
+	        	{className:"text-center"},
+	        	{className:"text-center"},
+	        	{className:"text-center"},
+	        	null
+	        ]
         });
 
         $(".filter").submit(function(event) {
@@ -143,11 +149,10 @@
 		$(".table").on('click', '#btn-skor', function() {
 	        var data = {
 				id: $(this).data("id"),
-				rival: $(this).parents("tr").find("td").eq(2).html(),
-				tanggal_main: $(this).parents("tr").find("td").eq(3).html(),
-				tempat_main: $(this).parents("tr").find("td").eq(4).html(),
-				skor1: $(this).parents("tr").find("td").eq(5).html(),
-				skor2: $(this).parents("tr").find("td").eq(6).html(),
+				rival: $(this).parents("tr").find("td").eq(6).html(),
+				tanggal_main: $(this).parents("tr").find("td").eq(4).html(),
+				skor1: $(this).parents("tr").find("td").eq(3).html(),
+				skor2: $(this).parents("tr").find("td").eq(5).html(),
 			}
 			
 	        skor(data);
@@ -248,12 +253,8 @@
 			form += '	 	<div className="col-xs-12">'
 			form += '	 		<table class="table table-striped table-hover">'
 			form += '	 			<tr>'
-			form += '	 				<td>Tanggal dan Jam</td>'
+			form += '	 				<td>Tanggal/Tempat Main</td>'
 			form += '	 				<td>'+ data.tanggal_main +'</td>'
-			form += '	 			</tr>'
-			form += '	 			<tr>'
-			form += '	 				<td>Tempat</td>'
-			form += '	 				<td>'+ data.tempat_main +'</td>'
 			form += '	 			</tr>'
 			form += '	 		</table>'
 			form += '	 	</div>'

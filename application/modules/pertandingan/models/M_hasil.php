@@ -36,7 +36,7 @@ class M_hasil extends CI_Model{
             $rowCount = $this->db->get()->num_rows();
 
             // get result
-            $this->db->select('id_match, match_rival, match_date, alamat, match_resultscore1, match_resultscore2');
+            $this->db->select('id_match, match_rival, match_date, match_resultstatus, alamat, match_resultscore1, match_resultscore2');
 
             $this->db->limit($post['length'], $post['start']);
 
@@ -99,11 +99,11 @@ class M_hasil extends CI_Model{
             $baris = array(
                 $no,
                 $aksi,
-                $data->match_rival,
-                indoDateFormat($data->match_date, "j F Y H:i"),
-                $data->alamat,
+                ucwords($data->match_resultstatus),
                 $data->match_resultscore1,
+                indoDateFormat($data->match_date, "j F Y H:i") . "<br /><small>" . $data->alamat . "</small>",
                 $data->match_resultscore2,
+                $data->match_rival,
             );
 
             array_push($output['data'], $baris);
