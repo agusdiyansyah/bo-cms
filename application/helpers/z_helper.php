@@ -43,17 +43,6 @@ function combobox_category($id_type, $selected="", $name="id_category", $class="
     $cmb .="</select>";
     return $cmb;
 }
-function webinfo()
-{
-    $ci =& get_instance();
-    $q = $ci->db->join('category', 'category.id_category = web_setting.id_category');
-    $q = $ci->db->get('web_setting')->result();
-    $web = array();
-    foreach ($q as $r) {
-        $web[$r->category] = $r->value;
-    }
-    return $web;
-}
 function indoDateFormat ($waktu="", $format="") {
     //{tanggalIndoTiga tgl=0000-00-00 00:00:00 format="l, d/m/Y H:i:s"}
     if ($waktu != "" || $format != "") {
@@ -121,4 +110,17 @@ function form_select ($option = array()) {
 }
 function _id () {
     return md5(uniqid(rand(), true));
+}
+function webinfo()
+{
+    $return = array();
+    $CI =& get_instance();
+    $q = $CI->db
+            ->select("label, value")
+            ->where("tipe", "web_info")
+            ->get('meta');
+    foreach ($q->result() as $r) {
+        $return[$r->label] = $r->value;
+    }
+    return $return;
 }

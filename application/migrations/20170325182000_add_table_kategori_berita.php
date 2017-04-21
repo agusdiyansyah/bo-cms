@@ -33,7 +33,12 @@ class Migration_add_table_kategori_berita extends CI_Migration {
                 'default' => '',
                 'constraint' => 50,
                 'null' => FALSE,
-            )
+            ),
+            'slug' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => FALSE
+            ),
         );
         
         $this->dbforge->add_field($field);
@@ -45,45 +50,9 @@ class Migration_add_table_kategori_berita extends CI_Migration {
             ->update($this->menu_admin, array(
                 "link" => "#"
             ));
-        
-        $menuBerita = array(
-            array(
-                "id_menu" => null,
-                "name" => "Data",
-                "link" => "berita",
-                "icon" => "fa fa-angle-right",
-                "order" => 1,
-                "is_active" => 1,
-                "is_parent" => $this->id_menu,
-                "level" => 0
-            ),
-            array(
-                "id_menu" => null,
-                "name" => "Kategori",
-                "link" => "berita/kategori",
-                "icon" => "fa fa-angle-right",
-                "order" => 2,
-                "is_active" => 1,
-                "is_parent" => $this->id_menu,
-                "level" => 0
-            ),
-        );
-        
-        $this->db->insert_batch($this->menu_admin, $menuBerita);
     }
     
-    public function down () {
-        $this->db
-            ->where("link", "berita")
-            ->or_where("link", "berita/kategori")
-            ->delete($this->menu_admin);
-            
-        $this->db
-            ->where("id_menu", $this->id_menu)
-            ->update($this->menu_admin, array(
-                "link" => "berita"
-            ));
-            
+    public function down () {    
         if ($this->db->table_exists($this->berita_kategori)) {
             $this->dbforge->drop_table($this->berita_kategori);
         }

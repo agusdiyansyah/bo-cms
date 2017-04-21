@@ -17,9 +17,8 @@ class Migration_add_table_socmed extends CI_Migration {
                 'type' => 'INT',
                 'auto_increment' => TRUE,
             ),
-            'id_player' => array(
-                'type' => 'VARCHAR',
-                'constraint' => 20,
+            'id_relasi' => array(
+                'type' => 'INT',
                 'null' => FALSE,
             ),
             'id_jenis_socmed' => array(

@@ -1,3 +1,4 @@
+<?php echo $this->session->flashdata('message');?>
 <section class="content-header">
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
@@ -6,7 +7,6 @@
 </section>
 
 <section class="content">
-    
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         
         <?php echo form_input($input['id_hide']) ?>

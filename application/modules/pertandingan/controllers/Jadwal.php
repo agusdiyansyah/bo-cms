@@ -8,6 +8,7 @@ class Jadwal extends Controller{
     private $moduleLink;
     private $stat   = false;
     private $valid  = false;
+    private $msg = "Data gagal di proses";
 
     public function __construct() {
         parent::__construct();
@@ -65,7 +66,7 @@ class Jadwal extends Controller{
     public function add () {
         $this->_formAssets();
         
-        $data = $this->_formData(array(
+        $data = $this->_formInputData(array(
             "form_action" => "$this->moduleLink/add_proses",
             "subtitle" => "Tambah Data"
         ));
@@ -82,16 +83,9 @@ class Jadwal extends Controller{
             $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/add");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $data = $this->_postData();
+                $data = $this->_formPostInputData();
 
                 $add = $this->M_match->add($data);
 
@@ -99,17 +93,21 @@ class Jadwal extends Controller{
                     $this->stat = true;
                 }
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/add";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->moduleLink);
     }
     
     public function edit ($id = 0, $submodule = "") {
@@ -119,14 +117,9 @@ class Jadwal extends Controller{
             $id > 0 AND
             $res->num_rows() > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
             $val = $res->row();
 
-            $data = $this->_formData(array(
+            $data = $this->_formInputData(array(
                 "form_action" => "$this->moduleLink/edit_proses",
                 "subtitle" => "Ubah Data",
                 
@@ -143,6 +136,8 @@ class Jadwal extends Controller{
             
             $this->output->set_title($data['title'] . " " . $data['subtitle']);
             $this->load->view("$this->moduleLink/form", $data);
+        } else {
+            show_404();
         }
 
     }
@@ -152,29 +147,17 @@ class Jadwal extends Controller{
         $this->output->unset_template();
         
         if (
-            $this->input->post()
+            $this->input->post() AND
+            !empty($this->input->post("id")) AND
+            $this->input->post("id") > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
-            $this->_rules();
-            
             $id = $this->input->post('id');
-            
+            $this->_rules();
             if (!$this->form_validation->run()) {
-                $errorMsg = "";
-                
-                $errorMsg = $this->_postProsesError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->moduleLink/edit/$id");
+                $this->msg = $this->_formPostProsesError();
             } else {
                 
-                $data = $this->_postData();
+                $data = $this->_formPostInputData();
 
                 $edit = $this->M_match->edit($data, $id);
 
@@ -183,24 +166,24 @@ class Jadwal extends Controller{
                 }
             }
 
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                if ($this->input->post('submodule') != "") {
+                    $_backto = $this->module . "/" . $this->input->post('submodule');
+                } else {
+                    $_backto = $this->moduleLink;
+                }
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->submodule/edit/$id";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        if ($this->input->post('submodule') != "") {
-            $back = $this->module . "/" . $this->input->post('submodule');
-        } else {
-            $back = $this->moduleLink;
-        }
-        
-        
-        redirect($back);
 
     }
     
@@ -211,10 +194,6 @@ class Jadwal extends Controller{
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
             
             $del = $this->M_match->delete($id);
@@ -304,7 +283,7 @@ class Jadwal extends Controller{
         $this->output->js('assets/themes/adminLTE/plugins/easyautocomplete/easyautocomplete.js');
     }
     
-    private function _formData ($data = array()) {
+    private function _formInputData ($data = array()) {
         return array(
             "title" => ucwords($this->submodule),
             "subtitle" => $data['subtitle'],
@@ -356,21 +335,16 @@ class Jadwal extends Controller{
         );
     }
     
-    private function _postData () {
-        $match_rival = $this->input->post('match_rival');
-        $match_date = $this->input->post('match_date');
-        $match_homeaway = $this->input->post('match_homeaway');
-        $alamat = $this->input->post('alamat');
-
+    private function _formPostInputData () {
         return array(
-            "match_rival" => $match_rival,
-            "match_date" => $match_date,
-            "match_homeaway" => $match_homeaway,
-            "alamat" => $alamat,
+            "match_rival" => $this->input->post('match_rival'),
+            "match_date" => $this->input->post('match_date'),
+            "match_homeaway" => $this->input->post('match_homeaway'),
+            "alamat" => $this->input->post('alamat'),
         );
     }
     
-    private function _postProsesError () {
+    private function _formPostProsesError () {
         if (form_error("match_rival")) {
             $errorMsg .= form_error("match_rival");
         }

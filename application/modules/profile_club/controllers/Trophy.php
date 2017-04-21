@@ -272,8 +272,7 @@ class Trophy extends Controller{
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             !empty($this->input->post('nama_trophy')) AND
-            !empty($this->input->post('tahun')) AND
-            !empty($this->input->post('keterangan'))
+            !empty($this->input->post('tahun')) 
         ) {
             $this->valid = true;
         }
@@ -433,14 +432,6 @@ class Trophy extends Controller{
                 "errors" => array(
                     "required" => "%s tidak boleh kosong",
                     "numeric" => "%s harus berupa nomor %s"
-                )
-            ),
-            array(
-                "field" => "keterangan",
-                "label" => "Keterangan",
-                "rules" => "required",
-                "errors" => array(
-                    "required" => "%s tidak boleh kosong"
                 )
             )
         );

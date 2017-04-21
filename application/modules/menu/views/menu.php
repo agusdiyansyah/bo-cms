@@ -1,46 +1,49 @@
-<div class="container">
-	<div class="row">
-		<nav class="navbar navbar-default navbar-custom">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="col-md-12">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					</button>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li id="menu-beranda">
-							<?php echo anchor('beranda', 'BERANDA');?>
-						</li>
-						<li id="menu-profil" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PROFIL <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<?php
-								echo "<li>".anchor('profil/struktur-organisasi', 'STRUKTUR ORGANISASI')."</li>";
-								echo "<li>".anchor('profil/visi-dan-misi', 'VISI MISI')."</li>";
-								echo "<li>".anchor('profil/tupoksi', 'TUPOKSI')."</li>";
-								?>
-							</ul>
-						</li>
-						<?php echo "<li id='menu-unitkerja'>".anchor('unit-kerja', 'UNIT KERJA')."</li>";?>
-						</li>
-						<li id="menu-berita">
-							<?php echo anchor('berita', 'BERITA');?>
-						</li>
-						<li id="menu-galeri">
-							<?php echo anchor('galeri', 'GALERI');?>
-						</li>
-						<li id="menu-produk-hukum"><?php echo anchor('produk-hukum', 'PRODUK HUKUM');?></li>
-						<li id="menu-informasi"><?php echo anchor('informasi', 'PERMOHONAN INFORMASI');?></li>
-						<li id="menu-kontak-kami"><?php echo anchor('kontak-kami', 'KONTAK KAMI');?></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</div>
+<div class="tm-menu-box">
+    <div style="height: 70px;" class="uk-sticky-placeholder">
+        <nav style="margin: 0px;" class="tm-navbar uk-navbar" data-uk-sticky="">
+            <div class="uk-container uk-container-center">
+                <a class="tm-logo uk-float-left" href="index.html">
+                    <img src="<?php echo base_url(); ?>assets/themes/kancil/images/logo-img.png" alt="logo" title="logo"> <span>Kancil <em>BBK</em></span>
+                </a>
+
+                <ul class="uk-navbar-nav uk-hidden-small">
+                    <li class="uk-parent uk-active"><a href="index.html">Beranda</a></li>
+                    <li data-uk-dropdown="{'preventflip':'y'}" aria-haspopup="true" aria-expanded="false"><a href="about.html">Sejarah</a></li>
+                    <li class="uk-parent" data-uk-dropdown="{'preventflip':'y'}" aria-haspopup="true" aria-expanded="false"><a href="#">Pages</a>
+                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-width-1">
+                            <div class="uk-grid uk-dropdown-grid">
+                                <div class="uk-width-1-1">
+                                    <ul class="uk-nav uk-nav-navbar">
+                                        <li><a href="players.html">Players</a>
+                                        </li>
+                                        <li><a href="gallery.html">Gallery</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="uk-parent" data-uk-dropdown="{'preventflip':'y'}" aria-haspopup="true" aria-expanded="false"><a href="match-list.html">Match</a>
+                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-width-1">
+                            <div class="uk-grid uk-dropdown-grid">
+                                <div class="uk-width-1-1">
+                                    <ul class="uk-nav uk-nav-navbar">
+                                        <li><a href="results.html">Results</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="news.html">News</a>
+                    </li>
+                    <li><a href="category.html">Shop</a>
+                    </li>
+                    <li><a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas=""></a>
+            </div>
+        </nav>
+    </div>
 </div>

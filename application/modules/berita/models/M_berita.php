@@ -29,6 +29,9 @@ class M_berita extends CI_Model{
             if (!empty($post['title'])) {
                 $this->db->like('title', $post['title'], 'both');
             }
+            if (!empty($post['status'])) {
+                $this->db->where('status', $post['status']);
+            }
 
             // order
             $this->db->order_by('id_berita', 'DESC');
@@ -148,7 +151,17 @@ class M_berita extends CI_Model{
     }
     
     public function status () {
-        return $this->status;
+        return array("" => "") + $this->status;
+    }
+    
+    public function kategori () {
+        $this->ci->load->model("berita/M_kategori");
+        $objKategori = $this->ci->M_kategori->getData("id_kategori, kategori")->result();
+        $kategori = array("" => "");
+        foreach ($objKategori as $val) {
+            $kategori += array($val->id_kategori => $val->kategori);
+        }
+        return $kategori;
     }
 
 }
