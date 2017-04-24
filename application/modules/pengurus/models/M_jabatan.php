@@ -130,8 +130,8 @@ class M_jabatan extends CI_Model {
             ->get($this->jabatan);
     }
     
-    public function getJabatanArray ($isHC = 0) {
-        if ($isHC) {
+    public function getJabatanArray ($tipe = "hc") {
+        if ($tipe != "staf") {
             $listJabatan = array("0" => "HEAD COACH");
         } else {
             $listJabatan = array("" => "");
