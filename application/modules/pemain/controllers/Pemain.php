@@ -145,7 +145,7 @@ class Pemain extends Controller{
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->_rules();
+            $this->_rules("edit");
             $id = $this->input->post('id');
             
             if (!$this->form_validation->run()) {
@@ -446,7 +446,7 @@ class Pemain extends Controller{
         return $errorMsg;
     }
 
-    private function _rules () {
+    private function _rules ($tipe = "add") {
         $this->load->library('form_validation');
         $this->load->helper('security');
         
@@ -477,7 +477,7 @@ class Pemain extends Controller{
             ),
         );
         
-        if ($_FILES['file']['name'] == "") {
+        if ($_FILES['file']['name'] == "" AND $tipe == "add") {
             array_push($config, array(
                 "field" => "file",
                 "label" => "Photo Pemain",

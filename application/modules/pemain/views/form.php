@@ -125,11 +125,13 @@
 		  	errorClass: 'error',
 		 	rules: {
 				nama : {required: true},
-				jabatan : {required: true},
+				no_jersey : {required: true},
+				posisi : {required: true},
 			},
 			messages: {
 				nama : {required: "Nama tidak boleh kosong"} ,
-				jabatan : {required: "Jabatan tidak boleh kosong"} ,
+				no_jersey : {required: "Jabatan tidak boleh kosong"} ,
+				posisi : {required: "Posisi tidak boleh kosong"},
 		   	}
 	   	});
 		
