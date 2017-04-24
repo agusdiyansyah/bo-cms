@@ -59,117 +59,112 @@ class Image {
             
             if (!file_exists($upload_path)) {
                 $msg = "Upload path is not exists";
-                return array(
-                    "stat" => $valid,
-                    "msg" => $msg,
-                    "file_name" => $file_name
-                );
-                // exit;
-            }
-            
-            $conf = array(
-                "upload_path" => $upload_path,
-                "allowed_types" => "jpg|jpeg|gif|png",
-                "max_size" => $opt['max_size'],
-                "encrypt_name" => $opt['encrypt_name']
-            );
-            
-            $this->ci->load->library('upload' , $conf);
-            
-            if (!$this->ci->upload->do_upload($file_element_name)) {
-                $msg = $this->ci->upload->display_errors();
-                return false;
-                exit;
+                $valid = false;
             } else {
-                $msg = "file berhasil di upload";
-                $upload = $this->ci->upload->data();
-                $file_name = $upload['file_name'];
+                $conf = array(
+                    "upload_path" => $upload_path,
+                    "allowed_types" => "jpg|jpeg|gif|png",
+                    "max_size" => $opt['max_size'],
+                    "encrypt_name" => $opt['encrypt_name']
+                );
                 
-                if ($opt['resize']) {
+                $this->ci->load->library('upload' , $conf);
+                
+                if (!$this->ci->upload->do_upload($file_element_name)) {
+                    $msg = $this->ci->upload->display_errors();
+                    return false;
+                    exit;
+                } else {
+                    $msg = "file berhasil di upload";
+                    $upload = $this->ci->upload->data();
+                    $file_name = $upload['file_name'];
                     
-                    $this->ci->load->library('image_lib');
-                    
-                    if ($upload['image_width'] > $upload['image_height']) {
-                        $fit = "height";
-                    } else {
-                        $fit = "width";
-                    }
-                    
-                    $conf = array(
-                        "image_library" => "gd2",
-                        "maintain_ratio" => true,
-                        "master_dim" => $fit,
-                        "quality" => "100%",
-                        "source_image" => $upload_path . $file_name,
-                        "new_image" => $opt['thumbnail_path'],
-                        "width" => $opt['resize_width'],
-                        "height" => $opt['resize_height'],
-                    );
-                    
-                    $this->ci->image_lib->initialize($conf);
-                    
-                    $resize = false;
-                    if ($this->ci->image_lib->resize()) {
-                        $resize = true;
-                        $msg = "file berhasil di resize";
-                    } else {
-                        if (file_exists($upload_path . $file_name)) {
-                            unlink($upload_path . $file_name);
+                    if ($opt['resize']) {
+                        
+                        $this->ci->load->library('image_lib');
+                        
+                        if ($upload['image_width'] > $upload['image_height']) {
+                            $fit = "height";
+                        } else {
+                            $fit = "width";
                         }
-                        $msg = $this->ci->image_lib->display_errors();
-                    }
-                    
-                    // centering crop image
-                    if ($resize) {
-                        if ($opt['crop']) {
-                            if ($opt['crop_center']) {
-                                if ($fit == "width") {
-                                    $heightAfterResize = ceil($opt['crop_width'] * ($upload['image_height']/$upload['image_width']));
-                                    $space = $heightAfterResize - $opt['crop_height'];
+                        
+                        $conf = array(
+                            "image_library" => "gd2",
+                            "maintain_ratio" => true,
+                            "master_dim" => $fit,
+                            "quality" => "100%",
+                            "source_image" => $upload_path . $file_name,
+                            "new_image" => $opt['thumbnail_path'],
+                            "width" => $opt['resize_width'],
+                            "height" => $opt['resize_height'],
+                        );
+                        
+                        $this->ci->image_lib->initialize($conf);
+                        
+                        $resize = false;
+                        if ($this->ci->image_lib->resize()) {
+                            $resize = true;
+                            $msg = "file berhasil di resize";
+                        } else {
+                            if (file_exists($upload_path . $file_name)) {
+                                unlink($upload_path . $file_name);
+                            }
+                            $msg = $this->ci->image_lib->display_errors();
+                        }
+                        
+                        // centering crop image
+                        if ($resize) {
+                            if ($opt['crop']) {
+                                if ($opt['crop_center']) {
+                                    if ($fit == "width") {
+                                        $heightAfterResize = ceil($opt['crop_width'] * ($upload['image_height']/$upload['image_width']));
+                                        $space = $heightAfterResize - $opt['crop_height'];
+                                        $x = 0;
+                                        $y = ceil($space/2);
+                                    } elseif ($fit == "height") {
+                                        $widthAfterResize = ceil($opt['crop_height'] / ($upload['image_height']/$upload['image_width']));
+                                        $space = $widthAfterResize - $opt['crop_width'];
+                                        $x = ceil($space/2);
+                                        $y = 0;
+                                    }
+                                } else {
                                     $x = 0;
-                                    $y = ceil($space/2);
-                                } elseif ($fit == "height") {
-                                    $widthAfterResize = ceil($opt['crop_height'] / ($upload['image_height']/$upload['image_width']));
-                                    $space = $widthAfterResize - $opt['crop_width'];
-                                    $x = ceil($space/2);
                                     $y = 0;
                                 }
+                                
+                                $conf = array(
+                                    "image_library" => "gd2",
+                                    "maintain_ratio" => false,
+                                    "quality" => "100%",
+                                    "source_image" => $opt['thumbnail_path'] . $file_name,
+                                    "new_image" => $opt['thumbnail_path'],
+                                    "width" => $opt['crop_width'],
+                                    "height" => $opt['crop_height'],
+                                    "x_axis" => $x,
+                                    "y_axis" => $y,
+                                );
+                                $this->ci->image_lib->clear();
+                                $this->ci->image_lib->initialize($conf);
+                                if ($this->ci->image_lib->crop()) {
+                                    $valid = true;
+                                    $msg = "file berhasil di upload , resize, dan crop";
+                                } else {
+                                    if (file_exists($upload_path . $file_name)) {
+                                        unlink($upload_path . $file_name);
+                                    }
+                                    if (file_exists($opt['thumbnail_path'] . $file_name)) {
+                                        unlink($upload_path . $file_name);
+                                    }
+                                    $msg = $this->ci->image_lib->display_errors();
+                                }
                             } else {
-                                $x = 0;
-                                $y = 0;
-                            }
-                            
-                            $conf = array(
-                                "image_library" => "gd2",
-                                "maintain_ratio" => false,
-                                "quality" => "100%",
-                                "source_image" => $opt['thumbnail_path'] . $file_name,
-                                "new_image" => $opt['thumbnail_path'],
-                                "width" => $opt['crop_width'],
-                                "height" => $opt['crop_height'],
-                                "x_axis" => $x,
-                                "y_axis" => $y,
-                            );
-                            $this->ci->image_lib->clear();
-                            $this->ci->image_lib->initialize($conf);
-                            if ($this->ci->image_lib->crop()) {
                                 $valid = true;
-                                $msg = "file berhasil di upload , resize, dan crop";
-                            } else {
-                                if (file_exists($upload_path . $file_name)) {
-                                    unlink($upload_path . $file_name);
-                                }
-                                if (file_exists($opt['thumbnail_path'] . $file_name)) {
-                                    unlink($upload_path . $file_name);
-                                }
-                                $msg = $this->ci->image_lib->display_errors();
                             }
-                        } else {
-                            $valid = true;
                         }
+                    } else {
+                        $valid = true;
                     }
-                } else {
-                    $valid = true;
                 }
             }
             

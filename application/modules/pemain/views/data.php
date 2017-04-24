@@ -1,4 +1,6 @@
-<?php echo $this->session->flashdata('message');?>
+<div class="msg">
+	<?php echo $this->session->flashdata('message');?>
+</div>
 <section class="content-header">
 	<h1><?php echo @$title;?> <small><?php echo @$subtitle ?></small></h1>
 </section>
@@ -14,7 +16,7 @@
 					<?php 
 					$photo = empty($data->photo) ? "assets/themes/adminLTE/img/boxed-bg.png" : "{$ImageUploadPath}thumb/$data->photo"
 					?>
-					<div class="col-sm-4 col-md-3 col-lg-2" style="margin-bottom: 15px">
+					<div class="col-sm-4 col-md-3 col-lg-2 data-pemain-<?php echo $data->id_pemain ?>" style="margin-bottom: 15px">
 						<div class="pengurus-wrapper">
 			        		<div class="photo" style="background-image: url('<?php echo base_url("$photo") ?>')"></div>
 							<div class="info">
@@ -112,11 +114,27 @@
 	                url: '<?php echo base_url("$moduleLink/delete_proses") ?>',
 					cache: false,
 	                type: 'POST',
+					dataType: "json",
 	                data: {
 	                    id: id
 	                },
-	                success: function () {
-						location.reload();
+	                success: function (json) {
+						if (json.stat) {
+							conf = {
+								tipe: "success",
+								title: "Berhasil",
+								msg: "Data berhasil di proses",
+							}
+							$(".data-pemain-" + id).remove();
+						} else {
+							conf = {
+								tipe: "warning",
+								title: "Gagal",
+								msg: "Data gagal di proses",
+							}
+						}
+						
+						notification(conf);
 	                }
 	            });
 	        });
@@ -126,5 +144,24 @@
 	function ratio (width) {
         return (1)*width;
     }
-
+	
+	function notification (data) {
+        var content = $(".msg");
+        var html    = "";
+        
+        html += '<div class="alert alert-' + data.tipe + ' alert-dismissable js-notif" style="border-radius: 0px;">';
+        html += '    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>';
+        html += '    <h4><i class="icon fa fa-check"></i> ' + data.title + '</h4>';
+        html += '    ' + data.msg;
+        html += '</div>';
+        var timeout = 2500;
+        if ($(".msg").find('.js-notif').hasClass('alert')) {
+            $(".msg").find('.js-notif').remove();
+            timeout = 0;
+        }
+        content.html(html);
+        setTimeout(function(){ 
+            $(".msg").find('.js-notif').remove();
+        }, timeout);
+    }
 </script>

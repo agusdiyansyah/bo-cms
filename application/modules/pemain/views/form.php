@@ -10,7 +10,7 @@
     
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
         
-        <?php echo form_input($input['id_hide']) ?>
+        <?php echo form_input($input['hide']['id']) ?>
         
         <div class="row remove-margin-top">
         	
@@ -22,7 +22,7 @@
 						<!-- <div id="errorBlock" class="help-block"></div> -->
 						
 						<div class="btn-group btn-group-justified" style="margin-bottom: 15px;">
-							<a href="#" class="btn btn-default fileinput-reset hide">Reset</a>
+							<!-- <a href="#" class="btn btn-default fileinput-reset hide">Reset</a> -->
 							<a href="#" class="btn btn-primary fileinput-browse">Browse</a>
 						</div>
 					</div>
@@ -106,16 +106,19 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('.mn-Pengurus, .mn-Pengurus .mn-Data').addClass('active');
+		$('.mn-Pemain').addClass('active');
 		
 		$(".select2").select2({
 			width: "100%"
 		});
 		
-		$(".tanggal_lahir").datepicker({
-			format: "yyyy-mm-dd",
-			autoclose: true
-		});
+		$('.tanggal_lahir').bootstrapMaterialDatePicker({
+            format : 'YYYY-MM-DD',
+            lang : 'en',
+            weekStart : 0,
+            time: false,
+            cancelText : 'Kembali'
+        });
 		
 		$('.form').validate({
 		   	ignore: [],
@@ -142,30 +145,12 @@
 	    });
 		
 		fileInputInit();
- 		   
- 	   	$(".form").on('click', '.file-drop-zone', function(event) {
-           	 event.preventDefault();
-          	  $("#file").trigger('click');
-     	});
         
         $(".form").on('click', '.fileinput-browse', function(event) {
         	event.preventDefault();
           	$("#file").trigger('click');
      	});
-        
-    	$(".form").on('click', '.fileinput-reset', function(event) {
-        	event.preventDefault();
- 			fileInputReset();
- 		});
 	});
-	
-	function fileInputReset () {
-		$("#file").fileinput('destroy');
-		$(".stat_removecover").val(1);
-		fileInputInit({
-			reset: true
-		});
-	}
 	
 	function fileInputInit (conf = {
 		reset: false
@@ -174,9 +159,6 @@
 		
 		if (imageLink == "" || conf.reset) {
 			imageLink = "<?php echo base_url("assets/themes/adminLTE/img/boxed-bg.png") ?>";
-			$(".form").find('.fileinput-reset').addClass('hide');
-		} else {
-			$(".form").find('.fileinput-reset').removeClass('hide');
 		}
 		
 		var fileInput = {
@@ -196,13 +178,6 @@
  	   };
  	   
  	   	$("#file")
- 		   	.fileinput(fileInput)
- 		   	.on('fileimageloaded', function(event, previewId) {
- 			   	$(".form").find('.fileinput-reset').removeClass('hide');
-				$(".stat_removecover").val(0);
- 		   	})
- 		   	.on('fileclear', function(event) {
- 			   	$(".form").find('.fileinput-reset').addClass('hide');
- 		   	});
+ 		   	.fileinput(fileInput);
 	}
 </script>
