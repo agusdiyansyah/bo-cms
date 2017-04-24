@@ -9,6 +9,7 @@ class Pemain extends Controller{
     private $stat   = false;
     private $valid  = false;
     private $ImageUploadPath = "./assets/upload/images/pemain/";
+    private $msg = "Data gagal di proses";
 
     public function __construct() {
         parent::__construct();
@@ -46,128 +47,10 @@ class Pemain extends Controller{
     public function add () {
         $this->_formAssets();
         
-        $data = array(
-            "title" => ucwords($this->module),
+        $data = $this->_formInputData(array(
             "subtitle" => "Tambah Data",
-            "link_back" => site_url($this->module),
-            "form_action" => base_url("$this->module/add_proses"),
-            
-            "photo" => "",
-            
-            "input" => array(
-                "id_hide" => array(
-                    "name" => "id",
-                    "class" => "id",
-                    "type" => "hidden"
-                ),
-                
-                "nama" => array(
-                    "name" => "nama",
-                    "type" => "text",
-                    "class" => "form-control nama"
-                ),
-                "no_jersey" => array(
-                    "name" => "no_jersey",
-                    "type" => "number",
-                    "class" => "form-control no_jersey"
-                ),
-                "posisi" => array(
-                    "config" => array(
-                        "name" => "posisi",
-                        "class" => "form-control select2 posisi",
-                    ),
-                    "list" => $this->M_pemain->getPosisiArray()
-                ),
-				"kota_kelahiran" => array(
-                    "name" => "kota_kelahiran",
-                    "type" => "text",
-                    "class" => "form-control kota_kelahiran"
-                ),
-				"tanggal_lahir" => array(
-                    "name" => "tanggal_lahir",
-                    "type" => "text",
-                    "class" => "form-control tanggal_lahir"
-                ),
-				"socmed" => array(
-                    array(
-                        "icon" => "fa fa-facebook",
-                        "item" => array(
-                            "name" => "facebook",
-                            "type" => "text",
-                            "class" => "form-control facebook",
-                            "placeholder" => "Facebook",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-twitter",
-                        "item" => array(
-                            "name" => "twitter",
-                            "type" => "text",
-                            "class" => "form-control twitter",
-                            "placeholder" => "Twitter",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-instagram",
-                        "item" => array(
-                            "name" => "instagram",
-                            "type" => "text",
-                            "class" => "form-control instagram",
-                            "placeholder" => "Instagram",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-google",
-                        "item" => array(
-                            "name" => "google_plus",
-                            "type" => "text",
-                            "class" => "form-control google_plus",
-                            "placeholder" => "Google Plus",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-heart",
-                        "item" => array(
-                            "name" => "bloglovin",
-                            "type" => "text",
-                            "class" => "form-control bloglovin",
-                            "placeholder" => "Bloglovin",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-pinterest",
-                        "item" => array(
-                            "name" => "pinterest",
-                            "type" => "text",
-                            "class" => "form-control pinterest",
-                            "placeholder" => "Pinterest",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-youtube",
-                        "item" => array(
-                            "name" => "youtube",
-                            "type" => "text",
-                            "class" => "form-control youtube",
-                            "placeholder" => "Youtube",
-                        ),
-                    ),
-                    array(
-                        "icon" => "fa fa-tumblr",
-                        "item" => array(
-                            "name" => "tumblr",
-                            "type" => "text",
-                            "class" => "form-control tumblr",
-                            "placeholder" => "Tumblr",
-                        ),
-                    ),
-                ),
-				"biografi" => array(
-                    "name" => "biografi",
-                    "class" => "form-control biografi"
-                ),
-            )
-        );
+            "form_action" => "add_proses"
+        ));
         
         $this->output->set_title($data['title'] . " " . $data['subtitle']);
 		$this->load->view("form", $data);
@@ -176,37 +59,13 @@ class Pemain extends Controller{
     public function add_proses () {
         $this->output->unset_template();
         if (
-            $this->input->post() AND
-            $this->input->post('nama') AND
-            $this->input->post('no_jersey') AND
-            $this->input->post('posisi')
+            $this->input->post()
         ) {
-
-            $this->rules();
+            $this->_rules();
 
             if (!$this->form_validation->run()) {
-                $errorMsg = $this->_formError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->module/add");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $nama = $this->input->post('nama');
-                $posisi = $this->input->post('posisi');
-                $no_jersey = $this->input->post('no_jersey');
-                $kota_kelahiran = $this->input->post('kota_kelahiran');
-                $tanggal_lahir = $this->input->post('tanggal_lahir');
-                $biografi = $this->input->post('biografi');
-                
-                $facebook = $this->input->post('facebook');
-                $twitter = $this->input->post('twitter');
-                $instagram = $this->input->post('instagram');
-                $google_plus = $this->input->post('google_plus');
-                $bloglovin = $this->input->post('bloglovin');
-                $pinterest = $this->input->post('pinterest');
-                $youtube = $this->input->post('youtube');
-                $tumblr = $this->input->post('tumblr');
                 
                 $photo = "";
                 if (is_uploaded_file($_FILES['file']['tmp_name'])) {
@@ -218,45 +77,29 @@ class Pemain extends Controller{
                         $photo = $upload['file_name'];
                     }
                 }
-
-                $dataPengurus = array(
-                    "nama" => $nama,
-                    "photo" => $photo,
-                    "posisi" => $posisi,
-                    "no_jersey" => $no_jersey,
-                    "kota_kelahiran" => $kota_kelahiran,
-                    "tanggal_lahir" => $tanggal_lahir,
-                    "biografi" => $biografi,
-                );
                 
-                $dataSocmed = array(
-                    "facebook" => $facebook,
-                    "twitter" => $twitter,
-                    "instagram" => $instagram,
-                    "google_plus" => $google_plus,
-                    "bloglovin" => $bloglovin,
-                    "pinterest" => $pinterest,
-                    "youtube" => $youtube,
-                    "tumblr" => $tumblr,
-                );
-
-                $proses = $this->M_pemain->add($dataPengurus, $dataSocmed);
+                $data = $this->_formPostInputData($photo);
+                $proses = $this->M_pemain->add($data['pemain'], $data['socmed']);
 
                 if ($proses) {
                     $this->stat = true;
                 }
             }
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/add";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect("pengurus");
     }
     
     public function edit ($id = 0) {
@@ -266,263 +109,98 @@ class Pemain extends Controller{
             $res->num_rows() > 0
         ) {
             $this->_formAssets();
-            
             $data = $res->row();
-            
-            $photo = "";
-            if (!empty($data->photo)) {
-                $photo = base_url($this->ImageUploadPath.$data->photo);
-            }
             
             $socmed = $this->M_pemain->getDataSocmedArray($id);
             
-            $data = array(
-                "title" => ucwords($this->module),
+            $data = $this->_formInputData(array(
                 "subtitle" => "Ubah Data",
-                "link_back" => site_url($this->module),
-                "form_action" => base_url("$this->module/edit_proses"),
-                
-                "photo" => $photo,
-                
-                "input" => array(
-                    "id_hide" => array(
-                        "name" => "id",
-                        "class" => "id",
-                        "type" => "hidden",
-                        "value" => $id
-                    ),
-                    
-                    "nama" => array(
-                        "name" => "nama",
-                        "type" => "text",
-                        "class" => "form-control nama",
-                        "value" => $data->nama
-                    ),
-                    "no_jersey" => array(
-                        "name" => "no_jersey",
-                        "type" => "text",
-                        "class" => "form-control no_jersey",
-                        "value" => $data->no_jersey
-                    ),
-                    "posisi" => array(
-                        "config" => array(
-                            "name" => "posisi",
-                            "class" => "form-control select2 posisi",
-                        ),
-                        "list" => $this->M_pemain->getPosisiArray(),
-                        "selected" => $data->posisi
-                    ),
-    				"kota_kelahiran" => array(
-                        "name" => "kota_kelahiran",
-                        "type" => "text",
-                        "class" => "form-control kota_kelahiran",
-                        "value" => $data->kota_kelahiran
-                    ),
-    				"tanggal_lahir" => array(
-                        "name" => "tanggal_lahir",
-                        "type" => "text",
-                        "class" => "form-control tanggal_lahir",
-                        "value" => $data->tanggal_lahir
-                    ),
-                    "socmed" => array(
-                        array(
-                            "icon" => "fa fa-facebook",
-                            "item" => array(
-                                "name" => "facebook",
-                                "type" => "text",
-                                "class" => "form-control facebook",
-                                "placeholder" => "Facebook",
-                                "value" => @$socmed['2']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-twitter",
-                            "item" => array(
-                                "name" => "twitter",
-                                "type" => "text",
-                                "class" => "form-control twitter",
-                                "placeholder" => "Twitter",
-                                "value" => @$socmed['1']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-instagram",
-                            "item" => array(
-                                "name" => "instagram",
-                                "type" => "text",
-                                "class" => "form-control instagram",
-                                "placeholder" => "Instagram",
-                                "value" => @$socmed['3']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-google",
-                            "item" => array(
-                                "name" => "google_plus",
-                                "type" => "text",
-                                "class" => "form-control google_plus",
-                                "placeholder" => "Google Plus",
-                                "value" => @$socmed['4']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-heart",
-                            "item" => array(
-                                "name" => "bloglovin",
-                                "type" => "text",
-                                "class" => "form-control bloglovin",
-                                "placeholder" => "Bloglovin",
-                                "value" => @$socmed['5']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-pinterest",
-                            "item" => array(
-                                "name" => "pinterest",
-                                "type" => "text",
-                                "class" => "form-control pinterest",
-                                "placeholder" => "Pinterest",
-                                "value" => @$socmed['6']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-youtube",
-                            "item" => array(
-                                "name" => "youtube",
-                                "type" => "text",
-                                "class" => "form-control youtube",
-                                "placeholder" => "Youtube",
-                                "value" => @$socmed['7']
-                            ),
-                        ),
-                        array(
-                            "icon" => "fa fa-tumblr",
-                            "item" => array(
-                                "name" => "tumblr",
-                                "type" => "text",
-                                "class" => "form-control tumblr",
-                                "placeholder" => "Tumblr",
-                                "value" => @$socmed['8']
-                            ),
-                        ),
-                    ),
-    				"biografi" => array(
-                        "name" => "biografi",
-                        "class" => "form-control biografi",
-                        "value" => $data->biografi
-                    ),
-                )
-            );
+                "form_action" => "edit_proses",
+                "id" => $id,
+                "nama" => $data->nama,
+                "photo" => $data->photo,
+                "no_jersey" => $data->no_jersey,
+                "posisi" => $data->posisi,
+                "kota_kelahiran" => $data->kota_kelahiran,
+                "tanggal_lahir" => $data->tanggal_lahir,
+                "biografi" => $data->biografi,
+                "facebook" => @$socmed["2"],
+                "twitter" => @$socmed["1"],
+                "instagram" => @$socmed["3"],
+                "google_plus" => @$socmed["4"],
+                "bloglovin" => @$socmed["5"],
+                "pinterest" => @$socmed["6"],
+                "youtube" => @$socmed["7"],
+                "tumblr" => @$socmed["8"]
+            ));
             
             $this->load->view("form", $data);
         }
     }
     
     public function edit_proses () {
-        
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
-            !empty($this->input->post('nama')) AND
-            !empty($this->input->post('posisi'))
+            $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-
-        if ($this->valid) {
-            
-            $this->rules();
-            
+            $this->_rules();
             $id = $this->input->post('id');
             
             if (!$this->form_validation->run()) {
-                $errorMsg = $this->_formError();
-
-                $notif = notification_proses("warning", "Gagal", $errorMsg);
-                $this->session->set_flashdata('message', $notif);
-
-                redirect("$this->module/edit/$id");
+                $this->msg = $this->_formPostProsesError();
             } else {
-                $nama = $this->input->post('nama');
-                $posisi = $this->input->post('posisi');
-                $no_jersey = $this->input->post('no_jersey');
-                $kota_kelahiran = $this->input->post('kota_kelahiran');
-                $tanggal_lahir = $this->input->post('tanggal_lahir');
-                $biografi = $this->input->post('biografi');
                 
-                $facebook = $this->input->post('facebook');
-                $twitter = $this->input->post('twitter');
-                $instagram = $this->input->post('instagram');
-                $google_plus = $this->input->post('google_plus');
-                $bloglovin = $this->input->post('bloglovin');
-                $pinterest = $this->input->post('pinterest');
-                $youtube = $this->input->post('youtube');
-                $tumblr = $this->input->post('tumblr');
+                $pemain = $this->M_pemain->getData("photo", $id)->row();
+                $photo = @$pemain->photo;
                 
                 if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-                    $pengurus = $this->M_pemain->getData("photo", $id)->row();
                     $this->load->library('image');
                     $upload = $this->image->upload(array(
                         "upload_path" => $this->ImageUploadPath,
-                        "update" => @$pengurus->photo
+                        "update" => @$pemain->photo
                     ));
                     if ($upload['stat']) {
-                        $dataPengurus["photo"] = $upload['file_name'];
+                        $photo = $upload['file_name'];
                     }
                     
                 }
-
-                $dataPengurus["nama"] = $nama;
-                $dataPengurus["posisi"] = $posisi;
-                $dataPengurus["no_jersey"] = $no_jersey;
-                $dataPengurus["kota_kelahiran"] = $kota_kelahiran;
-                $dataPengurus["tanggal_lahir"] = $tanggal_lahir;
-                $dataPengurus["biografi"] = $biografi;
                 
-                $dataSocmed = array(
-                    "facebook" => $facebook,
-                    "twitter" => $twitter,
-                    "instagram" => $instagram,
-                    "google_plus" => $google_plus,
-                    "bloglovin" => $bloglovin,
-                    "pinterest" => $pinterest,
-                    "youtube" => $youtube,
-                    "tumblr" => $tumblr,
-                );
+                $data = $this->_formPostInputData($photo);
 
-                $proses = $this->M_pemain->edit($id, $dataPengurus, $dataSocmed);
+                $proses = $this->M_pemain->edit($id, $data['pemain'], $data['socmed']);
 
                 if ($proses['stat']) {
                     $this->stat = true;
                 }
             }
 
-        }
-
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            if ($this->stat) {
+                $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink";
+            } else {
+                $notif = notification_proses("warning", "Gagal", $this->msg);
+                $this->session->set_flashdata('message', $notif);
+                $_backto = "$this->moduleLink/edit/$id";
+            }
+            
+            redirect($_backto);
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
-        
-        redirect($this->module);
 
     }
     
-    public function delete_proses ($id) {
+    public function delete_proses () {
+        $this->output->unset_template();
         if (
             $this->input->post() AND
             !empty($this->input->post('id')) AND
             $this->input->post('id') > 0
         ) {
-            $this->valid = true;
-        }
-        
-        if ($this->valid) {
             $id = $this->input->post('id');
-            
             $del = $this->M_pemain->delete($id);
 
             if ($del['stat']) {
@@ -532,44 +210,14 @@ class Pemain extends Controller{
                     unlink($this->ImageUploadPath . "thumb/" . $del['photo']);
                 }
             }
-        }
 
-        if ($this->stat) {
-            $notif = notification_proses("success", "Sukses", "Data Berhasil di proses");
-            $this->session->set_flashdata('message', $notif);
+            echo json_encode(array(
+                "stat" => $this->stat
+            ));
         } else {
-            $notif = notification_proses("warning", "Gagal", "Data gagal di proses");
-            $this->session->set_flashdata('message', $notif);
+            show_404();
         }
 
-    }
-    
-    private function rules () {
-        $this->load->library('form_validation');
-        $this->load->helper('security');
-        
-        $config = array(
-            array(
-                "field" => "nama",
-                "label" => "Nama Pengurus",
-                "rules" => "required|xss_clean",
-                "errors" => array(
-                    "required" => "%s tidak boleh kosong"
-                )
-            ),
-            array(
-                "field" => "posisi",
-                "label" => "Posisi",
-                "rules" => "required|xss_clean",
-                "errors" => array(
-                    "required" => "%s tidak boleh kosong"
-                )
-            ),
-        );
-        
-        $this->form_validation->set_error_delimiters("<div class='text-danger'>", "</div>");
-        
-        $this->form_validation->set_rules($config);
     }
     
     private function _formAssets () {
@@ -591,12 +239,196 @@ class Pemain extends Controller{
 		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
 		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
         
-        // datepicker
-        $this->output->css('assets/themes/adminLTE/plugins/datepicker/datepicker3.css');
-		$this->output->js('assets/themes/adminLTE/plugins/datepicker/bootstrap-datepicker.js');
+        // material datetime picker
+        $this->output->css('assets/themes/adminLTE/plugins/bootstrap-materialdatetimepicker/css/bootstrap-material-datetimepicker.css');
+        $this->output->css('assets/themes/adminLTE/css/bootstrap-materialdatetimepicker-skin.css');
+        $this->output->css('https://fonts.googleapis.com/icon?family=Material+Icons');
+        $this->output->js('assets/themes/adminLTE/plugins/moment/moment.js');
+        $this->output->js('assets/themes/adminLTE/plugins/bootstrap-materialdatetimepicker/js/bootstrap-material-datetimepicker.js');
     }
     
-    private function _formError () {
+    private function _formInputData ($data) {
+        $photo = "";
+        if (!empty($data['photo'])) {
+            $baseImage = str_replace(".", "", $this->ImageUploadPath);
+            $photo = base_url($baseImage . "/" . $data['photo']);
+        }
+        $tanggal_lahir = "";
+        if (!empty($data['tanggal_lahir']) AND $data['tanggal_lahir'] != "0000-00-00") {
+            $tanggal_lahir = $data['tanggal_lahir'];
+        }
+        return array(
+            "title" => ucwords($this->module),
+            "subtitle" => @$data['subtitle'],
+            "link_back" => site_url($this->module),
+            "moduleLink" => base_url($this->module),
+            "ImageUploadPath" => $this->ImageUploadPath,
+            "form_action" => base_url($this->module . "/" . $data['form_action']),
+            
+            "photo" => $photo,
+            
+            "input" => array(
+                "hide" => array(
+                    "id" => array(
+                        "name" => "id",
+                        "class" => "id",
+                        "type" => "hidden",
+                        "value" => @$data['id']
+                    )
+                ),
+                
+                "nama" => array(
+                    "name" => "nama",
+                    "type" => "text",
+                    "class" => "form-control nama",
+                    "value" => @$data['nama']
+                ),
+                "no_jersey" => array(
+                    "name" => "no_jersey",
+                    "type" => "number",
+                    "class" => "form-control no_jersey",
+                    "value" => @$data['no_jersey']
+                ),
+                "posisi" => array(
+                    "config" => array(
+                        "name" => "posisi",
+                        "class" => "form-control select2 posisi",
+                    ),
+                    "list" => $this->M_pemain->getPosisiArray(),
+                    "selected" => @$data['posisi']
+                ),
+				"kota_kelahiran" => array(
+                    "name" => "kota_kelahiran",
+                    "type" => "text",
+                    "class" => "form-control kota_kelahiran",
+                    "value" => @$data['kota_kelahiran']
+                ),
+				"tanggal_lahir" => array(
+                    "name" => "tanggal_lahir",
+                    "type" => "text",
+                    "class" => "form-control tanggal_lahir",
+                    "value" => $tanggal_lahir
+                ),
+				"socmed" => array(
+                    array(
+                        "icon" => "fa fa-facebook",
+                        "item" => array(
+                            "name" => "facebook",
+                            "type" => "text",
+                            "class" => "form-control facebook",
+                            "placeholder" => "Facebook",
+                            "value" => @$data['facebook']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-twitter",
+                        "item" => array(
+                            "name" => "twitter",
+                            "type" => "text",
+                            "class" => "form-control twitter",
+                            "placeholder" => "Twitter",
+                            "value" => @$data['twitter']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-instagram",
+                        "item" => array(
+                            "name" => "instagram",
+                            "type" => "text",
+                            "class" => "form-control instagram",
+                            "placeholder" => "Instagram",
+                            "value" => @$data['instagram']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-google",
+                        "item" => array(
+                            "name" => "google_plus",
+                            "type" => "text",
+                            "class" => "form-control google_plus",
+                            "placeholder" => "Google Plus",
+                            "value" => @$data['google_plus']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-heart",
+                        "item" => array(
+                            "name" => "bloglovin",
+                            "type" => "text",
+                            "class" => "form-control bloglovin",
+                            "placeholder" => "Bloglovin",
+                            "value" => @$data['bloglovin']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-pinterest",
+                        "item" => array(
+                            "name" => "pinterest",
+                            "type" => "text",
+                            "class" => "form-control pinterest",
+                            "placeholder" => "Pinterest",
+                            "value" => @$data['pinterest']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-youtube",
+                        "item" => array(
+                            "name" => "youtube",
+                            "type" => "text",
+                            "class" => "form-control youtube",
+                            "placeholder" => "Youtube",
+                            "value" => @$data['youtube']
+                        ),
+                    ),
+                    array(
+                        "icon" => "fa fa-tumblr",
+                        "item" => array(
+                            "name" => "tumblr",
+                            "type" => "text",
+                            "class" => "form-control tumblr",
+                            "placeholder" => "Tumblr",
+                            "value" => @$data['tumblr']
+                        ),
+                    ),
+                ),
+				"biografi" => array(
+                    "name" => "biografi",
+                    "class" => "form-control biografi",
+                    "value" => @$data['biografi']
+                ),
+            )
+        );
+    }
+    
+    private function _formPostInputData ($photo = "") {
+        $pemain = array(
+            "nama" => $this->input->post('nama'),
+            "photo" => $photo,
+            "posisi" => $this->input->post('posisi'),
+            "no_jersey" => $this->input->post('no_jersey'),
+            "kota_kelahiran" => $this->input->post('kota_kelahiran'),
+            "tanggal_lahir" => $this->input->post('tanggal_lahir'),
+            "biografi" => $this->input->post('biografi'),
+        );
+        
+        $socmed = array(
+            "facebook" => $this->input->post('facebook'),
+            "twitter" => $this->input->post('twitter'),
+            "instagram" => $this->input->post('instagram'),
+            "google_plus" => $this->input->post('google_plus'),
+            "bloglovin" => $this->input->post('bloglovin'),
+            "pinterest" => $this->input->post('pinterest'),
+            "youtube" => $this->input->post('youtube'),
+            "tumblr" => $this->input->post('tumblr'),
+        );
+        
+        return array(
+            "pemain" => $pemain,
+            "socmed" => $socmed,
+        );
+    }
+    
+    private function _formPostProsesError () {
         $errorMsg = "";
         if (form_error("nama")) {
             $errorMsg .= form_error("nama");
@@ -604,8 +436,61 @@ class Pemain extends Controller{
         if (form_error("posisi")) {
             $errorMsg .= form_error("posisi");
         }
+        if (form_error("no_jersey")) {
+            $errorMsg .= form_error("no_jersey");
+        }
+        if (form_error("file")) {
+            $errorMsg .= form_error("file");
+        }
         
         return $errorMsg;
+    }
+
+    private function _rules () {
+        $this->load->library('form_validation');
+        $this->load->helper('security');
+        
+        $config = array(
+            array(
+                "field" => "nama",
+                "label" => "Nama Pengurus",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+            array(
+                "field" => "no_jersey",
+                "label" => "Nomor Jersey",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+            array(
+                "field" => "posisi",
+                "label" => "Posisi",
+                "rules" => "required|xss_clean",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ),
+        );
+        
+        if ($_FILES['file']['name'] == "") {
+            array_push($config, array(
+                "field" => "file",
+                "label" => "Photo Pemain",
+                "rules" => "required",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ));
+        }
+        
+        $this->form_validation->set_error_delimiters("<div class=''>", "</div>");
+        
+        $this->form_validation->set_rules($config);
     }
 
 }

@@ -6,4 +6,4 @@
 /assets/upload/images/**/**/*.jpeg
 /assets/upload/images/**/**/*.png
 catatatan
-application/config/config.php
+/application/config/config.php
