@@ -8,7 +8,7 @@
 
 <section class="content">
     <form class="form" action="<?php echo $form_action ?>" method="post" enctype="multipart/form-data">
-        <?php echo form_input($input['hide_id']) ?>
+        <?php echo form_input($input['hide']['id']) ?>
 		
 		<div class="row remove-margin-top">
 			<div class="col-sm-3">
@@ -16,7 +16,7 @@
 					<div class="col-xs-12">
 						<label for="file" class="control-label">Photo</label>
 						<input id="file" name="foto" type="file" class="file-loading">
-						<!-- <div id="errorBlock" class="help-block"></div> -->
+						<input type="hidden" name="remove-photo" class="remove-photo" value="0">
 						
 						<div class="btn-group btn-group-justified" style="margin-bottom: 15px;">
 						    <a href="#" class="btn btn-default fileinput-reset hide">Reset</a>
@@ -84,32 +84,27 @@
         $(".select2").select2({width: '100%'});
         
         $('.form').validate({
-		   ignore: [],
-		   errorClass: 'error',
-		   rules: {
-               username : {required: true},
-               password : {
-                   required: passwordCallback,
-               },
-               level : {required: true},
-               nama : {required: true},
-			   status : {required: true},
-		   },
-		   messages: {
-               username : {required: "Username tidak boleh kosong"},
-               password : {required: "Password tidak boleh kosong"},
-               level : {required: "Level tidak boleh kosong"},
-               nama : {required: "Nama lengkap tidak boleh kosong"},
-			   status : {required: "Status tidak boleh kosong"},
-		   }
-	   });
+		   	ignore: [],
+		  	errorClass: 'error',
+		 	rules: {
+               	username : {required: true},
+              	password : {
+                	required: passwordCallback,
+            	},
+           	    level : {required: true},
+          	    nama : {required: true},
+				status : {required: true},
+		   	},
+		   	messages: {
+               	username : {required: "Username tidak boleh kosong"},
+               	password : {required: "Password tidak boleh kosong"},
+               	level : {required: "Level tidak boleh kosong"},
+               	nama : {required: "Nama lengkap tidak boleh kosong"},
+			   	status : {required: "Status tidak boleh kosong"},
+		   	}
+	   	});
 	   
-	   fileInputInit();
-		   
-	   	$(".form").on('click', '.file-drop-zone', function(event) {
-          	 event.preventDefault();
-         	  $("#file").trigger('click');
-    	});
+		fileInputInit();
        
        	$(".form").on('click', '.fileinput-browse', function(event) {
           	 event.preventDefault();
@@ -124,11 +119,23 @@
 	
 	function fileInputReset () {
 		$("#file").fileinput('destroy');
-		fileInputInit();
+		$(".remove-photo").val(1);
+		fileInputInit({
+			reset: true
+		});
 	}
 	
-	function fileInputInit () {
-		var linkDefaultImage = "<?php echo $adminFoto ?>";
+	function fileInputInit (conf = {
+		reset: false
+	}) {
+		var imageLink = "<?php echo $photo ?>";
+		
+		if (imageLink == "" || conf.reset) {
+			imageLink = "<?php echo base_url("assets/themes/adminLTE/img/boxed-bg.png") ?>";
+			$(".form").find('.fileinput-reset').addClass('hide');
+		} else {
+			$(".form").find('.fileinput-reset').removeClass('hide');
+		}
 		
 		var fileInput = {
  		   maxFilePreviewSize: 10240,
@@ -142,7 +149,7 @@
  			   image: { width: "98.5%", height: "auto" },
  		   },
  		   initialPreview: [
- 			   "<img src='"+ linkDefaultImage +"' class='file-preview-image' style='width: 100%; height: auto' alt='Default Image' title='Default Image'>",
+ 			   "<img src='"+ imageLink +"' class='file-preview-image' style='width: 100%; height: auto' alt='Default Image' title='Default Image'>",
  		   ]
  	   };
  	   
