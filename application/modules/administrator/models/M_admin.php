@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class M_admin extends CI_Model {
-	protected $tb = '';
+	private $tb;
 	
 	public $level = array(
 		"" 	=> "Pilih Level", 
@@ -20,17 +20,6 @@ class M_admin extends CI_Model {
 	public function __construct() {
 		$tb = $this->config->load("database_table", true);
         $this->tb = $tb['tb_user'];
-	}
-
-	function getAll($limit = array()){
-		$this->filter();
-		if($limit == NULL){
-			return $this->db->get($this->tb);
-		}
-		else {
-			$this->db->limit($limit['perpage'], $limit['offset']);
-			return $this->db->get($this->tb);
-		}
 	}
 	
 	public function data ($post, $debug = false) {
@@ -93,13 +82,15 @@ class M_admin extends CI_Model {
             </li>
             ";
 
-            $btnAksi .= "
-            <li>
-                <a href='#' id='btn-hapus' data-id='$data->id_user'>
-                    Hapus
-                </a>
-            </li>
-            ";
+            if ($data->id_user != $this->session->userdata("id_user")) {
+				$btnAksi .= "
+	            <li>
+	                <a href='#' id='btn-hapus' data-id='$data->id_user'>
+	                    Hapus
+	                </a>
+	            </li>
+	            ";
+            }
 
             $aksi = "
 			<div class='btn-group'>
@@ -131,51 +122,40 @@ class M_admin extends CI_Model {
 
     }
 	
-	protected function statusLabel ($showStat = "") {
+	private function statusLabel ($showStat = "") {
 		if ($showStat > 0 AND ( is_int($showStat) OR $showStat == "" )) {
 			return $this->status[$showStat];
 		}
 	}
 	
-	function insert($data){
-		$this->db->insert($this->tb, $data);
+	public function insert($data) {
+		return $this->db->insert($this->tb, $data);
 	}
-	function update($id_user, $data){
+	
+	public function update($id_user, $data) {
 		$this->db->where('id_user', $id_user);
-		$this->db->update($this->tb, $data);
+		return $this->db->update($this->tb, $data);
 	}
-	function delete($id_user){
+	
+	public function delete($id_user) {
 		$this->db->where('id_user', $id_user);
-		$this->db->delete($this->tb);
+		return $this->db->delete($this->tb);
 	}
-	function getById($id_user){
+	
+	public function getById($id_user) {
 		$this->db->where('id_user', $id_user);
 		return $this->db->get($this->tb);
 	}
-	function combobox_level($selected="")
-	{
+	
+	public function combobox_level($selected="") {
 		$options = $this->level;
 		return form_dropdown('level', $options, $selected, 'class="form-control"');
 	}
-	function getLevel($level){
+	
+	public function getLevel($level){
 		return $this->level[$level];
 	}
-	private function filter(){
-		$Admin_cari_level = $this->session->userdata('Admin_cari_level');
-		$Admin_cari_status = $this->session->userdata('Admin_cari_status');
-		$Admin_cari_nama = $this->session->userdata('Admin_cari_nama');
-		if ($Admin_cari_nama != "") {
-			$this->db->like($this->tb.'.nama', $Admin_cari_nama, 'both');
-		}
-		if ($Admin_cari_status != "") {
-			$this->db->where($this->tb.'.status', $Admin_cari_status);
-		}
-		if ($Admin_cari_level != "") {
-			$this->db->where($this->tb.'.level', $Admin_cari_level);
-		}
-		$this->db->where($this->tb.'.level !=', 100);
-	}
-
+	
 }
 
 /* End of file M_news.php */

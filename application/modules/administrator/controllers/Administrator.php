@@ -18,6 +18,7 @@ class Administrator extends Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('M_admin');
+		$this->output->set_title(ucwords($this->module));
 	}
 	
 	public function index () {
@@ -66,7 +67,7 @@ class Administrator extends Controller {
                 )
             ),
 		);
-		$this->output->set_title($data['title'] . " " . $data['subtitle']);
+		$this->output->append_title($data['subtitle']);
 		$this->load->view('data', $data);
 	}
 	
@@ -92,11 +93,10 @@ class Administrator extends Controller {
 			"form_action" => "add_proses",
 		));
 		
-        $this->output->append_title($data['subtitle'] . " " . $data['title']);
+        $this->output->append_title($data['subtitle']);
         $this->load->view('form', $data);
 	}
 	
-	// sampai sini udah ga kuat dah mate :D
 	public function add_proses () {
 		$this->output->unset_template();
 		if ($this->input->post()) {
@@ -105,56 +105,43 @@ class Administrator extends Controller {
 				$this->msg = $this->_formPostProsesError();
 			}
 			else {
-				if(is_uploaded_file($_FILES['foto']['tmp_name'])){
-					$file_element_name = 'foto';
-					$user_upload_path = 'assets/admin_foto/';
-
-					$config['upload_path'] = './' . $user_upload_path;
-					$config['allowed_types'] = 'jpg|jpeg|gif|png';
-					$config['max_size']  = 1024 * 4;
-					$config['encrypt_name'] = TRUE;
-
-					$this->load->library('upload', $config);
-
-					if (!$this->upload->do_upload($file_element_name))
-					{
-						$error = $this->upload->display_errors();
-						$notif = notification_proses("error","Gagal",$error);
+				$photo = "";
+                if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+                    $this->load->library('image');
+                    $upload = $this->image->upload(array(
+						"file_element_name" => "foto",
+						"max_size" => 1024*4,
+						"crop_width" => 215,
+						"crop_height" => 215,
+						"resize_width" => 560,
+						"resize_height" => 251,
+                        "upload_path" => $this->ImageUploadPath
+                    ));
+                    if ($upload['stat']) {
+                        $photo = $upload['file_name'];
+                    } else {
+						$notif = notification_proses("error","Gagal", $upload['msg']);
 					    $this->session->set_flashdata('message', $notif);
 						redirect('administrator/add');
-					}
-					else
-					{
-						$data_upload = $this->upload->data();
-
-						$file_name = $data_upload["file_name"];
-
-						$this->load->library('image_lib');
-						$config_resize['image_library'] = 'gd2';	
-						$config_resize['maintain_ratio'] = TRUE;
-						$config_resize['master_dim'] = 'height';
-						$config_resize['quality'] = "100%";
-						$config_resize['source_image'] = './' . $user_upload_path . $file_name;
-						$config_resize['new_image'] = './' . $user_upload_path .'thumb/';
-
-						$config_resize['height'] = 251;
-						$config_resize['width'] = 560;
-						$this->image_lib->initialize($config_resize);
-						$this->image_lib->resize();
-						$data['foto'] = $file_name;
-					}
-				}
-				$data['username'] = $this->input->post('username');
-				$data['password'] = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
-				$data['nama'] = $this->input->post('nama');
-				$data['level'] = $this->input->post('level');
-				$data['email'] = $this->input->post('email');
-				$data['status'] = $this->input->post('status');
+                    }
+                }
+				$data = $this->_formPostInputData($photo);
 				$insert = $this->M_admin->insert($data);
-				$notif = notification_proses("success","Sukses","Data Berhasil di Tambah");
-	            $this->session->set_flashdata('message', $notif);
-				redirect('administrator');
+				
+				if ($insert) {
+					$this->stat = true;
+				}
 			}
+			if ($this->stat) {
+				$notif = notification_proses("success", "Sukses", "Data Berhasil di Tambah");
+	            $this->session->set_flashdata('message', $notif);
+				$_backto = "$this->module";
+			} else {
+				$notif = notification_proses("warning", "Gagal", $this->msg);
+	            $this->session->set_flashdata('message', $notif);
+				$_backto = "$this->module/add";
+			}
+			redirect($_backto);
 		} else {
 			show_404();
 		}
@@ -162,189 +149,124 @@ class Administrator extends Controller {
 	
 	public function edit ($id){
 		$query = $this->M_admin->getById($id);
-		if ($query->num_rows() > 0) {
-			$this->valid = true;
-		}
-		
-		if ($this->valid) {
-			// select2
-	        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
-			$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
-			$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-			
-			// validate
-	        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
-			$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
-			
-			// fileinput
-			$this->output->css("assets/themes/adminLTE/plugins/file-input/fileinput.min.css");
-	        $this->output->css("assets/themes/adminLTE/css/file-input-custom.css");
-	        $this->output->js("assets/themes/adminLTE/plugins/file-input/fileinput.min.js");
-			
+		if (
+			$query->num_rows() > 0 AND
+			$id > 0
+		) {
+			$this->_formAssets();
 			$row = $query->row();
 			
-			$adminFoto = (empty($row->foto)) ? base_url('assets/themes/adminLTE/img/boxed-bg.png') : base_url("assets/admin_foto/thumb/$row->foto");
+			$photo = (empty($row->foto)) ? base_url('assets/themes/adminLTE/img/boxed-bg.png') : base_url("assets/admin_foto/thumb/$row->foto");
 			
-	        $data = array(
-	            'title' => $this->title,
-	            'subtitle' => 'Ubah',
-	            'form_action' => site_url('administrator/edit_proses'),
-				'link_back' => site_url('administrator'),
-				
-				"adminFoto" => $adminFoto, 
-				"input" => array(
-					"hide_id" => array(
-	                    "name" => "id",
-	                    "class" => "form-control hide_id",
-						"id" => "hide_id",
-	                    "type" => "hidden",
-						"value" => $row->id_user
-	                ),
-					
-					"level" => array(
-	                    "config" => array(
-	                        "name" => "level",
-	                        "class" => "form-control select2 level",
-	                        "id" => "level",
-	                    ),
-	                    "list" => $this->M_admin->level,
-						"selected" => $row->level
-	                ),
-					"username" => array(
-	                    "name" => "username",
-	                    "class" => "form-control username",
-						"id" => "username",
-	                    "type" => "text",
-						"value" => $row->username
-	                ),
-					"password" => array(
-	                    "name" => "password",
-	                    "class" => "form-control password",
-						"id" => "password",
-	                ),
-					"nama" => array(
-	                    "name" => "nama",
-	                    "class" => "form-control nama",
-						"id" => "nama",
-	                    "type" => "text",
-						"value" => $row->nama
-	                ),
-					"email" => array(
-	                    "name" => "email",
-	                    "class" => "form-control email",
-						"id" => "email",
-	                    "type" => "email",
-						"value" => $row->email
-	                ),
-					"status" => array(
-	                    "config" => array(
-	                        "name" => "status",
-	                        "class" => "form-control select2 status",
-	                        "id" => "status",
-	                    ),
-	                    "list" => $this->M_admin->status,
-						"selected" => $row->status
-	                ),
-	            )
-	        );
-	        $this->output->append_title($data['subtitle'] . " " . $data['title']);
+			$data = $this->_formInputData(array(
+				"subtitle" => "Ubah Data",
+				"form_action" => "edit_proses",
+				"id" => $id,
+				"level" => $row->level,
+				"foto" => $row->foto,
+				"username" => $row->username,
+				"nama" => $row->nama,
+				"email" => $row->email,
+				"status" => $row->status,
+			));
+			
+	        $this->output->append_title($data['subtitle']);
 	        $this->load->view('form', $data);
 		} else {
-			$notif = notification_proses("warning", "Gagal", "Data tidak ditemukan");
-            $this->session->set_flashdata('message', $notif);
-			redirect('administrator');
+			show_404();
 		}
 	}
 
-	public function edit_proses (){
+	public function edit_proses () {
+		$this->output->unset_template();
 		$id_user = $this->input->post('id');
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('username', 'Username', 'required');
-		$this->form_validation->set_rules('nama', 'Nama', 'required|trim');
-		$this->form_validation->set_rules('level', 'Level', 'required');
-		$this->form_validation->set_rules('status', 'Status', 'required');
-		if ($this->form_validation->run() == FALSE){
-			$msg_error = validation_errors('<span>', '</span>');
-			$notif = notification_proses("error","Gagal",$msg_error);
-            $this->session->set_flashdata('message', $notif);
-			$this->edit($id);
-		}
-		else {
-			if(is_uploaded_file($_FILES['foto']['tmp_name'])){
-				$file_element_name = 'foto';
-				$user_upload_path = 'assets/admin_foto/';
-
-				$config['upload_path'] = './' . $user_upload_path;
-				$config['allowed_types'] = 'jpg|jpeg|gif|png';
-				$config['max_size']  = 1024 * 4;
-				$config['encrypt_name'] = TRUE;
-
-				$this->load->library('upload', $config);
-
-				if (!$this->upload->do_upload($file_element_name))
-				{
-					$error = $this->upload->display_errors();
-					$notif = notification_proses("error","Gagal",$error);
-				    $this->session->set_flashdata('message', $notif);
-					redirect('administrator/add');
-				}
-				else
-				{
-					$data_upload = $this->upload->data();
-
-					$file_name = $data_upload["file_name"];
-
-					$this->load->library('image_lib');
-					$config_resize['image_library'] = 'gd2';	
-					$config_resize['maintain_ratio'] = TRUE;
-					$config_resize['master_dim'] = 'height';
-					$config_resize['quality'] = "100%";
-					$config_resize['source_image'] = './' . $user_upload_path . $file_name;
-					$config_resize['new_image'] = './' . $user_upload_path .'thumb/';
-
-					$config_resize['height'] = 251;
-					$config_resize['width'] = 560;
-					$this->image_lib->initialize($config_resize);
-					$this->image_lib->resize();
-					$data['foto'] = $file_name;
+		$sql = $this->M_admin->getById($id_user);
+		if (
+			$this->input->post() AND
+			!empty($id_user) AND
+			$id_user > 0 AND
+			$sql->num_rows() > 0
+		) {
+			$this->_rules("edit");
+			
+			if (!$this->form_validation->run()) {
+				$this->msg = $this->_formPostProsesError();
+			} else {
+				$image = $sql->row();
+				$photo = @$image->foto;
+                if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+                    $this->load->library('image');
+                    $upload = $this->image->upload(array(
+						"file_element_name" => "foto",
+						"max_size" => 1024 * 4,
+						"crop_width" => 215,
+						"crop_height" => 215,
+						"resize_width" => 560,
+						"resize_height" => 251,
+                        "upload_path" => $this->ImageUploadPath,
+						"update" => @$image->foto
+                    ));
+                    if ($upload['stat']) {
+                        $photo = $upload['file_name'];
+                    } else {
+						$notif = notification_proses("error","Gagal", $upload['msg']);
+					    $this->session->set_flashdata('message', $notif);
+						redirect("administrator/edit/$id_user");
+                    }
+                }
+				$data = $this->_formPostInputData($photo);
+				$update = $this->M_admin->update($id_user, $data);
+				
+				if ($update) {
+					$this->stat = true;
 				}
 			}
-			$data['username'] = $this->input->post('username');
-			$password = $this->input->post('password');
-			if ($password != "") {
-				$data['password'] = password_hash($password,PASSWORD_BCRYPT);
+			if ($this->stat) {
+				$notif = notification_proses("success", "Sukses", "Data Berhasil di Proses");
+	            $this->session->set_flashdata('message', $notif);
+				if ($id_user == $this->session->userdata("id_user")) {
+					Modules::run('login/logout');
+				} else {
+					$_backto = "$this->module";
+				}
+			} else {
+				$notif = notification_proses("warning", "Gagal", $this->msg);
+	            $this->session->set_flashdata('message', $notif);
+				$_backto = "$this->module/edit/$id_user";
 			}
-			$data['nama'] = $this->input->post('nama');
-			$data['level'] = $this->input->post('level');
-			$data['email'] = $this->input->post('email');
-			$data['status'] = $this->input->post('status');
-			$update = $this->M_admin->update($id_user, $data);
-			$notif = notification_proses("success","Sukses","Data Berhasil di Edit");
-            $this->session->set_flashdata('message', $notif);
-			redirect('administrator');
+			redirect($_backto);
+		} else {
+			show_404();
 		}
 	}
 	
-	public function delete (){
+	public function delete () {
+		$this->output->unset_template();
 		$id = $this->input->post('id');
 		$row = $this->M_admin->getById($id);
-        if ($row) {
+		if (
+			!empty($id) AND
+			$id > 0 AND
+			$row->num_rows() > 0
+		) {
 			$data = $row->row();
-			$upload_path = "./assets/admin_foto/";
+            $del = $this->M_admin->delete($id);
 			
-            $this->M_admin->delete($id);
-			if (file_exists($upload_path . $data->foto)) {
-				if (unlink($upload_path . $data->foto) AND file_exists($upload_path . "thumb/" . $data->foto)) {
-					unlink($upload_path . "thumb/" . $data->foto);
+			if (file_exists($this->ImageUploadPath . $data->foto)) {
+				if (unlink($this->ImageUploadPath . $data->foto) AND file_exists($this->ImageUploadPath . "thumb/" . $data->foto)) {
+					unlink($this->ImageUploadPath . "thumb/" . $data->foto);
 				}
 			}
+			if ($del) {
+				$this->stat = true;
+			}
 			
-            $notif = notification_proses("success","Sukses","Data Berhasil di Hapus $exists");
-            $this->session->set_flashdata('message', $notif);
-        } else {
-            $notif = notification_proses("danger","Gagal", "Data Gagal di Hapus");
-            $this->session->set_flashdata('message', $notif);
-        }
+			echo json_encode(array(
+				"stat" => $this->stat
+			));
+		} else {
+			show_404();
+		}
 	}
 	
 	public function cari (){
@@ -373,8 +295,9 @@ class Administrator extends Controller {
 	
 	private function _formInputData ($data) {
 		$photo = "";
-		if (!empty($data['photo'])) {
-			
+		if (!empty($data['foto'])) {
+			$baseImage = str_replace(".", "", $this->ImageUploadPath);
+			$photo = base_url($baseImage . $data['foto']);
 		}
 		
 		return array(
@@ -447,8 +370,18 @@ class Administrator extends Controller {
         );
 	}
 	
-	private function _formPostInputData () {
-	
+	private function _formPostInputData ($photo) {
+		if (!empty($this->input->post('password'))) {
+			$data["password"] = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
+		}
+		$data["foto"] = $photo;
+		$data["username"] = $this->input->post('username');
+		$data["nama"] = $this->input->post('nama');
+		$data["level"] = $this->input->post('level');
+		$data["email"] = $this->input->post('email');
+		$data["status"] = $this->input->post('status');
+
+		return $data;
 	}
 	
 	private function _formPostProsesError () {
@@ -472,7 +405,7 @@ class Administrator extends Controller {
         return $errorMsg;
 	}
 	
-	private function _rules () {
+	private function _rules ($tipe = "add") {
 		$this->load->library('form_validation');
         $this->load->helper('security');
         
@@ -481,14 +414,6 @@ class Administrator extends Controller {
                 "field" => "username",
                 "label" => "Username",
                 "rules" => "required|xss_clean",
-                "errors" => array(
-                    "required" => "%s tidak boleh kosong"
-                )
-            ),
-            array(
-                "field" => "password",
-                "label" => "Password",
-                "rules" => "required",
                 "errors" => array(
                     "required" => "%s tidak boleh kosong"
                 )
@@ -518,6 +443,17 @@ class Administrator extends Controller {
                 )
             ),
         );
+		
+		if ($tipe == "add") {
+			array_push($config, array(
+                "field" => "password",
+                "label" => "Password",
+                "rules" => "required",
+                "errors" => array(
+                    "required" => "%s tidak boleh kosong"
+                )
+            ));
+		}
         
         $this->form_validation->set_error_delimiters("<div class=''>", "</div>");
         $this->form_validation->set_rules($config);

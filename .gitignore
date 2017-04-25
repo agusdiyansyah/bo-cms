@@ -5,5 +5,11 @@
 /assets/upload/images/**/**/*.jpg
 /assets/upload/images/**/**/*.jpeg
 /assets/upload/images/**/**/*.png
-catatatan
+/assets/admin_foto/*.png
+/assets/admin_foto/*.jpg
+/assets/admin_foto/*.jpeg
+/assets/admin_foto/thumb/*.png
+/assets/admin_foto/thumb/*.jpg
+/assets/admin_foto/thumb/*.jpeg
 /application/config/config.php
+catatatan
