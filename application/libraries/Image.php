@@ -39,9 +39,12 @@ class Image {
         $opt["max_size"]          = empty($opt['max_size']) ? 1024*5 : $opt['max_size'];
         $opt["min_size"]          = empty($opt['min_size']) ? 0 : $opt['min_size'];
         
-        $valid = true;
+        $opt["allowed_types"]     = empty($opt["allowed_types"]) ? "jpg|jpeg|gif|png" : $opt["allowed_types"];
+        
+        $valid = false;
         $file_name = "";
         $msg = "Data gagal di proses";
+        $msgnumber = 0;
         
         if ($opt['update']) {
             if (file_exists($opt['upload_path'] . $opt['update'])) {
@@ -58,12 +61,11 @@ class Image {
             $upload_path = $opt['upload_path'];
             
             if (!file_exists($upload_path)) {
-                $msg = "Upload path is not exists";
-                $valid = false;
+                $msgnumber = 2;
             } else {
                 $conf = array(
                     "upload_path" => $upload_path,
-                    "allowed_types" => "jpg|jpeg|gif|png",
+                    "allowed_types" => $opt['allowed_types'],
                     "max_size" => $opt['max_size'],
                     "encrypt_name" => $opt['encrypt_name']
                 );
@@ -71,113 +73,130 @@ class Image {
                 $this->ci->load->library('upload' , $conf);
                 
                 if (!$this->ci->upload->do_upload($file_element_name)) {
-                    $msg = $this->ci->upload->display_errors();
-                    return false;
-                    exit;
+                    $msgnumber = 3;
                 } else {
-                    $msg = "file berhasil di upload";
                     $upload = $this->ci->upload->data();
                     $file_name = $upload['file_name'];
-                    
-                    if ($opt['resize']) {
+                    if (!file_exists($opt['upload_path'] . $upload['file_name'])) {
+                        $msgnumber = 9;
+                    } else {
+                        $msgnumber = 4;
                         
-                        $this->ci->load->library('image_lib');
-                        
-                        if ($upload['image_width'] > $upload['image_height']) {
-                            $fit = "height";
-                        } else {
-                            $fit = "width";
-                        }
-                        
-                        $conf = array(
-                            "image_library" => "gd2",
-                            "maintain_ratio" => true,
-                            "master_dim" => $fit,
-                            "quality" => "100%",
-                            "source_image" => $upload_path . $file_name,
-                            "new_image" => $opt['thumbnail_path'],
-                            "width" => $opt['resize_width'],
-                            "height" => $opt['resize_height'],
-                        );
-                        
-                        $this->ci->image_lib->initialize($conf);
-                        
-                        $resize = false;
-                        if ($this->ci->image_lib->resize()) {
-                            $resize = true;
-                            $msg = "file berhasil di resize";
-                        } else {
-                            if (file_exists($upload_path . $file_name)) {
-                                unlink($upload_path . $file_name);
+                        if ($opt['resize']) {
+                            
+                            $this->ci->load->library('image_lib');
+                            
+                            if ($upload['image_width'] > $upload['image_height']) {
+                                $fit = "height";
+                            } else {
+                                $fit = "width";
                             }
-                            $msg = $this->ci->image_lib->display_errors();
-                        }
-                        
-                        // centering crop image
-                        if ($resize) {
-                            if ($opt['crop']) {
-                                if ($opt['crop_center']) {
-                                    if ($fit == "width") {
-                                        $heightAfterResize = ceil($opt['crop_width'] * ($upload['image_height']/$upload['image_width']));
-                                        $space = $heightAfterResize - $opt['crop_height'];
+                            
+                            $conf = array(
+                                "image_library" => "gd2",
+                                "maintain_ratio" => true,
+                                "master_dim" => $fit,
+                                "quality" => "100%",
+                                "source_image" => $upload_path . $file_name,
+                                "new_image" => $opt['thumbnail_path'],
+                                "width" => $opt['resize_width'],
+                                "height" => $opt['resize_height'],
+                            );
+                            
+                            $this->ci->image_lib->initialize($conf);
+                            
+                            $resize = false;
+                            if ($this->ci->image_lib->resize()) {
+                                $resize = true;
+                                $msgnumber = 5;
+                            } else {
+                                if (file_exists($upload_path . $file_name)) {
+                                    unlink($upload_path . $file_name);
+                                }
+                                $msgnumber = 7;
+                            }
+                            
+                            // centering crop image
+                            if ($resize) {
+                                if ($opt['crop']) {
+                                    if ($opt['crop_center']) {
+                                        if ($fit == "width") {
+                                            $heightAfterResize = ceil($opt['crop_width'] * ($upload['image_height']/$upload['image_width']));
+                                            $space = $heightAfterResize - $opt['crop_height'];
+                                            $x = 0;
+                                            $y = ceil($space/2);
+                                        } elseif ($fit == "height") {
+                                            $widthAfterResize = ceil($opt['crop_height'] / ($upload['image_height']/$upload['image_width']));
+                                            $space = $widthAfterResize - $opt['crop_width'];
+                                            $x = ceil($space/2);
+                                            $y = 0;
+                                        }
+                                    } else {
                                         $x = 0;
-                                        $y = ceil($space/2);
-                                    } elseif ($fit == "height") {
-                                        $widthAfterResize = ceil($opt['crop_height'] / ($upload['image_height']/$upload['image_width']));
-                                        $space = $widthAfterResize - $opt['crop_width'];
-                                        $x = ceil($space/2);
                                         $y = 0;
                                     }
+                                    
+                                    $conf = array(
+                                        "image_library" => "gd2",
+                                        "maintain_ratio" => false,
+                                        "quality" => "100%",
+                                        "source_image" => $opt['thumbnail_path'] . $file_name,
+                                        "new_image" => $opt['thumbnail_path'],
+                                        "width" => $opt['crop_width'],
+                                        "height" => $opt['crop_height'],
+                                        "x_axis" => $x,
+                                        "y_axis" => $y,
+                                    );
+                                    $this->ci->image_lib->clear();
+                                    $this->ci->image_lib->initialize($conf);
+                                    if ($this->ci->image_lib->crop()) {
+                                        $valid = true;
+                                        $msgnumber = 6;
+                                    } else {
+                                        if (file_exists($upload_path . $file_name)) {
+                                            unlink($upload_path . $file_name);
+                                        }
+                                        if (file_exists($opt['thumbnail_path'] . $file_name)) {
+                                            unlink($upload_path . $file_name);
+                                        }
+                                        $msgnumber = 8;
+                                    }
                                 } else {
-                                    $x = 0;
-                                    $y = 0;
-                                }
-                                
-                                $conf = array(
-                                    "image_library" => "gd2",
-                                    "maintain_ratio" => false,
-                                    "quality" => "100%",
-                                    "source_image" => $opt['thumbnail_path'] . $file_name,
-                                    "new_image" => $opt['thumbnail_path'],
-                                    "width" => $opt['crop_width'],
-                                    "height" => $opt['crop_height'],
-                                    "x_axis" => $x,
-                                    "y_axis" => $y,
-                                );
-                                $this->ci->image_lib->clear();
-                                $this->ci->image_lib->initialize($conf);
-                                if ($this->ci->image_lib->crop()) {
                                     $valid = true;
-                                    $msg = "file berhasil di upload , resize, dan crop";
-                                } else {
-                                    if (file_exists($upload_path . $file_name)) {
-                                        unlink($upload_path . $file_name);
-                                    }
-                                    if (file_exists($opt['thumbnail_path'] . $file_name)) {
-                                        unlink($upload_path . $file_name);
-                                    }
-                                    $msg = $this->ci->image_lib->display_errors();
                                 }
-                            } else {
-                                $valid = true;
                             }
-                        }
-                    } else {
-                        $valid = true;
+                        } else {
+                            $valid = true;
+                        }    
                     }
                 }
             }
-            
         } else {
-            $msg = "Tidak ada file yang di upload";
+            $msgnumber = 1;
         }
         
         return array(
             "stat" => $valid,
-            "msg" => $opt['update'],
+            "msg" => $this->msglist[$msgnumber],
+            "msgnumber" => $msgnumber,
             "file_name" => $file_name
         );
+    }
+    
+    private function _msg ($msgnumber) {
+        $msglist = array(
+            1 => "Tidak ada file yang di upload",
+            2 => "Upload path is not exists",
+            3 => "Data gagal di upload" . $this->ci->upload->display_errors(),
+            4 => "file berhasil di upload",
+            5 => "file berhasil di resize",
+            6 => "file berhasil di upload , resize, dan crop",
+            7 => "Data gagal di resize <br />" . $this->ci->image_lib->display_errors(),
+            8 => "Data gagal di crop <br />" . $this->ci->image_lib->display_errors(),
+            9 => "Data gagal di upload"
+        );
         
+        return $msglist[$msgnumber];
     }
 
 }
