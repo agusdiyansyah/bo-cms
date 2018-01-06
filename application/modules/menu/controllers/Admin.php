@@ -2,15 +2,20 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin extends Controller {
-    protected $title = "Menu Admin Manajemen";
-    protected $valid = false;
-    protected $msg = "Data gagal di proses";
+    private $title = "Menu Admin Manajemen";
+    private $valid = false;
+    private $msg = "Data gagal di proses";
+    private $module = "menu";
+    private $submodule = "admin";
+    private $moduleLink;
+    private $stat   = false;
     
 	public function __construct() {
 		parent::__construct();
         $this->load->model('M_menu');
         $this->load->model('Administrator/M_admin');
         $this->output->set_title($this->title);
+        $this->moduleLink = "$this->module/$this->submodule/";
     }   
     
     public function index () {
@@ -36,12 +41,11 @@ class Admin extends Controller {
         $data = array(
             'title' => $this->title,
             'subtitle' => 'Data',
-            'link_add' => site_url('menu/admin/add'),
+            'link_add' => site_url("$this->moduleLink/add"),
             'combobox_parent' => $combobox_parent,
             'cari_name' => set_value('cari_name', $this->session->userdata('Menu_cari_name')),
-            'title' => $this->title
         );
-        
+        $this->output->append_title($data['subtitle']);
 		$this->load->view('admin/data', $data);
     }
     
@@ -59,22 +63,8 @@ class Admin extends Controller {
     	return;
 	}
     
-    public function cari() {
-        $ses['Menu_cari_name'] = $this->input->post('name');
-        $ses['Menu_cari_parent'] = $this->input->post('combobox_parent');
-        $this->session->set_userdata( $ses );
-        redirect('menu/admin');
-    }
-    public function add() 
-    {
-        // select2
-        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
-		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
-		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
-        
-        // validate
-        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
-		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+    public function add() {
+        $this->_formAssets();
         
         $data = array(
             'title' => 'Tambah Data Menu Admin',
@@ -93,8 +83,7 @@ class Admin extends Controller {
         $this->load->view('admin/form', $data);
     }
     
-    public function add_proses() 
-    {
+    public function add_proses() {
         $this->load->library('form_validation');
         $this->_rules();
         if ($this->form_validation->run() == FALSE) {
@@ -117,8 +106,7 @@ class Admin extends Controller {
         }
     }
     
-    public function edit($id) 
-    {
+    public function edit($id) {
         $row = $this->M_menu->get_by_id($id);
 
         if ($row) {
@@ -148,8 +136,7 @@ class Admin extends Controller {
         }
     }
     
-    public function edit_proses() 
-    {
+    public function edit_proses() {
         $this->load->library('form_validation');
         $this->_rules();
 
@@ -173,7 +160,7 @@ class Admin extends Controller {
         }
     }
     
-    public function delete() {        
+    public function delete() {
         $id = $this->input->post('id');
         $row = $this->M_menu->get_by_id($id);
         if ($row) {
@@ -186,6 +173,13 @@ class Admin extends Controller {
             $this->session->set_flashdata('message', $notif);
             // redirect(site_url('menu/admin'));
         }
+    }
+    
+    public function cari() {
+        $ses['Menu_cari_name'] = $this->input->post('name');
+        $ses['Menu_cari_parent'] = $this->input->post('combobox_parent');
+        $this->session->set_userdata( $ses );
+        redirect('menu/admin');
     }
     
     public function getLastOrderByIdParent () {
@@ -206,8 +200,7 @@ class Admin extends Controller {
         echo json_encode(array("order" => $order));
     }
 
-    public function order($status, $id_menu)
-    {
+    public function order($status, $id_menu) {
         $row = $this->M_menu->get_by_id($id_menu);
         if ($row) {
             if ($status=="up") {
@@ -231,8 +224,72 @@ class Admin extends Controller {
         }
     }
 
-    public function _rules() 
-    {
+	public function tampil() {
+        $this->output->unset_template();
+        $menu = $this->M_menu->recursive();
+        echo $menu;
+	}	
+    
+    private function _formAssets () {
+        // select2
+        $this->output->css('assets/themes/adminLTE/plugins/select2/select2.min.css');
+		$this->output->css('assets/themes/adminLTE/plugins/select2/select2-bootstrap.css');
+		$this->output->js('assets/themes/adminLTE/plugins/select2/select2.min.js');
+        
+        // validate
+        $this->output->js('assets/themes/adminLTE/plugins/jquery-validation/jquery.validate.js');
+		$this->output->js('assets/themes/adminLTE/plugins/jquery-validation/localization/messages_id.js');
+    }
+    
+    private function _formInputData ($data) {
+        $data = array(
+            'title' => 'Tambah Data Menu Admin',
+            'button' => 'Tambah',
+            'action' => site_url('menu/admin/add_proses'),
+            'id_menu' => set_value('id_menu'),
+            'name' => set_value('name'),
+            'link' => set_value('link'),
+            'icon' => set_value('icon'),
+            'order' => set_value('order', $this->M_menu->getLastOrder()),
+            'is_active' => set_value('is_active'),
+            'is_parent' => set_value('is_parent'),
+            'level' => $this->M_admin->combobox_level(set_value('level')),
+        );
+        return array(
+            "title" => $this->title,
+            "subtitle" => @$data['subtitle'],
+            "link_back" => site_url($this->moduleLink),
+            "form_action" => base_url($this->moduleLink . $data['form_action']),
+            
+            "input" => array(
+                "hide" => array(
+                    "id" => array(
+                        "name" => "id",
+                        "class" => "id",
+                        "type" => "hidden",
+                        "value" => @$data['id']
+                    )
+                ),
+                
+                "nama" => array(
+                    "name" => "nama",
+                    "type" => "text",
+                    "class" => "form-control nama",
+                    "value" => @$data['nama']
+                ),
+            )
+        );
+    }
+    
+    private function _formPostInputData () {
+    
+    }
+    
+    private function _formPostProsesError () {
+    
+    }
+    
+    private function _rules() {
     	$this->form_validation->set_rules('name', 'name', 'trim|required');
     	$this->form_validation->set_rules('link', 'link', 'trim|required');
     	$this->form_validation->set_rules('is_active', 'is active', 'trim|required');
@@ -241,12 +298,6 @@ class Admin extends Controller {
     	$this->form_validation->set_rules('id', 'id', 'trim');
     	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
-	public function tampil()
-	{
-        $this->output->unset_template();
-        $menu = $this->M_menu->recursive();
-        echo $menu;
-	}	
 }
 
 /* End of file admin.php */

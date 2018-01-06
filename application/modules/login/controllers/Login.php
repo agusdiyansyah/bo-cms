@@ -18,6 +18,7 @@ class Login extends MX_Controller {
 		$data['html_captcha'] = $this->recaptcha->get_html();
 		$data['userid'] = set_value('userid');
 		$this->load->view('login', $data);
+		// $this->login_proses();
 	}
 	function login_proses(){
 		//validasi form
